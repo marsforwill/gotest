@@ -1,141 +1,74 @@
 package main
 
 import (
-	"container/list"
+	"bytes"
+	"crypto/md5"
+	"encoding/base64"
+	"encoding/binary"
 	"fmt"
 )
 
-//leetcode submit region begin(Prohibit modification and deletion)
-type MyStack struct {
-	  l *list.List
+type MallcooTraceBody struct {
+	EventType int              `json:"EventType,omitempty"`
+	EventData MallcooEventData `json:"EventData,omitempty"`
+}
+type MallcooEventData struct {
+	Time            string `json:"time,omitempty"`
+	UniqueID        string `json:"unique_id,omitempty"`
+	PositionID      string `json:"position_id,omitempty"`
+	FaceID          string `json:"face_id,omitempty"`
+	VendorID        string `json:"vendor_id,omitempty"`
+	FaceImageURL    string `json:"face_img_url,omitempty"`
+	IsNew           string `json:"is_new,omitempty"`
+	AccessDirection string `json:"access_direction,omitempty"`
 }
 
+func md5Tool(str string) string {
+	data := []byte(str)
+	has := md5.Sum(data)
+	md5Str := fmt.Sprintf("%x", has)
 
-/** Initialize your data structure here. */
-func Constructor() MyStack {
-	return MyStack{
-		l: list.New(),
+	return md5Str
+}
+
+type DeleteAreaInfo struct {
+	RequestID string `json:"request_id"`
+	ErrorCode int    `json:"error_code"`
+	ErrorMsg  string `json:"error_msg"`
+}
+
+//GetFeatureWithNoHeader 从base64编码获取feature变量,该feature不包含Header，长度为在参数中
+func GetFeatureWithNoHeader(base64Str string, length int64) []float32 {
+	// base64解码
+	deBytes, err := base64.StdEncoding.DecodeString(base64Str)
+	if err != nil {
+		return nil
 	}
-}
-
-
-/** Push element x onto stack. */
-func (this *MyStack) Push(x int)  {
-	this.l.PushBack(x)
-}
-
-
-/** Removes the element on top of the stack and returns that element. */
-func (this *MyStack) Pop() int {
-	back := this.l.Back()
-	ans := back.Value.(int)
-	this.l.Remove(back)
-	return ans
-}
-
-
-/** Get the top element. */
-func (this *MyStack) Top() int {
-	return this.l.Back().Value.(int)
-}
-
-
-/** Returns whether the stack is empty. */
-func (this *MyStack) Empty() bool {
-	return this.l.Len()==0
-}
-
-
-  type ListNode struct {
-      Val int
-      Next *ListNode
-  }
-  // 连上指针 空判断
-func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
-	var head *ListNode
-	temp := &ListNode{
-		Val:  0,
-		Next: nil,
+	if int64(len(deBytes)) < length*4 {
+		return nil
 	}
-	flag := 0
-	var num,num1,num2 int
-	for i:=0; true ; temp = temp.Next  {
-
-		if l1==nil {
-			num1 = 0
-		} else {
-			num1 = l1.Val
-		}
-		if l2==nil {
-			num2=0
-		} else {
-			num2 = l2.Val
-		}
-
-		num = num1 + num2 + flag
-		flag = 0
-		if num == 0 && l1==nil && l2==nil {
-			break
-		}
-		if num >= 10 {
-			flag = 1
-			num -= 10
-		}
-		node :=&ListNode{
-			Val:  num,
-			Next: nil,
-		}
-		temp.Next = node
-		if i==0 {
-			head = node
-		}
-
-		if l1!=nil {
-			l1 = l1.Next
-		}
-		if l2 != nil {
-			l2 = l2.Next
-		}
-		i++
+	// 获取feature
+	var feature = make([]float32, length)
+	for i := int64(0); i < length; i++ {
+		b := []byte{deBytes[3+4*i], deBytes[2+4*i], deBytes[1+4*i], deBytes[4*i]}
+		buf := bytes.NewBuffer(b)
+		binary.Read(buf, binary.BigEndian, &feature[i])
 	}
-	if head == nil {
-		head = &ListNode{
-			Val:  0,
-			Next: nil,
-		}
-	}
-	return head
+	return feature
+}
+
+func FeatureToString(feature []float32) string {
+	var feaBuf bytes.Buffer
+	binary.Write(&feaBuf, binary.LittleEndian, feature)
+	return string(feaBuf.Bytes())
 }
 
 func main() {
-	fmt.Println("jh")
-	a := &ListNode{
-		Val:  2,
-		Next: &ListNode{
-			Val:  4,
-			Next: &ListNode{
-				Val:  3,
-				Next: nil,
-			},
-		},
-	}
-	b := &ListNode{
-		Val:  5,
-		Next: &ListNode{
-			Val:  6,
-			Next: &ListNode{
-				Val:  4,
-				Next: nil,
-			},
-		},
-	}
-	addTwoNumbers(a,b)
-	//mystack := Constructor()
-	////mystack.Push(1)
-	//mystack.Push(2)
-	//fmt.Println(mystack.l.Len())
-	//fmt.Println(mystack.Top())
-	//fmt.Println(mystack.Pop())
-	//fmt.Println(mystack.Empty())
-	//fmt.Println("hello atty")
+	fmt.Printf("hello atty")
+
+}
+
+func excute(i int) {
+
+	print(i)
 }
