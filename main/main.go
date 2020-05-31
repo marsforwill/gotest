@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/binary"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -115,16 +114,23 @@ func main() {
 	//ks = append(ks, string(strArry))
 	//fmt.Println(ks)
 
-	m := AKInfo{}
-	// 解析json 第一层的ak
-	str := "{\n\t\"AK\":\"asdfsdf\"\n}"
-	err := json.Unmarshal([]byte(str), &m)
-	if err == nil {
-		fmt.Println("one" + m.Ak)
-		//fmt.Println("two"+m.Ak1)
+	//m := AKInfo{}
+	//// 解析json 第一层的ak
+	//str := "{\n\t\"AK\":\"asdfsdf\"\n}"
+	//err := json.Unmarshal([]byte(str), &m)
+	//if err == nil {
+	//	fmt.Println("one" + m.Ak)
+	//	//fmt.Println("two"+m.Ak1)
+	//
+	//}
+	//fmt.Println(1<<2)
+	value := aa()
+	println(len(value))
 
-	}
+}
 
+func aa() (value string) {
+	return "asdf"
 }
 
 type AKInfo struct {

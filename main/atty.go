@@ -77,32 +77,47 @@ func jump(nums []int) int {
 	lenth := len(nums)
 	count := make([]int, lenth)
 	count[lenth-1] = 0
+	// 从后往前循环的index
 	for i := lenth - 2; i >= 0; i-- {
 		if nums[i] == 0 {
+			count[i] = -1
 			continue
 		}
-		min := math.MaxInt8
+		min := math.MaxInt64
+		// 可以跳的步数
 		for j := 1; j <= nums[i]; j++ {
-			if j+i >= lenth {
-				count[i] = 1
+			if j+i == lenth-1 {
+				min = 0
+				continue
+			}
+			if j+i > lenth-1 {
 				continue
 			}
 			if nums[i+j] == 0 {
 				continue
 			}
-			if count[i+j] < min {
+			if count[i+j] < min && count[i+j] >= 0 {
 				min = count[i+j]
 			}
-			count[i] = min + 1
 		}
+		count[i] = min + 1
 	}
-	fmt.Println(count)
+	//fmt.Println(count)
 	return count[0]
 }
+
+func mySqrt(x int) int {
+	ans := math.Sqrt(float64(x))
+	return int(ans)
+}
+
+//[1,4],[4,4],[2,2],[3,4],[1,1]
 func main() {
 	//ans := waysToChange(5)
 	//fmt.Printf("ans:%v",ans)
 	//fmt.Println(lengthOfLongestSubstring("asdfsdf"))
-	s := []int{5, 9, 3, 2, 1, 0, 2, 3, 3, 1, 0, 0}
-	fmt.Println(jump(s))
+	s := [][]int{{1, 4}, {4, 4}, {2, 2}, {3, 4}, {1, 1}}
+	fmt.Println(maxEvents(s))
+	//fmt.Println(jump(s))
+
 }
