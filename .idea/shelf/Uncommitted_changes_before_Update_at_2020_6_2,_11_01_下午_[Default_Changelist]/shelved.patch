@@ -1,0 +1,401 @@
+Index: main/530.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package main\n\nimport (\n\t\"fmt\"\n\t\"math\"\n\t\"sort\"\n\t\"strings\"\n)\n\nfunc canBeEqual(target []int, arr []int) bool {\n\tlt := len(target)\n\tla := len(arr)\n\tif lt != la {\n\t\treturn false\n\t}\n\tsort.Ints(target)\n\tsort.Ints(arr)\n\tfor i := 0; i < la; i++ {\n\t\tif target[i] != arr[i] {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\nfunc hasAllCodes(s string, k int) bool {\n\tcount := math.Pow(float64(2), float64(k))\n\tn := int(count)\n\tfor i := 0; i < n; i++ {\n\t\tstr := fmt.Sprintf(\"%b\", i)\n\t\tif len(str) < k {\n\t\t\tstr = strings.Repeat(\"0\", k-len(str)) + str\n\t\t}\n\t\tif !strings.Contains(s, str) {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\nfunc checkIfPrerequisite(n int, prerequisites [][]int, queries [][]int) []bool {\n\t// ans[i] 存 i的一级后续\n\tans := make([][]int, n+5)\n\tfor i := 0; i < len(prerequisites); i++ {\n\t\tans[prerequisites[i][0]] = append(ans[prerequisites[i][0]], prerequisites[i][1])\n\t}\n\tl := len(queries)\n\tansf := make([][]bool, n+5)\n\t// 循环每一个begin，\n\tfor i := 0; i <= n; i++ {\n\t\tdfsAdd(i, ans, &ansf)\n\t}\n\tvar final []bool\n\tfor i := 0; i < l; i++ {\n\t\tif ansf[queries[i][0]][queries[i][1]] {\n\t\t\tfinal = append(final, true)\n\t\t} else {\n\t\t\tfinal = append(final, false)\n\t\t}\n\t}\n\treturn final\n}\n\nfunc dfsAdd(num int, mp [][]int, ans *[][]bool) {\n\tfor i := 0; i < len(mp[num]); i++ {\n\t\t(*ans)[num][mp[num][i]] = true\n\t\tdfsAdd(mp[num][i], mp, ans)\n\t}\n\treturn\n}\n\nfunc dfsQuery(begin int, end int, attr [][]int) bool {\n\tif begin == end {\n\t\treturn true\n\t}\n\tfor i := 0; i < len(attr[begin]); i++ {\n\t\tif dfsQuery(attr[begin][i], end, attr) {\n\t\t\treturn true\n\t\t}\n\t}\n\treturn false\n}\n\nfunc main() {\n\t//a := []int{2,4,3,5}\n\t//b := []int{2,5,4,3}\n\t//fmt.Println(canBeEqual(a,b))\n\t//hasAllCodes(\"2342\",3)\n\tpre := [][]int{{1, 2}, {1, 3}}\n\tcheckIfPrerequisite(3, pre, nil)\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- main/530.go	(revision bb2828f6b420ee32758897b18ef8b518274bd7c4)
++++ main/530.go	(date 1591109901974)
+@@ -1,6 +1,7 @@
+ package main
+ 
+ import (
++	"container/list"
+ 	"fmt"
+ 	"math"
+ 	"sort"
+@@ -80,11 +81,63 @@
+ 	return false
+ }
+ 
++func minReorder(n int, connections [][]int) int {
++	//1 记录连通性 conn[i] 记录i联通节点
++	conn := make([][]int, n+10)
++	for i := 0; i < n-1; i++ {
++		conn[connections[i][0]] = append(conn[connections[i][0]], connections[i][1])
++		conn[connections[i][1]] = append(conn[connections[i][1]], connections[i][0])
++	}
++
++	//2 从0开始做bfs并记录顺序 mapi【i】【j】
++	flag := make([]bool, n+10)
++	path := make(map[int][]int)
++	l := list.New()
++	l.PushBack(0)
++	flag[0] = true
++	for  l.Len() > 0{
++		cur := l.Front()
++		l.Remove(cur)
++		val := cur.Value.(int)
++		flag[val] = true
++		for i := 0; i < len(conn[val]); i++ {
++			if flag[conn[val][i]] {
++				continue
++			}
++			l.PushBack(conn[val][i])
++			//path[val][conn[val][i]] = true
++			_,ok := path[val]
++			if ok {
++				path[val] = append(path[val],conn[val][i])
++			}else {
++				path[val] = []int{conn[val][i]}
++			}
++		}
++	}
++
++	//3 对输入再处理 顺序不对count
++	count :=0
++	for i := 0; i < n-1; i++ {
++		ss,ok := path[connections[i][0]]
++		if ok {
++			for j := 0; j < len(ss); j++ {
++				if ss[j] == connections[i][1] {
++					count ++
++					break
++				}
++			}
++		}
++	}
++	return count
++}
++
+ func main() {
+ 	//a := []int{2,4,3,5}
+ 	//b := []int{2,5,4,3}
+ 	//fmt.Println(canBeEqual(a,b))
+ 	//hasAllCodes("2342",3)
+-	pre := [][]int{{1, 2}, {1, 3}}
+-	checkIfPrerequisite(3, pre, nil)
++	//pre := [][]int{{1, 2}, {1, 3}}
++	//checkIfPrerequisite(3, pre, nil)
++	con := [][]int{{0,1},{2,1},{3,2},{0,4},{5,1},{2,6},{5,7},{3,8},{8,9}}
++	print(minReorder(10,con))
+ }
+Index: .idea/leetcode/editor.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"LeetcodeEditor\">\n    <option name=\"projectConfig\">\n      <map>\n        <entry key=\"/var/folders/08/l_f010n97ll17dlkz9gf4kpr12d9r0/T/leetcode/editor/cn/[面试题 08.11]硬币.go\">\n          <value>\n            <LeetcodeEditor>\n              <option name=\"path\" value=\"/var/folders/08/l_f010n97ll17dlkz9gf4kpr12d9r0/T/leetcode/editor/cn/[面试题 08.11]硬币.go\" />\n              <option name=\"questionId\" value=\"100231\" />\n            </LeetcodeEditor>\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/leetcode/editor.xml	(revision bb2828f6b420ee32758897b18ef8b518274bd7c4)
++++ .idea/leetcode/editor.xml	(date 1591017753011)
+@@ -11,6 +11,14 @@
+             </LeetcodeEditor>
+           </value>
+         </entry>
++        <entry key="/var/folders/0g/2vhrw3p92hj2zq0g68j5t3fw0000gn/T/leetcode/editor/cn/[133]克隆图.go">
++          <value>
++            <LeetcodeEditor>
++              <option name="path" value="/var/folders/0g/2vhrw3p92hj2zq0g68j5t3fw0000gn/T/leetcode/editor/cn/[133]克隆图.go" />
++              <option name="questionId" value="133" />
++            </LeetcodeEditor>
++          </value>
++        </entry>
+       </map>
+     </option>
+   </component>
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"JavaScriptSettings\">\n    <option name=\"languageLevel\" value=\"ES6\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision bb2828f6b420ee32758897b18ef8b518274bd7c4)
++++ .idea/misc.xml	(date 1591017753005)
+@@ -3,4 +3,7 @@
+   <component name="JavaScriptSettings">
+     <option name="languageLevel" value="ES6" />
+   </component>
++  <component name="ProjectRootManager">
++    <output url="file://$PROJECT_DIR$/out" />
++  </component>
+ </project>
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"a6e3c688-1725-454d-b3fb-65ee7e139d1d\" name=\"Default Changelist\" comment=\"\">\n      <change beforePath=\"$PROJECT_DIR$/.idea/leetcode/editor.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/leetcode/editor.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/main/atty.go\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main/atty.go\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"CodeStyleSettingsInfer\">\n    <option name=\"done\" value=\"true\" />\n  </component>\n  <component name=\"ComposerSettings\">\n    <execution>\n      <executable />\n    </execution>\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Go File\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"GOROOT\" path=\"/usr/local/go\" />\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GoLibraries\">\n    <option name=\"indexEntireGoPath\" value=\"false\" />\n    <option name=\"urls\">\n      <list>\n        <option value=\"file://$PROJECT_DIR$/../../../..\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"ProjectCodeStyleSettingsMigration\">\n    <option name=\"version\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"1RPVFUnZ7qCkFdaUxjDMIUamQvy\" />\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"autoscrollToSource\" value=\"true\" />\n    <option name=\"flattenPackages\" value=\"true\" />\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n    <option name=\"showMembers\" value=\"true\" />\n    <option name=\"showVisibilityIcons\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">\n    <property name=\"ASKED_ADD_EXTERNAL_FILES\" value=\"true\" />\n    <property name=\"ASKED_SHARE_PROJECT_CONFIGURATION_FILES\" value=\"true\" />\n    <property name=\"DefaultGoTemplateProperty\" value=\"Go File\" />\n    <property name=\"GO_FMT\" value=\"true\" />\n    <property name=\"RunOnceActivity.OpenProjectViewOnStart\" value=\"true\" />\n    <property name=\"RunOnceActivity.ShowReadmeOnStart\" value=\"true\" />\n    <property name=\"SHARE_PROJECT_CONFIGURATION_FILES\" value=\"true\" />\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\n    <property name=\"aspect.path.notification.shown\" value=\"true\" />\n    <property name=\"configurable.Global.GOPATH.is.expanded\" value=\"true\" />\n    <property name=\"configurable.Module.GOPATH.is.expanded\" value=\"true\" />\n    <property name=\"configurable.Project.GOPATH.is.expanded\" value=\"true\" />\n    <property name=\"go.import.settings.migrated\" value=\"true\" />\n    <property name=\"last_opened_file_path\" value=\"$PROJECT_DIR$\" />\n    <property name=\"project.structure.last.edited\" value=\"Project\" />\n    <property name=\"project.structure.proportion\" value=\"0.15\" />\n    <property name=\"project.structure.side.proportion\" value=\"0.2\" />\n    <property name=\"settings.editor.selected.configurable\" value=\"com.goide.configuration.GoLibrariesConfigurableProvider\" />\n  </component>\n  <component name=\"RecentsManager\">\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/main\" />\n    </key>\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Go Build.go build github.com/marsforwill/gotest/main\">\n    <configuration name=\"go build github.com/marsforwill/gotest/main\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"gotest\" />\n      <working_directory value=\"$PROJECT_DIR$/\" />\n      <kind value=\"FILE\" />\n      <filePath value=\"$PROJECT_DIR$/main/atty.go\" />\n      <package value=\"github.com/marsforwill/gotest/main\" />\n      <directory value=\"$PROJECT_DIR$/\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"go build leetcode.go\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"GoTest\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind value=\"FILE\" />\n      <filePath value=\"$PROJECT_DIR$/main/leetcode.go\" />\n      <directory value=\"$PROJECT_DIR$\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"go build main.go\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"GoTest\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind value=\"FILE\" />\n      <filePath value=\"$PROJECT_DIR$/main/main.go\" />\n      <directory value=\"$PROJECT_DIR$\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"go build test2.go\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"GoTest\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind value=\"FILE\" />\n      <filePath value=\"$PROJECT_DIR$/main/test2.go\" />\n      <directory value=\"$PROJECT_DIR$\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"go build test.go (1)\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"GoTest\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind value=\"FILE\" />\n      <filePath value=\"$PROJECT_DIR$/main/test.go\" />\n      <directory value=\"$PROJECT_DIR$\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Go Build.go build github.com/marsforwill/gotest/main\" />\n        <item itemvalue=\"Go Build.go build main.go\" />\n        <item itemvalue=\"Go Build.go build leetcode.go\" />\n        <item itemvalue=\"Go Build.go build test2.go\" />\n        <item itemvalue=\"Go Build.go build test.go (1)\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SvnConfiguration\">\n    <configuration />\n  </component>\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"a6e3c688-1725-454d-b3fb-65ee7e139d1d\" name=\"Default Changelist\" comment=\"\" />\n      <created>1569568614217</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1569568614217</updated>\n      <workItem from=\"1569568618538\" duration=\"3845000\" />\n      <workItem from=\"1569729203825\" duration=\"1988000\" />\n      <workItem from=\"1569742964728\" duration=\"2207000\" />\n      <workItem from=\"1569746366921\" duration=\"1723000\" />\n      <workItem from=\"1570620665123\" duration=\"229000\" />\n      <workItem from=\"1570620968632\" duration=\"306000\" />\n      <workItem from=\"1571643310797\" duration=\"1348000\" />\n      <workItem from=\"1571724809958\" duration=\"6000\" />\n      <workItem from=\"1571819457079\" duration=\"1002000\" />\n      <workItem from=\"1574672212604\" duration=\"1416000\" />\n      <workItem from=\"1574740348897\" duration=\"10980000\" />\n      <workItem from=\"1574840811974\" duration=\"2858000\" />\n      <workItem from=\"1574997039046\" duration=\"620000\" />\n      <workItem from=\"1579180580719\" duration=\"900000\" />\n      <workItem from=\"1583829530349\" duration=\"1050000\" />\n      <workItem from=\"1584077946921\" duration=\"711000\" />\n      <workItem from=\"1585488920740\" duration=\"1014000\" />\n      <workItem from=\"1585565739447\" duration=\"5707000\" />\n      <workItem from=\"1586243461160\" duration=\"1010000\" />\n      <workItem from=\"1586749174033\" duration=\"587000\" />\n      <workItem from=\"1587027608005\" duration=\"5015000\" />\n      <workItem from=\"1587140573526\" duration=\"950000\" />\n      <workItem from=\"1587199022037\" duration=\"499000\" />\n      <workItem from=\"1587199566085\" duration=\"318000\" />\n      <workItem from=\"1587199923308\" duration=\"7294000\" />\n      <workItem from=\"1587464890105\" duration=\"5632000\" />\n      <workItem from=\"1587522814972\" duration=\"541000\" />\n      <workItem from=\"1587556976113\" duration=\"599000\" />\n      <workItem from=\"1587633958095\" duration=\"2929000\" />\n      <workItem from=\"1587697570123\" duration=\"728000\" />\n      <workItem from=\"1587698421953\" duration=\"1067000\" />\n      <workItem from=\"1587704432746\" duration=\"346000\" />\n      <workItem from=\"1587720079066\" duration=\"7512000\" />\n      <workItem from=\"1587981984891\" duration=\"311000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"nothing for struct\">\n      <created>1587699214697</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1587699214697</updated>\n    </task>\n    <task id=\"LOCAL-00002\" summary=\"go test struct\">\n      <created>1587704727922</created>\n      <option name=\"number\" value=\"00002\" />\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1587704727922</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"3\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"2\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n    <option name=\"oldMeFiltersMigrated\" value=\"true\" />\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"nothing for struct\" />\n    <MESSAGE value=\"go test struct\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"go test struct\" />\n  </component>\n  <component name=\"VgoProject\">\n    <integration-enabled>true</integration-enabled>\n  </component>\n  <component name=\"WindowStateProjectService\">\n    <state x=\"1888\" y=\"-59\" key=\"#Project_Structure\" timestamp=\"1587699174371\">\n      <screen x=\"1440\" y=\"-180\" width=\"1920\" height=\"1080\" />\n    </state>\n    <state x=\"1888\" y=\"-59\" key=\"#Project_Structure/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587699174371\" />\n    <state x=\"417\" y=\"97\" key=\"#go_build_github.com/marsforwill/gotest/main\" timestamp=\"1587720602285\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state x=\"417\" y=\"97\" key=\"#go_build_github.com/marsforwill/gotest/main/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587720602285\" />\n    <state x=\"1923\" y=\"-85\" key=\"CommitChangelistDialog2\" timestamp=\"1587704725639\">\n      <screen x=\"1440\" y=\"-180\" width=\"1920\" height=\"1080\" />\n    </state>\n    <state x=\"1923\" y=\"-85\" key=\"CommitChangelistDialog2/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587704725639\" />\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.bottom\" timestamp=\"1587969662605\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.bottom/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587969662605\" />\n    <state width=\"1878\" height=\"271\" key=\"GridCell.Tab.0.bottom/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587698087386\" />\n    <state width=\"698\" height=\"272\" key=\"GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900\" timestamp=\"1587224098524\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.0.bottom/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471311854\" />\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.center\" timestamp=\"1587969662603\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.center/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587969662603\" />\n    <state width=\"1878\" height=\"271\" key=\"GridCell.Tab.0.center/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587698087383\" />\n    <state width=\"698\" height=\"272\" key=\"GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900\" timestamp=\"1587224098522\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.0.center/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471311846\" />\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.left\" timestamp=\"1587969662602\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.left/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587969662602\" />\n    <state width=\"1878\" height=\"271\" key=\"GridCell.Tab.0.left/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587698087379\" />\n    <state width=\"698\" height=\"272\" key=\"GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900\" timestamp=\"1587224098521\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.0.left/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471311843\" />\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.right\" timestamp=\"1587969662604\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"698\" height=\"215\" key=\"GridCell.Tab.0.right/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587969662604\" />\n    <state width=\"1878\" height=\"271\" key=\"GridCell.Tab.0.right/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587698087385\" />\n    <state width=\"698\" height=\"272\" key=\"GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900\" timestamp=\"1587224098523\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.0.right/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471311848\" />\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.bottom\" timestamp=\"1587523355896\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.bottom/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587523355896\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.bottom/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587472908419\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.bottom/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471312882\" />\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.center\" timestamp=\"1587523355893\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.center/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587523355893\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.center/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587472908414\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.center/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471312877\" />\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.left\" timestamp=\"1587523355892\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.left/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587523355892\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.left/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587472908411\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.left/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471312873\" />\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.right\" timestamp=\"1587523355895\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state width=\"1398\" height=\"274\" key=\"GridCell.Tab.1.right/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587523355895\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.right/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587472908416\" />\n    <state width=\"1878\" height=\"264\" key=\"GridCell.Tab.1.right/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587471312879\" />\n    <state x=\"1745\" y=\"-73\" key=\"SettingsEditor\" timestamp=\"1587704629770\">\n      <screen x=\"1440\" y=\"-180\" width=\"1920\" height=\"1080\" />\n    </state>\n    <state x=\"1745\" y=\"-73\" key=\"SettingsEditor/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587704629770\" />\n    <state x=\"229\" y=\"89\" key=\"SettingsEditor/0.0.1440.900@0.0.1440.900\" timestamp=\"1587200275705\" />\n    <state x=\"2000\" y=\"100\" key=\"Vcs.Push.Dialog.v2\" timestamp=\"1587699219893\">\n      <screen x=\"1440\" y=\"-180\" width=\"1920\" height=\"1080\" />\n    </state>\n    <state x=\"2000\" y=\"100\" key=\"Vcs.Push.Dialog.v2/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080\" timestamp=\"1587699219893\" />\n    <state x=\"162\" y=\"67\" key=\"com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser\" timestamp=\"1587223137456\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state x=\"162\" y=\"67\" key=\"com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1440.900@0.0.1440.900\" timestamp=\"1587223137456\" />\n    <state x=\"420\" y=\"181\" width=\"600\" height=\"538\" key=\"find.popup\" timestamp=\"1587720802202\">\n      <screen x=\"0\" y=\"0\" width=\"1440\" height=\"900\" />\n    </state>\n    <state x=\"420\" y=\"181\" width=\"600\" height=\"538\" key=\"find.popup/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900\" timestamp=\"1587720802202\" />\n    <state x=\"420\" y=\"181\" width=\"600\" height=\"538\" key=\"find.popup/0.0.1440.900@0.0.1440.900\" timestamp=\"1587221450274\" />\n  </component>\n  <component name=\"XDebuggerManager\">\n    <breakpoint-manager>\n      <breakpoints>\n        <line-breakpoint enabled=\"true\" type=\"DlvLineBreakpoint\">\n          <url>file://$PROJECT_DIR$/main/leetcode.go</url>\n          <line>103</line>\n          <option name=\"timeStamp\" value=\"1\" />\n        </line-breakpoint>\n      </breakpoints>\n    </breakpoint-manager>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/workspace.xml	(revision bb2828f6b420ee32758897b18ef8b518274bd7c4)
++++ .idea/workspace.xml	(date 1591109916542)
+@@ -3,8 +3,9 @@
+   <component name="ChangeListManager">
+     <list default="true" id="a6e3c688-1725-454d-b3fb-65ee7e139d1d" name="Default Changelist" comment="">
+       <change beforePath="$PROJECT_DIR$/.idea/leetcode/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/leetcode/editor.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main/atty.go" beforeDir="false" afterPath="$PROJECT_DIR$/main/atty.go" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/530.go" beforeDir="false" afterPath="$PROJECT_DIR$/main/530.go" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -79,7 +80,7 @@
+       <recent name="$PROJECT_DIR$" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="Go Build.go build github.com/marsforwill/gotest/main">
++  <component name="RunManager" selected="Go Build.go build gotest/main (1)">
+     <configuration name="go build github.com/marsforwill/gotest/main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+       <module name="gotest" />
+       <working_directory value="$PROJECT_DIR$/" />
+@@ -89,45 +90,47 @@
+       <directory value="$PROJECT_DIR$/" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="go build leetcode.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+-      <module name="GoTest" />
+-      <working_directory value="$PROJECT_DIR$" />
++    <configuration name="go build gotest/main (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
++      <module name="gotest" />
++      <working_directory value="$PROJECT_DIR$/" />
+       <kind value="FILE" />
+-      <filePath value="$PROJECT_DIR$/main/leetcode.go" />
+-      <directory value="$PROJECT_DIR$" />
++      <filePath value="$PROJECT_DIR$/main/530.go" />
++      <package value="gotest/main" />
++      <directory value="$PROJECT_DIR$/" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+-      <module name="GoTest" />
+-      <working_directory value="$PROJECT_DIR$" />
++    <configuration name="go build gotest/main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
++      <module name="gotest" />
++      <working_directory value="$PROJECT_DIR$/" />
+       <kind value="FILE" />
+-      <filePath value="$PROJECT_DIR$/main/main.go" />
+-      <directory value="$PROJECT_DIR$" />
++      <filePath value="$PROJECT_DIR$/main/image.go" />
++      <package value="gotest/main" />
++      <directory value="$PROJECT_DIR$/" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="go build test2.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
++    <configuration name="go build leetcode.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+       <module name="GoTest" />
+       <working_directory value="$PROJECT_DIR$" />
+       <kind value="FILE" />
+-      <filePath value="$PROJECT_DIR$/main/test2.go" />
++      <filePath value="$PROJECT_DIR$/main/leetcode.go" />
+       <directory value="$PROJECT_DIR$" />
+       <method v="2" />
+     </configuration>
+-    <configuration name="go build test.go (1)" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
++    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+       <module name="GoTest" />
+       <working_directory value="$PROJECT_DIR$" />
+       <kind value="FILE" />
+-      <filePath value="$PROJECT_DIR$/main/test.go" />
++      <filePath value="$PROJECT_DIR$/main/main.go" />
+       <directory value="$PROJECT_DIR$" />
+       <method v="2" />
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="Go Build.go build gotest/main (1)" />
++        <item itemvalue="Go Build.go build gotest/main" />
+         <item itemvalue="Go Build.go build github.com/marsforwill/gotest/main" />
+         <item itemvalue="Go Build.go build main.go" />
+         <item itemvalue="Go Build.go build leetcode.go" />
+-        <item itemvalue="Go Build.go build test2.go" />
+-        <item itemvalue="Go Build.go build test.go (1)" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -190,7 +193,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1587704727922</updated>
+     </task>
+-    <option name="localTasksCounter" value="3" />
++    <task id="LOCAL-00003" summary="image deep clone">
++      <created>1591027000835</created>
++      <option name="number" value="00003" />
++      <option name="presentableId" value="LOCAL-00003" />
++      <option name="project" value="LOCAL" />
++      <updated>1591027000835</updated>
++    </task>
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -211,7 +221,8 @@
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="nothing for struct" />
+     <MESSAGE value="go test struct" />
+-    <option name="LAST_COMMIT_MESSAGE" value="go test struct" />
++    <MESSAGE value="image deep clone" />
++    <option name="LAST_COMMIT_MESSAGE" value="image deep clone" />
+   </component>
+   <component name="VgoProject">
+     <integration-enabled>true</integration-enabled>
+@@ -225,80 +236,107 @@
+       <screen x="0" y="0" width="1440" height="900" />
+     </state>
+     <state x="417" y="97" key="#go_build_github.com/marsforwill/gotest/main/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587720602285" />
+-    <state x="1923" y="-85" key="CommitChangelistDialog2" timestamp="1587704725639">
+-      <screen x="1440" y="-180" width="1920" height="1080" />
++    <state x="417" y="74" key="#go_build_gotest/main" timestamp="1591018713887">
++      <screen x="0" y="23" width="1440" height="812" />
++    </state>
++    <state x="417" y="74" key="#go_build_gotest/main/0.23.1440.812@0.23.1440.812" timestamp="1591018713887" />
++    <state x="417" y="74" key="#go_build_gotest/main_(1)" timestamp="1591105355280">
++      <screen x="0" y="23" width="1440" height="812" />
++    </state>
++    <state x="417" y="74" key="#go_build_gotest/main_(1)/0.23.1440.812@0.23.1440.812" timestamp="1591105355280" />
++    <state x="483" y="137" key="#xdebugger.evaluate" timestamp="1591109832356">
++      <screen x="0" y="23" width="1440" height="812" />
++    </state>
++    <state x="483" y="137" key="#xdebugger.evaluate/0.23.1440.812@0.23.1440.812" timestamp="1591109832356" />
++    <state x="362" y="23" key="CommitChangelistDialog2" timestamp="1591027000513">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state x="1923" y="-85" key="CommitChangelistDialog2/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587704725639" />
+-    <state width="698" height="215" key="GridCell.Tab.0.bottom" timestamp="1587969662605">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state x="362" y="23" key="CommitChangelistDialog2/0.23.1440.812@0.23.1440.812" timestamp="1591027000513" />
++    <state width="1398" height="255" key="GridCell.Tab.0.bottom" timestamp="1591109902360">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="698" height="215" key="GridCell.Tab.0.bottom/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587969662605" />
+     <state width="1878" height="271" key="GridCell.Tab.0.bottom/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587698087386" />
+     <state width="698" height="272" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1587224098524" />
+     <state width="1878" height="264" key="GridCell.Tab.0.bottom/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471311854" />
+-    <state width="698" height="215" key="GridCell.Tab.0.center" timestamp="1587969662603">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state width="1398" height="255" key="GridCell.Tab.0.bottom/0.23.1440.812@0.23.1440.812" timestamp="1591109902360" />
++    <state width="1398" height="255" key="GridCell.Tab.0.center" timestamp="1591109902359">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="698" height="215" key="GridCell.Tab.0.center/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587969662603" />
+     <state width="1878" height="271" key="GridCell.Tab.0.center/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587698087383" />
+     <state width="698" height="272" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1587224098522" />
+     <state width="1878" height="264" key="GridCell.Tab.0.center/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471311846" />
+-    <state width="698" height="215" key="GridCell.Tab.0.left" timestamp="1587969662602">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state width="1398" height="255" key="GridCell.Tab.0.center/0.23.1440.812@0.23.1440.812" timestamp="1591109902359" />
++    <state width="1398" height="255" key="GridCell.Tab.0.left" timestamp="1591109902359">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="698" height="215" key="GridCell.Tab.0.left/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587969662602" />
+     <state width="1878" height="271" key="GridCell.Tab.0.left/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587698087379" />
+     <state width="698" height="272" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1587224098521" />
+     <state width="1878" height="264" key="GridCell.Tab.0.left/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471311843" />
+-    <state width="698" height="215" key="GridCell.Tab.0.right" timestamp="1587969662604">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state width="1398" height="255" key="GridCell.Tab.0.left/0.23.1440.812@0.23.1440.812" timestamp="1591109902359" />
++    <state width="1398" height="255" key="GridCell.Tab.0.right" timestamp="1591109902360">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="698" height="215" key="GridCell.Tab.0.right/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587969662604" />
+     <state width="1878" height="271" key="GridCell.Tab.0.right/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587698087385" />
+     <state width="698" height="272" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1587224098523" />
+     <state width="1878" height="264" key="GridCell.Tab.0.right/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471311848" />
+-    <state width="1398" height="274" key="GridCell.Tab.1.bottom" timestamp="1587523355896">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state width="1398" height="255" key="GridCell.Tab.0.right/0.23.1440.812@0.23.1440.812" timestamp="1591109902360" />
++    <state width="1398" height="255" key="GridCell.Tab.1.bottom" timestamp="1591109902361">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="1398" height="274" key="GridCell.Tab.1.bottom/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587523355896" />
+     <state width="1878" height="264" key="GridCell.Tab.1.bottom/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587472908419" />
+     <state width="1878" height="264" key="GridCell.Tab.1.bottom/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471312882" />
+-    <state width="1398" height="274" key="GridCell.Tab.1.center" timestamp="1587523355893">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state width="1398" height="255" key="GridCell.Tab.1.bottom/0.23.1440.812@0.23.1440.812" timestamp="1591109902361" />
++    <state width="1398" height="255" key="GridCell.Tab.1.center" timestamp="1591109902360">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="1398" height="274" key="GridCell.Tab.1.center/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587523355893" />
+     <state width="1878" height="264" key="GridCell.Tab.1.center/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587472908414" />
+     <state width="1878" height="264" key="GridCell.Tab.1.center/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471312877" />
+-    <state width="1398" height="274" key="GridCell.Tab.1.left" timestamp="1587523355892">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state width="1398" height="255" key="GridCell.Tab.1.center/0.23.1440.812@0.23.1440.812" timestamp="1591109902360" />
++    <state width="1398" height="255" key="GridCell.Tab.1.left" timestamp="1591109902360">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="1398" height="274" key="GridCell.Tab.1.left/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587523355892" />
+     <state width="1878" height="264" key="GridCell.Tab.1.left/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587472908411" />
+     <state width="1878" height="264" key="GridCell.Tab.1.left/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471312873" />
+-    <state width="1398" height="274" key="GridCell.Tab.1.right" timestamp="1587523355895">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state width="1398" height="255" key="GridCell.Tab.1.left/0.23.1440.812@0.23.1440.812" timestamp="1591109902360" />
++    <state width="1398" height="255" key="GridCell.Tab.1.right" timestamp="1591109902361">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state width="1398" height="274" key="GridCell.Tab.1.right/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587523355895" />
+     <state width="1878" height="264" key="GridCell.Tab.1.right/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587472908416" />
+     <state width="1878" height="264" key="GridCell.Tab.1.right/0.23.1440.808/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587471312879" />
++    <state width="1398" height="255" key="GridCell.Tab.1.right/0.23.1440.812@0.23.1440.812" timestamp="1591109902361" />
+     <state x="1745" y="-73" key="SettingsEditor" timestamp="1587704629770">
+       <screen x="1440" y="-180" width="1920" height="1080" />
+     </state>
+     <state x="1745" y="-73" key="SettingsEditor/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587704629770" />
+     <state x="229" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1587200275705" />
+-    <state x="2000" y="100" key="Vcs.Push.Dialog.v2" timestamp="1587699219893">
+-      <screen x="1440" y="-180" width="1920" height="1080" />
++    <state x="420" y="234" key="Vcs.Push.Dialog.v2" timestamp="1591027004463">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state x="2000" y="100" key="Vcs.Push.Dialog.v2/0.0.1440.900/1440.-180.1920.1080@1440.-180.1920.1080" timestamp="1587699219893" />
++    <state x="420" y="234" key="Vcs.Push.Dialog.v2/0.23.1440.812@0.23.1440.812" timestamp="1591027004463" />
+     <state x="162" y="67" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1587223137456">
+       <screen x="0" y="0" width="1440" height="900" />
+     </state>
+     <state x="162" y="67" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1440.900@0.0.1440.900" timestamp="1587223137456" />
+-    <state x="420" y="181" width="600" height="538" key="find.popup" timestamp="1587720802202">
+-      <screen x="0" y="0" width="1440" height="900" />
++    <state x="420" y="186" width="600" height="486" key="find.popup" timestamp="1591103248286">
++      <screen x="0" y="23" width="1440" height="812" />
+     </state>
+     <state x="420" y="181" width="600" height="538" key="find.popup/0.0.1440.900/1440.-180.1920.1080@0.0.1440.900" timestamp="1587720802202" />
+     <state x="420" y="181" width="600" height="538" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1587221450274" />
++    <state x="420" y="186" width="600" height="486" key="find.popup/0.23.1440.812@0.23.1440.812" timestamp="1591103248286" />
++    <state x="385" y="159" width="670" height="676" key="search.everywhere.popup" timestamp="1591017288732">
++      <screen x="0" y="23" width="1440" height="812" />
++    </state>
++    <state x="385" y="159" width="670" height="676" key="search.everywhere.popup/0.23.1440.812@0.23.1440.812" timestamp="1591017288732" />
+   </component>
+   <component name="XDebuggerManager">
+     <breakpoint-manager>
+@@ -307,6 +345,26 @@
+           <url>file://$PROJECT_DIR$/main/leetcode.go</url>
+           <line>103</line>
+           <option name="timeStamp" value="1" />
++        </line-breakpoint>
++        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
++          <url>file://$PROJECT_DIR$/main/image.go</url>
++          <line>72</line>
++          <option name="timeStamp" value="6" />
++        </line-breakpoint>
++        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
++          <url>file://$PROJECT_DIR$/main/image.go</url>
++          <line>31</line>
++          <option name="timeStamp" value="9" />
++        </line-breakpoint>
++        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
++          <url>file://$PROJECT_DIR$/main/530.go</url>
++          <line>92</line>
++          <option name="timeStamp" value="11" />
++        </line-breakpoint>
++        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
++          <url>file://$PROJECT_DIR$/main/530.go</url>
++          <line>118</line>
++          <option name="timeStamp" value="12" />
+         </line-breakpoint>
+       </breakpoints>
+     </breakpoint-manager>
