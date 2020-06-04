@@ -110,14 +110,62 @@ func mySqrt(x int) int {
 	ans := math.Sqrt(float64(x))
 	return int(ans)
 }
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	len1 := len(nums1)
+	len2 := len(nums2)
+	num := make([]int, len1+len2)
+	i, j, cur := 0, 0, 0
+	for len1 != 0 && len2 != 0 {
+		if nums1[i] < nums2[j] {
+			num[cur] = nums1[i]
+			i++
+			cur++
+			if i == len1 {
+				for k := j; k < len2; k++ {
+					num[cur] = nums2[k]
+					cur++
+				}
+				break
+			}
+		} else {
+			num[cur] = nums2[j]
+			j++
+			cur++
+			if j == len2 {
+				for k := i; k < len1; k++ {
+					num[cur] = nums1[k]
+					cur++
+				}
+				break
+			}
+		}
+	}
+	if len1 == 0 {
+		num = nums2
+		cur = len2
+	}
+	if len2 == 0 {
+		num = nums1
+		cur = len1
+	}
+	index := int(cur / 2)
+	if cur%2 == 0 {
+		return float64(num[index]+num[index-1]) / 2
+	} else {
+		return float64(num[index])
+	}
+}
 
 //[1,4],[4,4],[2,2],[3,4],[1,1]
 func main() {
 	//ans := waysToChange(5)
 	//fmt.Printf("ans:%v",ans)
 	//fmt.Println(lengthOfLongestSubstring("asdfsdf"))
-	s := [][]int{{1, 4}, {4, 4}, {2, 2}, {3, 4}, {1, 1}}
-	fmt.Println(maxEvents(s))
+	//s := [][]int{{1, 4}, {4, 4}, {2, 2}, {3, 4}, {1, 1}}
+	//fmt.Println(maxEvents(s))
 	//fmt.Println(jump(s))
+	num1 := []int{}
+	num2 := []int{3, 4}
+	fmt.Println(findMedianSortedArrays(num1, num2))
 
 }
