@@ -90,7 +90,7 @@ func main() {
 	//if err!= nil || len(raw) < 100 {
 	//	fmt.Println(err)
 	//}
-	//fmt.Println(Rimage("a.jpeg"))
+	//fmt.Println(Rimage(""))
 	//str := "ak=John&email=john%40example.org"
 	//bodyList := strings.Split(str,"&")
 	//for _,b := range bodyList {

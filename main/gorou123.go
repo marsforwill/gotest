@@ -25,6 +25,7 @@ func main() {
 	println("done")
 	// test for select
 	c := make(chan bool)
+	//c <- true 不能自己写入数据 需要等待其他协程来写
 	go func() {
 		time.Sleep(time.Second)
 		c <- true
@@ -34,6 +35,5 @@ func main() {
 		println(ch1)
 	case <-time.After(time.Second):
 		println("time out")
-
 	}
 }
