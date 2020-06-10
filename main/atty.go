@@ -156,6 +156,72 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	}
 }
 
+//
+// 输入:
+//s = "mississippi"
+//p = "mis*is*p*."
+//输出: false
+// Related Topics 字符串 动态规划 回溯算法
+
+//leetcode submit region begin(Prohibit modification and deletion)
+func isMatch(s string, p string) bool {
+	lenp := len(p)
+	lens := len(s)
+	j := 0
+	// 处理* 需要截取 判断
+	for i := 0; i < lens; i++ {
+		if j+1 < lenp && p[j+1] == '*' && p[j] != s[i] {
+			j = j + 2
+			i--
+			continue
+		}
+		if j+1 < lenp && p[j+1] == '*' {
+			var k, h int
+			for k = i; s[k] == s[i]; k++ {
+				println(k)
+			}
+			temps := s[i:k]
+			for h = j; p[h] == p[j] || p[h] == '*'; h++ {
+				println(h)
+			}
+			tempp := p[j:h]
+			if check(temps, tempp) == false {
+				return false
+			}
+			i = k
+			j = h + 1
+		} else {
+			if j > lenp-1 {
+				return false
+			}
+			if s[i] != p[j] && p[j] != '.' {
+				return false
+			}
+			j++
+		}
+	}
+	return true
+}
+
+func check(temps string, tempp string) bool {
+	fmt.Println(tempp)
+	fmt.Println(temps)
+	ls := len(temps)
+	lp := len(tempp)
+	for i := lp - 1; i >= 0; i-- {
+		if i > lp-1 || i > ls-1 {
+			return true
+		}
+		if tempp[i] == '*' {
+			return true
+		}
+		if tempp[i] != temps[i] {
+			return false
+		}
+	}
+	return true
+}
+
 //[1,4],[4,4],[2,2],[3,4],[1,1]
 func main() {
 	//ans := waysToChange(5)
@@ -164,8 +230,12 @@ func main() {
 	//s := [][]int{{1, 4}, {4, 4}, {2, 2}, {3, 4}, {1, 1}}
 	//fmt.Println(maxEvents(s))
 	//fmt.Println(jump(s))
-	num1 := []int{}
-	num2 := []int{3, 4}
-	fmt.Println(findMedianSortedArrays(num1, num2))
+	//num1 := []int{}
+	//num2 := []int{3, 4}
+	//fmt.Println(findMedianSortedArrays(num1, num2))
+	s := "aa"
+	p := "a"
+	//p := "mis*is*p*."
+	fmt.Println(isMatch(s, p))
 
 }
