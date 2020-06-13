@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"strconv"
 )
 
 /*
@@ -156,53 +157,6 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	}
 }
 
-//
-// 输入:
-//s = "mississippi"
-//p = "mis*is*p*."
-//输出: false
-// Related Topics 字符串 动态规划 回溯算法
-
-//leetcode submit region begin(Prohibit modification and deletion)
-func isMatch(s string, p string) bool {
-	lenp := len(p)
-	lens := len(s)
-	j := 0
-	// 处理* 需要截取 判断
-	for i := 0; i < lens; i++ {
-		if j+1 < lenp && p[j+1] == '*' && p[j] != s[i] {
-			j = j + 2
-			i--
-			continue
-		}
-		if j+1 < lenp && p[j+1] == '*' {
-			var k, h int
-			for k = i; s[k] == s[i]; k++ {
-				println(k)
-			}
-			temps := s[i:k]
-			for h = j; p[h] == p[j] || p[h] == '*'; h++ {
-				println(h)
-			}
-			tempp := p[j:h]
-			if check(temps, tempp) == false {
-				return false
-			}
-			i = k
-			j = h + 1
-		} else {
-			if j > lenp-1 {
-				return false
-			}
-			if s[i] != p[j] && p[j] != '.' {
-				return false
-			}
-			j++
-		}
-	}
-	return true
-}
-
 func check(temps string, tempp string) bool {
 	fmt.Println(tempp)
 	fmt.Println(temps)
@@ -221,6 +175,31 @@ func check(temps string, tempp string) bool {
 	}
 	return true
 }
+func reverse(x int) int {
+	bound := 1 << 31
+	print(bound)
+	if x < bound*-1 || x > bound-1 {
+		return 0
+	}
+	str := strconv.Itoa(x)
+	var ans string
+	var i int
+	for i = len(str) - 1; i >= 0; i-- {
+		if str[i] != '0' {
+			break
+		}
+	}
+	for ; i >= 0; i-- {
+		if str[i] != '-' {
+			ans = ans + string(str[i])
+		}
+	}
+	if x < 0 {
+		ans = "-" + ans
+	}
+	a, _ := strconv.Atoi(ans)
+	return a
+}
 
 //[1,4],[4,4],[2,2],[3,4],[1,1]
 func main() {
@@ -233,9 +212,10 @@ func main() {
 	//num1 := []int{}
 	//num2 := []int{3, 4}
 	//fmt.Println(findMedianSortedArrays(num1, num2))
-	s := "aa"
-	p := "a"
+	//s := "aa"
+	//p := "a"
 	//p := "mis*is*p*."
-	fmt.Println(isMatch(s, p))
+	//fmt.Println(isMatch(s, p))
+	fmt.Println(reverse(1534236469))
 
 }
