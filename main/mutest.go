@@ -5,31 +5,45 @@ import (
 	"time"
 )
 
-type Stu struct {
-	lock sync.RWMutex
-	num  int
-}
+var mu sync.RWMutex
+var data map[string]string
 
-func write(num int, s *Stu) {
-	time.Sleep(time.Second)
-	s.num = num
-}
-
-func read(s *Stu) {
-	s.lock.Lock()
-	defer s.lock.Unlock()
-	time.Sleep(time.Second / 5)
-	println(s.num)
-
-}
-
+//只有当只存在读锁的时候不会互相阻塞
 func main() {
-	s := new(Stu)
-	for i := 0; i < 10; i++ {
-		go write(i, s)
-	}
-	for i := 0; i < 10; i++ {
-		go read(s)
-	}
-	time.Sleep(time.Second * 6)
+	data = map[string]string{"hoge": "fuga"}
+	mu = sync.RWMutex{}
+	go read()
+	go read()
+	go read()
+	go read()
+	go read()
+	go read()
+	go write()
+	go read()
+	go read()
+	go read()
+	go read()
+	time.Sleep(5 * time.Second)
+}
+
+// 读方法
+func read() {
+	println("read_wait")
+	mu.RLock()
+	println("read_start")
+	defer mu.RUnlock()
+	time.Sleep(1 * time.Second)
+	println("read_complete", data["hoge"])
+}
+
+// 写方法
+func write() {
+	//仔细看下这两行代码,此处是注释掉的
+	println("write_wait")
+	mu.Lock()
+	println("write_start")
+	defer mu.Unlock()
+	time.Sleep(2 * time.Second)
+	data["hoge"] = "piyo"
+	println("write_complete")
 }
