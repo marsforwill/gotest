@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"strconv"
 )
 
 /*
@@ -156,6 +157,50 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
 	}
 }
 
+func check(temps string, tempp string) bool {
+	fmt.Println(tempp)
+	fmt.Println(temps)
+	ls := len(temps)
+	lp := len(tempp)
+	for i := lp - 1; i >= 0; i-- {
+		if i > lp-1 || i > ls-1 {
+			return true
+		}
+		if tempp[i] == '*' {
+			return true
+		}
+		if tempp[i] != temps[i] {
+			return false
+		}
+	}
+	return true
+}
+func reverse(x int) int {
+	bound := 1 << 31
+	print(bound)
+	if x < bound*-1 || x > bound-1 {
+		return 0
+	}
+	str := strconv.Itoa(x)
+	var ans string
+	var i int
+	for i = len(str) - 1; i >= 0; i-- {
+		if str[i] != '0' {
+			break
+		}
+	}
+	for ; i >= 0; i-- {
+		if str[i] != '-' {
+			ans = ans + string(str[i])
+		}
+	}
+	if x < 0 {
+		ans = "-" + ans
+	}
+	a, _ := strconv.Atoi(ans)
+	return a
+}
+
 //[1,4],[4,4],[2,2],[3,4],[1,1]
 func main() {
 	//ans := waysToChange(5)
@@ -167,5 +212,10 @@ func main() {
 	//num1 := []int{}
 	//num2 := []int{3, 4}
 	//fmt.Println(findMedianSortedArrays(num1, num2))
+	//s := "aa"
+	//p := "a"
+	//p := "mis*is*p*."
+	//fmt.Println(isMatch(s, p))
+	fmt.Println(reverse(1534236469))
 
 }
