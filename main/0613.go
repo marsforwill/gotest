@@ -150,10 +150,63 @@ func minSumOfLengths(arr []int, target int) int {
 		for sum >= target {
 			sum -= arr[j]
 			j++
+			if sum == target {
+				sta = append(sta, j)
+				end = append(end, i)
+			}
 		}
 	}
-	return 0
+	lc := len(end)
+	if lc < 2 {
+		return -1
+	}
 
+	// dp求不相交最小
+	index := 0
+	min := 1 << 24
+	//arr[i]的左边最小长度
+	left := make([]int, l)
+	//arr[i]的右边最小长度
+	right := make([]int, l)
+	for i := 0; i < l; i++ {
+		if index >= len(sta) {
+			break
+		}
+		if i == end[index] {
+			min = minNum(min, end[index]-sta[index]+1)
+			index++
+		}
+		left[i] = min
+	}
+	index = len(sta) - 1
+	min = 1 << 24
+	for i := l - 1; i >= 0; i-- {
+		if index < 0 {
+			break
+		}
+		if i == sta[index] {
+			min = minNum(min, end[index]-sta[index]+1)
+			index--
+		}
+		right[i] = min
+	}
+	ans := 1 << 24
+	//吐血调试dp
+	for i := 0; i < l-1; i++ {
+		ans = minNum(ans, left[i]+right[i+1])
+	}
+	if ans == 1<<24 {
+		return -1
+	}
+	return ans
+}
+
+func minNum(m int, i int) int {
+	if m < i {
+		return m
+	} else {
+		return i
+	}
 }
 
 type TreeAncestor struct {
