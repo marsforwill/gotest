@@ -26,30 +26,42 @@ import "container/list"
 //cache.get(4);       // 返回  4
 
 //leetcode submit region begin(Prohibit modification and deletion)
-type ListNode struct {
-	Val  int
-	Next *ListNode
-}
+
 type LRUCache struct {
 	list *list.List
-	m    map[int]ListNode
+	m    map[int]list.Element
+	cap  int
 }
 
 func Constructor(capacity int) LRUCache {
 	l := list.New()
-	m := make(map[int]ListNode, capacity)
+	m := make(map[int]list.Element, capacity)
 	return LRUCache{
 		list: l,
 		m:    m,
+		cap:  capacity,
 	}
 }
 
 func (this *LRUCache) Get(key int) int {
-
+	k, ok := this.m[key]
+	if !ok {
+		return -1
+	}
+	this.list.Remove(&k)
+	this.list.InsertBefore(k)
+	return k
 }
 
 func (this *LRUCache) Put(key int, value int) {
-
+	this.m[key] = value
+	head := this.list.Front()
+	this.list.InsertBefore(value, head)
+	if this.list.Len() > this.cap {
+		tail := this.list.Back()
+		this.list.Remove(tail)
+		delete(this.m, tail.Value.(int))
+	}
 }
 
 func main() {
