@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // 输入：events = [[1,4],[4,4],[2,2],[3,4],[1,1]]
 //输出：4
@@ -74,7 +77,54 @@ func maxEvents3(events [][]int) int {
 	return count
 
 }
+
+//字符串有三种编辑操作:插入一个字符、删除一个字符或者替换一个字符。 给定两个字符串，编写一个函数判定它们是否只需要一次(或者零次)编辑。
+func oneEditAway(first string, second string) bool {
+	if strings.Compare(first, second) == 0 {
+		return true
+	}
+	l := len(first)
+	r := len(second)
+	if l-r >= 2 || r-l >= 2 {
+		return false
+	}
+	if l == r {
+		count := 0
+		for i := 0; i < l; i++ {
+			if first[i] != second[i] {
+				count++
+			}
+			if count >= 2 {
+				return false
+			}
+		}
+		return true
+	}
+	var m int
+	var long, short string
+	if l > r {
+		m = l
+		long = first
+		short = second
+	} else {
+		m = r
+		long = second
+		short = first
+	}
+	for i := 0; i < m; i++ {
+		if i == m-1 {
+			return true
+		}
+		if long[i] != short[i] {
+			long = long[:i] + long[i+1:]
+			break
+		}
+	}
+	return strings.Compare(long, short) == 0
+
+}
 func main() {
-	s := [][]int{{2, 2}, {3, 3}, {4, 4}, {1, 5}, {1, 5}}
-	fmt.Println(maxEvents3(s))
+	//s := [][]int{{2, 2}, {3, 3}, {4, 4}, {1, 5}, {1, 5}}
+	//fmt.Println(maxEvents3(s))
+	fmt.Println(oneEditAway("asdf", "asdff"))
 }
