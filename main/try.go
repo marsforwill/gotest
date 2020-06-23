@@ -123,8 +123,46 @@ func oneEditAway(first string, second string) bool {
 	return strings.Compare(long, short) == 0
 
 }
+
+//  [ 5, 1, 9,11],
+//  [ 2, 4, 8,10],
+//  [13, 3, 6, 7],
+//  [15,14,12,16]
+//原地旋转输入矩阵，使其变为:
+//[
+//  [15,13, 2, 5],
+//  [14, 3, 4, 1],
+//  [12, 6, 8, 9],
+//  [16, 7,10,11]
+
+// 0,1 -> 1,3   1,3 -> 3,2 1,2 2,2
+func rotate(matrix [][]int) {
+	l := len(matrix)
+	if l <= 1 {
+		return
+	}
+	temp := make([][]int, l)
+	for i := 0; i < l; i++ {
+		temp[i] = make([]int, l)
+	}
+	for i := 0; i < l; i++ {
+		for j := 0; j < l; j++ {
+			temp[i][j] = matrix[i][j]
+		}
+	}
+	for i := 0; i < l; i++ {
+		for j := 0; j < l; j++ {
+			matrix[j][l-1-i] = temp[i][j]
+		}
+	}
+	return
+}
 func main() {
 	//s := [][]int{{2, 2}, {3, 3}, {4, 4}, {1, 5}, {1, 5}}
 	//fmt.Println(maxEvents3(s))
-	fmt.Println(oneEditAway("asdf", "asdff"))
+	//fmt.Println(oneEditAway("asdf", "asdff"))
+	//rotate([][]int{{1,2,3},{4,5,6},{7,8,9}})
+	for i := 0; i < 20; i++ {
+		fmt.Printf("%v %v\n", i, i*i)
+	}
 }

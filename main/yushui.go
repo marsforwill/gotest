@@ -42,6 +42,32 @@ func trap(height []int) int {
 //
 //l:0,0,1,1,2,2,2,2,3,3,3,3
 //r:0,3,3,3,3,3,3,2,2,2,1,0
+
+func setZeroes(matrix [][]int) {
+	col := make([]int, 5000)
+	row := make([]int, 5000)
+	n := len(matrix)
+	if n == 0 {
+		return
+	}
+	m := len(matrix[0])
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			if matrix[i][j] == 0 {
+				row[i] = 1
+				col[j] = 1
+			}
+		}
+	}
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			if row[i] == 1 || col[j] == 1 {
+				matrix[i][j] = 0
+			}
+		}
+	}
+	return
+}
 func main() {
 	a := []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
 

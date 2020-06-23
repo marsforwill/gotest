@@ -32,7 +32,42 @@ func midfs(root *TreeNode, ans *[]int) {
 	return
 }
 
+/**
+情况 1，如果p和q都在以root为根的树中，函数返回的即使p和q的最近公共祖先节点。
+
+情况 2，那如果p和q都不在以root为根的树中怎么办呢？函数理所当然地返回null呗。
+
+情况 3，那如果p和q只有一个存在于root为根的树中呢？函数就会返回那个节点。
+
+题目说了输入的p和q一定存在于以root为根的树中，但是递归过程中，以上三种情况都有可能发生，所以说这里要定义清楚，后续这些定义都会在代码中体现。
+
+！！！！OK，第一个问题就解决了，把这个定义记在脑子里，无论发生什么，都不要怀疑这个定义的正确性，这是我们写递归函数的基本素养
+*/
 func lowestCommonAncestor(root, p, q *TreeNode) *TreeNode {
+	if root == nil {
+		return nil
+	}
+	if root == p || root == q {
+		return root
+	}
+	left := lowestCommonAncestor(root.Left, p, q)
+	right := lowestCommonAncestor(root.Right, p, q)
+
+	if left == nil && right == nil {
+		return nil
+	}
+	if left != nil && right != nil {
+		return root
+	}
+	if left == nil {
+		return right
+	} else {
+		return left
+	}
+
+}
+
+func lowestCommonAncestor2(root, p, q *TreeNode) *TreeNode {
 	pl := getPath(p, root)
 	i := len(pl) - 1
 	ql := getPath(q, root)
