@@ -78,19 +78,45 @@ func reverseBetween(head *ListNode, m int, n int) *ListNode {
 	}
 	return head
 }
+
+//编写程序以 x 为基准分割链表，使得所有小于 x 的节点排在大于或等于 x 的节点之前。如果链表中包含 x，x 只需出现在小于 x 的元素之后(如下所示)。
+//分割元素 x 只需处于“右半部分”即可，其不需要被置于左右两部分之间。
+// 输入: head = 3->5->8->5->10->2->1, x = 5
+//输出: 3->1->2->10->5->5->8
+func partition(head *ListNode, x int) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	var temp = head.Next
+	var before = head
+	for temp != nil {
+		if temp.Val < x {
+			// todo 链表操作的关键在于赋值执行的顺序！ 不要覆盖/
+			before.Next = temp.Next
+			cur := temp
+			cur.Next = head
+			head = cur
+			temp = before.Next
+			continue
+		}
+		before = temp
+		temp = temp.Next
+	}
+	return head
+}
 func main() {
-	fmt.Println(reverseBetween(&ListNode{
+	fmt.Println(partition(&ListNode{
 		Val: 1,
 		Next: &ListNode{
-			Val: 2,
+			Val: 4,
 			Next: &ListNode{
 				Val: 3,
 				Next: &ListNode{
-					Val:  4,
+					Val:  2,
 					Next: &ListNode{Val: 5},
 				},
 			},
 		},
-	}, 1, 5))
+	}, 3))
 
 }
