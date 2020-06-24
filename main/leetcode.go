@@ -85,37 +85,37 @@ type ListNode struct {
 }
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
-
-	temp := ListNode{
+	var num, flag = 0, 0
+	ans := &ListNode{
 		Val:  0,
 		Next: nil,
 	}
-	head := &temp
-	a := 0
-	for i := 1; l1 != nil; i++ {
-		a += l1.Val * i
-		l1 = l1.Next
-	}
-	b := 0
-	for i := 1; l2 != nil; i++ {
-		b += l2.Val * i
-		l2 = l2.Next
-	}
-	ans := a + b
-	for i := 0; ans != 0; i++ {
-
-		num := ans % 10
-
-		temp2 := ListNode{
+	temp := ans
+	for l1 != nil || l2 != nil || flag > 0 {
+		num = 0
+		if l1 != nil {
+			num += l1.Val
+			l1 = l1.Next
+		}
+		if l2 != nil {
+			num += l2.Val
+			l2 = l2.Next
+		}
+		num += flag
+		if num >= 10 {
+			num -= 10
+			flag = 1
+		} else {
+			flag = 0
+		}
+		node := &ListNode{
 			Val:  num,
 			Next: nil,
 		}
-		temp.Next = &temp2
-		temp = *temp.Next
-
-		ans = ans / 10
+		temp.Next = node
+		temp = temp.Next
 	}
-	return head
+	return ans.Next
 }
 
 // EncodeToString returns the base64 encoding of src.
@@ -123,12 +123,24 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 func main() {
 
 	a := ListNode{
-		Val:  5,
-		Next: nil,
+		Val: 2,
+		Next: &ListNode{
+			Val: 4,
+			Next: &ListNode{
+				Val:  3,
+				Next: nil,
+			},
+		},
 	}
 	b := ListNode{
-		Val:  5,
-		Next: nil,
+		Val: 5,
+		Next: &ListNode{
+			Val: 6,
+			Next: &ListNode{
+				Val:  4,
+				Next: nil,
+			},
+		},
 	}
 	addTwoNumbers(&a, &b)
 
