@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 //* Definition for a binary tree node.
 type TreeNode struct {
 	Val   int
@@ -109,30 +113,117 @@ func dfsNode(p *TreeNode, root *TreeNode, ans *[]TreeNode) bool {
 	}
 	return false
 }
-func main() {
-	rt := &TreeNode{
-		Val: 3,
-		Left: &TreeNode{
-			Val:  5,
-			Left: nil,
-			Right: &TreeNode{
-				Val:   4,
-				Left:  nil,
-				Right: nil,
-			},
-		},
-		Right: &TreeNode{
-			Val:   1,
-			Left:  nil,
-			Right: nil,
-		},
+
+func BSTSequences2(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{{}}
 	}
-	//path := getPath(rt, rt)
-	//fmt.Println(len(path))
-	//for i := 0; i < len(path); i++ {
-	//	println(path[i].Val)
+	var ret [][]int
+	// 初始调用
+	helper([]*TreeNode{root}, nil, &ret)
+	return ret
+}
+
+// ret保存答案
+// nodes 和 last 维护对应的状态，未处理的node 和 已存在的value last
+// 每一次递归调用都会处理掉一个node 继续递归状态转移 直到 node处理完 存答案
+func helper(node []*TreeNode, last []int, ret *[][]int) {
+	// 递归出口 没有要处理的node
+	if len(node) == 0 {
+		*ret = append(*ret, last)
+	}
+
+	// 对当前未处理的每一个node
+	for i, treeNode := range node {
+
+		var newSlice []int = make([]int, len(last))
+		copy(newSlice, last)
+		//把当前节点val加入slice
+		newSlice = append(newSlice, treeNode.Val)
+
+		newNodes := make([]*TreeNode, len(node))
+		copy(newNodes, node)
+		// 剔除掉当前node
+		newNodes = append(newNodes[:i], newNodes[i+1:]...)
+		// 添加左右子节点 这就保证了 子节点的处理都在父节点后
+		if treeNode.Left != nil {
+			newNodes = append(newNodes, treeNode.Left)
+		}
+		if treeNode.Right != nil {
+			newNodes = append(newNodes, treeNode.Right)
+		}
+		// 对新的nodes 和 slice继续递归遍历 直到 nodes == 0，将slice加入ans ret
+		helper(newNodes, newSlice, ret)
+	}
+
+}
+
+func BSTSequences(root *TreeNode) [][]int {
+	var res [][]int
+	var value []int
+	if root == nil {
+		return [][]int{{}}
+	}
+	dfsBST([]*TreeNode{root}, value, &res)
+	return res
+}
+
+func dfsBST(nodes []*TreeNode, value []int, res *[][]int) {
+
+	if len(nodes) == 0 {
+		*res = append(*res, value)
+		return
+	}
+	for i := 0; i < len(nodes); i++ {
+		newValue := make([]int, len(value))
+		copy(newValue, value)
+		newValue = append(newValue, nodes[i].Val)
+
+		newNodes := make([]*TreeNode, len(nodes))
+		copy(newNodes, nodes)
+		newNodes = append(newNodes[:i], newNodes[i+1:]...)
+		if nodes[i].Left != nil {
+			newNodes = append(newNodes, nodes[i].Left)
+		}
+		if nodes[i].Right != nil {
+			newNodes = append(newNodes, nodes[i].Right)
+		}
+		dfsBST(newNodes, newValue, res)
+	}
+	return
+}
+
+func main() {
+	root := &TreeNode{
+		Val:   2,
+		Left:  &TreeNode{Val: 1},
+		Right: &TreeNode{Val: 3},
+	}
+	fmt.Println(BSTSequences(root))
+
+	//rt := &TreeNode{
+	//	Val: 3,
+	//	Left: &TreeNode{
+	//		Val:  5,
+	//		Left: nil,
+	//		Right: &TreeNode{
+	//			Val:   4,
+	//			Left:  nil,
+	//			Right: nil,
+	//		},
+	//	},
+	//	Right: &TreeNode{
+	//		Val:   1,
+	//		Left:  nil,
+	//		Right: nil,
+	//	},
 	//}
-	ancestor := lowestCommonAncestor(rt, rt.Left.Right, rt.Right)
-	println(ancestor.Val)
+	////path := getPath(rt, rt)
+	////fmt.Println(len(path))
+	////for i := 0; i < len(path); i++ {
+	////	println(path[i].Val)
+	////}
+	//ancestor := lowestCommonAncestor(rt, rt.Left.Right, rt.Right)
+	//println(ancestor.Val)
 
 }
