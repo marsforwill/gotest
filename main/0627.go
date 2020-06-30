@@ -76,49 +76,49 @@ func longestSubarray(nums []int) int {
 
 func isPathCrossing(path string) bool {
 
-	m:=make(map[string]bool)
+	m := make(map[string]bool)
 	l := len(path)
-	x,y:=0,0
-	begin:=fmt.Sprintf("%v_%v",x,y)
-	m[begin]=true
+	x, y := 0, 0
+	begin := fmt.Sprintf("%v_%v", x, y)
+	m[begin] = true
 	for i := 0; i < l; i++ {
-		if path[i]=='N' {
+		if path[i] == 'N' {
 			y++
-			str := fmt.Sprintf("%v_%v",x,y)
-			_,ok := m[str]
-			if ok{
+			str := fmt.Sprintf("%v_%v", x, y)
+			_, ok := m[str]
+			if ok {
 				return true
 			} else {
 				m[str] = false
 			}
 		}
-		if path[i]=='E' {
+		if path[i] == 'E' {
 			x++
-			str := fmt.Sprintf("%v_%v",x,y)
-			_,ok := m[str]
-			if ok{
+			str := fmt.Sprintf("%v_%v", x, y)
+			_, ok := m[str]
+			if ok {
 				return true
 			} else {
 				m[str] = false
 			}
 
 		}
-		if path[i]=='W' {
+		if path[i] == 'W' {
 			x--
-			str := fmt.Sprintf("%v_%v",x,y)
-			_,ok := m[str]
-			if ok{
+			str := fmt.Sprintf("%v_%v", x, y)
+			_, ok := m[str]
+			if ok {
 				return true
 			} else {
 				m[str] = false
 			}
 
 		}
-		if path[i]=='S' {
+		if path[i] == 'S' {
 			y--
-			str := fmt.Sprintf("%v_%v",x,y)
-			_,ok := m[str]
-			if ok{
+			str := fmt.Sprintf("%v_%v", x, y)
+			_, ok := m[str]
+			if ok {
 				return true
 			} else {
 				m[str] = false
@@ -132,50 +132,52 @@ func canArrange(arr []int, k int) bool {
 	l := len(arr)
 	mod := make([]int, l)
 	for i := 0; i < l; i++ {
-		mod[i] = arr[i]%k
+		mod[i] = arr[i] % k
 	}
 	m := make(map[int]int)
 	for i := 0; i < l; i++ {
 		a := mod[i]
-		b:= k-a
-		b2 := 0-a
-		b3 := -k-a
-		count,ok := m[b]
-		count2,ok2 := m[b2]
-		count3,ok3 := m[b3]
-		if ok  {
-			if count==1{
+		b := k - a
+		b2 := 0 - a
+		b3 := -k - a
+		count, ok := m[b]
+		count2, ok2 := m[b2]
+		count3, ok3 := m[b3]
+		if ok {
+			if count == 1 {
 				delete(m, b)
-			}else {
-				m[b] = count-1
+			} else {
+				m[b] = count - 1
 			}
 		} else if ok2 {
-			if count2==1{
-				delete(m,b2)
-			}else {
-				m[b2]=count2-1
+			if count2 == 1 {
+				delete(m, b2)
+			} else {
+				m[b2] = count2 - 1
 			}
-		}else if ok3 {
-			if count3==1{
-				delete(m,b3)
-			}else {
-				m[b3]=count3-1
+		} else if ok3 {
+			if count3 == 1 {
+				delete(m, b3)
+			} else {
+				m[b3] = count3 - 1
 			}
 		} else {
-			v,ok := m[a]
-			if ok{
-				m[a] = v+1
-			}else {
+			v, ok := m[a]
+			if ok {
+				m[a] = v + 1
+			} else {
 				m[a] = 1
 			}
 		}
 	}
-	if len(m)==0 {
+	if len(m) == 0 {
 		return true
 	}
 	return false
 }
+
 /**
+大佬的代码
 class Solution {
     int a[15],f[32768],o[32768];
 public:
@@ -196,80 +198,57 @@ public:
 */
 // 状态压缩dp：整数代表集合 bit代表元素
 func minNumberOfSemesters(n int, dependencies [][]int, k int) int {
-	a:= make([]int, 15)
-	f:= make([]int,32768)
-	o:= make([]int,32768)
+	a := make([]int, 15)
+	f := make([]int, 32768)
+	o := make([]int, 32768)
+	// a[节点] 的 前依赖节点集合
 	for i := 0; i < len(dependencies); i++ {
-		// a[节点] = 前依赖节点  ？超过一个
-		a[dependencies[i][1]-1] = 1<<dependencies[i][0]-1
+		a[dependencies[i][1]-1] |= 1 << (dependencies[i][0] - 1)
 	}
-	for i := 1; i < 1<<n; i++ {
-		o[i] = o[i>>1] + (i&1)
+	// o[] 计算每一个数二进制下1的个数
+	for i := 1; i < (1 << n); i++ {
+		o[i] = o[i>>1] + (i & 1)
 	}
+	// 初始化
 	for i := 0; i < len(f); i++ {
 		f[i] = 127
 	}
 	f[0] = 0
-	for i := 0; i < 1<<n; i++ {
-		if f[i] < n {
-			l:=0
-			for j:=0;j<n;j++{
-				if !(i>>j&1)&&(a[j]&i)==a[j] {
-					l|=1<<j
+	//一共有2^n个状态
+	for i := 0; i < (1 << n); i++ {
+		if f[i] <= n {
+			l := 0
+			// 枚举每一位/每一门课程，求出l：可以继续上的课
+			for j := 0; j < n; j++ {
+				// i中没有j的课程 && j的前置依赖节点都在i里
+				if !(((i >> j) & 1) > 0) && (a[j]&i) == a[j] {
+					l |= 1 << j
 				}
 			}
-			for j:=l;j>0;j=j-1&l{
-				if o[j]<=k {
-					f[i|j]=min(f[i|j],f[i]+1)
+			for j := l; j > 0; j = (j - 1) & l {
+				// j集合状态枚举 如果当前集合j上的课数符合条件
+				if o[j] <= k {
+					// i:当前已经上的课   j：可以继续上的课
+					f[i|j] = minn(f[i|j], f[i]+1)
 				}
 			}
 		}
 	}
+	//上完所有(1<<n)-1集合课最少需要多少个学期
 	return f[(1<<n)-1]
 }
-func minNumberOfSemesters2(n int, dependencies [][]int, k int) int {
-	flag := make([]bool, n+1)
-	before := make(map[int]map[int]bool)
-	ld := len(dependencies)
-	for i := 0; i < ld; i++ {
-		value, ok := before[dependencies[i][1]]
-		if ok {
-			value[dependencies[i][0]] = true
-		} else {
-			tm := make(map[int]bool)
-			tm[dependencies[i][0]] = true
-			before[dependencies[i][1]] = tm
-		}
+func minn(i int, i2 int) int {
+	if i < i2 {
+		return i
+	} else {
+		return i2
 	}
-	ans := 0
-	count := 0
-	// 遍历每一层
-	for count < n {
-		temp := k
-		// 遍历每一个节点 可选则选
-		for i := 1; i <= n; i++ {
-			value := before[i]
-			// 找到一个
-			if len(value) == 0 && flag[i] == false {
-				temp--
-				flag[i] = true
-				for num := 1; num <= n; num++ {
-					v := before[num]
-					delete(v, num)
-				}
-				count++
-			}
-			if temp == 0 {
-				break
-			}
-		}
-		ans++
-	}
-	return ans
 }
+
 func main() {
-	fmt.Print(canArrange([]int{-4,-7,5,2,9,1,10,4,-8,-3},3))
+	//fmt.Print(canArrange([]int{-4,-7,5,2,9,1,10,4,-8,-3},3))
 	//fmt.Print(isPathCrossing("NESWW"))
 	//fmt.Println(longestSubarray([]int{1,1,0,1}))
-	//fmt.Println(minNumberOfSemesters(4, [][]int{{2, 1}, {3, 1}, {1, 4}}, 2))
+	//fmt.Printf("%b",(1<<10)-1)
+	fmt.Println(minNumberOfSemesters(5, [][]int{{2, 1}, {3, 1}, {4, 1}, {1, 5}}, 2))
 }
