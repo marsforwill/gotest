@@ -74,7 +74,160 @@ func longestSubarray(nums []int) int {
 	return ans
 }
 
+func isPathCrossing(path string) bool {
+
+	m:=make(map[string]bool)
+	l := len(path)
+	x,y:=0,0
+	begin:=fmt.Sprintf("%v_%v",x,y)
+	m[begin]=true
+	for i := 0; i < l; i++ {
+		if path[i]=='N' {
+			y++
+			str := fmt.Sprintf("%v_%v",x,y)
+			_,ok := m[str]
+			if ok{
+				return true
+			} else {
+				m[str] = false
+			}
+		}
+		if path[i]=='E' {
+			x++
+			str := fmt.Sprintf("%v_%v",x,y)
+			_,ok := m[str]
+			if ok{
+				return true
+			} else {
+				m[str] = false
+			}
+
+		}
+		if path[i]=='W' {
+			x--
+			str := fmt.Sprintf("%v_%v",x,y)
+			_,ok := m[str]
+			if ok{
+				return true
+			} else {
+				m[str] = false
+			}
+
+		}
+		if path[i]=='S' {
+			y--
+			str := fmt.Sprintf("%v_%v",x,y)
+			_,ok := m[str]
+			if ok{
+				return true
+			} else {
+				m[str] = false
+			}
+
+		}
+	}
+	return false
+}
+func canArrange(arr []int, k int) bool {
+	l := len(arr)
+	mod := make([]int, l)
+	for i := 0; i < l; i++ {
+		mod[i] = arr[i]%k
+	}
+	m := make(map[int]int)
+	for i := 0; i < l; i++ {
+		a := mod[i]
+		b:= k-a
+		b2 := 0-a
+		b3 := -k-a
+		count,ok := m[b]
+		count2,ok2 := m[b2]
+		count3,ok3 := m[b3]
+		if ok  {
+			if count==1{
+				delete(m, b)
+			}else {
+				m[b] = count-1
+			}
+		} else if ok2 {
+			if count2==1{
+				delete(m,b2)
+			}else {
+				m[b2]=count2-1
+			}
+		}else if ok3 {
+			if count3==1{
+				delete(m,b3)
+			}else {
+				m[b3]=count3-1
+			}
+		} else {
+			v,ok := m[a]
+			if ok{
+				m[a] = v+1
+			}else {
+				m[a] = 1
+			}
+		}
+	}
+	if len(m)==0 {
+		return true
+	}
+	return false
+}
+/**
+class Solution {
+    int a[15],f[32768],o[32768];
+public:
+    int minNumberOfSemesters(int n, vector<vector<int>>& dependencies, int k) {
+        memset(a,0,sizeof(a));
+        int i,j,l;
+        for(auto e:dependencies)a[e[1]-1]|=1<<e[0]-1;
+        for(i=1;i<1<<n;i++)o[i]=o[i>>1]+(i&1);
+        memset(f,127,sizeof(f));
+        for(i=f[0]=0;i<1<<n;i++)if(f[i]<=n)
+        {
+            for(j=l=0;j<n;j++)if(!(i>>j&1)&&(a[j]&i)==a[j])l|=1<<j;
+            for(j=l;j;j=j-1&l)if(o[j]<=k)f[i|j]=min(f[i|j],f[i]+1);
+        }
+        return f[(1<<n)-1];
+    }
+};
+*/
+// 状态压缩dp：整数代表集合 bit代表元素
 func minNumberOfSemesters(n int, dependencies [][]int, k int) int {
+	a:= make([]int, 15)
+	f:= make([]int,32768)
+	o:= make([]int,32768)
+	for i := 0; i < len(dependencies); i++ {
+		// a[节点] = 前依赖节点  ？超过一个
+		a[dependencies[i][1]-1] = 1<<dependencies[i][0]-1
+	}
+	for i := 1; i < 1<<n; i++ {
+		o[i] = o[i>>1] + (i&1)
+	}
+	for i := 0; i < len(f); i++ {
+		f[i] = 127
+	}
+	f[0] = 0
+	for i := 0; i < 1<<n; i++ {
+		if f[i] < n {
+			l:=0
+			for j:=0;j<n;j++{
+				if !(i>>j&1)&&(a[j]&i)==a[j] {
+					l|=1<<j
+				}
+			}
+			for j:=l;j>0;j=j-1&l{
+				if o[j]<=k {
+					f[i|j]=min(f[i|j],f[i]+1)
+				}
+			}
+		}
+	}
+	return f[(1<<n)-1]
+}
+func minNumberOfSemesters2(n int, dependencies [][]int, k int) int {
 	flag := make([]bool, n+1)
 	before := make(map[int]map[int]bool)
 	ld := len(dependencies)
@@ -115,6 +268,8 @@ func minNumberOfSemesters(n int, dependencies [][]int, k int) int {
 	return ans
 }
 func main() {
+	fmt.Print(canArrange([]int{-4,-7,5,2,9,1,10,4,-8,-3},3))
+	//fmt.Print(isPathCrossing("NESWW"))
 	//fmt.Println(longestSubarray([]int{1,1,0,1}))
-	fmt.Println(minNumberOfSemesters(4, [][]int{{2, 1}, {3, 1}, {1, 4}}, 2))
+	//fmt.Println(minNumberOfSemesters(4, [][]int{{2, 1}, {3, 1}, {1, 4}}, 2))
 }
