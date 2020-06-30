@@ -176,6 +176,47 @@ func canArrange(arr []int, k int) bool {
 	return false
 }
 
+//错误case： minNumberOfSemesters2(8, [][]int{{1,6}, {2,7}, {8,7},{2,5},{3,4}}, 3)
+// 跑出来的是 123 456 8 7 =》 4  没有选择的过程
+func minNumberOfSemesters2(n int, dependencies [][]int, k int) int {
+	flag := make([]bool, n+1)
+	before := make([]int, 32768)
+	// a[节点] 的 前依赖节点集合
+	for i := 0; i < len(dependencies); i++ {
+		before[dependencies[i][1]] |= 1 << (dependencies[i][0] - 1)
+	}
+	ans := 0
+	count := 0
+	// 遍历每一层
+	for count < n {
+		temp := k
+		var record []int
+		// 遍历每一个节点 可选则选
+		for i := 1; i <= n; i++ {
+			bef := before[i]
+			// 找到一个
+			if bef == 0 && flag[i] == false {
+				temp--
+				flag[i] = true
+				record = append(record, i)
+				count++
+			}
+			if temp == 0 {
+				break
+			}
+		}
+		for _, j := range record {
+			for num := 1; num <= n; num++ {
+				if before[num]&(1<<(j-1)) > 0 {
+					before[num] -= 1 << (j - 1)
+				}
+			}
+		}
+		ans++
+	}
+	return ans
+}
+
 /**
 大佬的代码
 class Solution {
@@ -249,6 +290,8 @@ func main() {
 	//fmt.Print(canArrange([]int{-4,-7,5,2,9,1,10,4,-8,-3},3))
 	//fmt.Print(isPathCrossing("NESWW"))
 	//fmt.Println(longestSubarray([]int{1,1,0,1}))
-	//fmt.Printf("%b",(1<<10)-1)
-	fmt.Println(minNumberOfSemesters(5, [][]int{{2, 1}, {3, 1}, {4, 1}, {1, 5}}, 2))
+	//fmt.Printf("%b",7-(1<<0))
+	//n = 4, dependencies = [[2,1],[3,1],[1,4]], k = 2
+	fmt.Println(minNumberOfSemesters2(8, [][]int{{1, 6}, {2, 7}, {8, 7}, {2, 5}, {3, 4}}, 3))
+
 }
