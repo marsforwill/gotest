@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+	"sort"
+)
 
 func average(salary []int) float64 {
 	l := len(salary)
@@ -286,12 +290,35 @@ func minn(i int, i2 int) int {
 	}
 }
 
+// 求nums中满足条件(max + min <= target)的子序列的数目
+// 算法就是没有想到 遇事不决先排序
+func numSubseq(nums []int, target int) int {
+	sort.Ints(nums)
+	count := 0
+	//滑动指针
+	if nums[0]*2 > target {
+		return 0
+	}
+	left := 0
+	right := len(nums) - 1
+	for right >= left {
+		if nums[left]+nums[right] <= target {
+			count += int(math.Pow(float64(2), float64(right-left)))
+			left++
+		} else {
+			right--
+		}
+	}
+	return count
+}
+
 func main() {
 	//fmt.Print(canArrange([]int{-4,-7,5,2,9,1,10,4,-8,-3},3))
 	//fmt.Print(isPathCrossing("NESWW"))
 	//fmt.Println(longestSubarray([]int{1,1,0,1}))
 	//fmt.Printf("%b",7-(1<<0))
 	//n = 4, dependencies = [[2,1],[3,1],[1,4]], k = 2
-	fmt.Println(minNumberOfSemesters2(8, [][]int{{1, 6}, {2, 7}, {8, 7}, {2, 5}, {3, 4}}, 3))
+	//fmt.Println(minNumberOfSemesters2(8, [][]int{{1, 6}, {2, 7}, {8, 7}, {2, 5}, {3, 4}}, 3))
+	fmt.Println(numSubseq([]int{3, 5, 6, 7}, 9))
 
 }
