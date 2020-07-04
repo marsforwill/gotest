@@ -157,12 +157,69 @@ func rotate(matrix [][]int) {
 	}
 	return
 }
+
+// dont want write!!!!
+type StackOfPlates struct {
+	cap int
+	num []int
+}
+
+func Constructor(cap int) StackOfPlates {
+	var num []int
+	return StackOfPlates{
+		cap: cap,
+		num: num,
+	}
+}
+
+func (this *StackOfPlates) Push(val int) {
+	this.num = append(this.num, val)
+}
+
+func (this *StackOfPlates) Pop() int {
+	l := len(this.num)
+	if l == 0 {
+		return -1
+	}
+	num := this.num[l-1]
+	this.num = this.num[:l-1]
+	return num
+}
+
+func (this *StackOfPlates) PopAt(index int) int {
+	l := len(this.num)
+	n := index * this.cap
+	if n > l-1 {
+		return -1
+	}
+	c := (index + 1) * this.cap
+	if c <= l {
+		n := c - 1
+		ans := this.num[n]
+		this.num = append(this.num[:n], this.num[n+1:]...)
+		return ans
+	}
+	num := this.num[l-1]
+	this.num = this.num[:l-1]
+	return num
+}
 func main() {
-	//s := [][]int{{2, 2}, {3, 3}, {4, 4}, {1, 5}, {1, 5}}
+	//s := [][]int{{2, 2,3}, {3, 3,3}}
 	//fmt.Println(maxEvents3(s))
 	//fmt.Println(oneEditAway("asdf", "asdff"))
 	//rotate([][]int{{1,2,3},{4,5,6},{7,8,9}})
-	for i := 0; i < 20; i++ {
-		fmt.Printf("%v %v\n", i, i*i)
-	}
+	//for i := 0; i < 20; i++ {
+	//	fmt.Printf("%v %v\n", i, i*i)
+	//}
+	//a:=[]int{1,2,3,4}
+	//fmt.Println(append(a[:2],a[3:]...))
+	//["StackOfPlates", "push", "push", "push", "popAt", "popAt", "popAt"]
+	//[[2], [1], [2], [3], [0], [0], [0]]
+	c := Constructor(2)
+	c.Push(1)
+	c.Push(2)
+	c.Push(3)
+	fmt.Println(c.PopAt(0))
+	fmt.Println(c.PopAt(0))
+	fmt.Println(c.PopAt(0))
 }
