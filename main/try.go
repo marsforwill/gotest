@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 	"strings"
 )
@@ -160,48 +161,63 @@ func rotate(matrix [][]int) {
 
 // dont want write!!!!
 type StackOfPlates struct {
-	cap int
-	num []int
+	cap   int
+	cur   int
+	stack []*list.List
 }
 
 func Constructor(cap int) StackOfPlates {
-	var num []int
+	var s []*list.List
+	s = append(s, list.New())
 	return StackOfPlates{
-		cap: cap,
-		num: num,
+		cap:   cap,
+		stack: s,
+		cur:   0,
 	}
 }
 
 func (this *StackOfPlates) Push(val int) {
-	this.num = append(this.num, val)
+	if this.stack[this.cur].Len() == this.cap {
+		l := list.New()
+		l.PushBack(val)
+		this.stack = append(this.stack, l)
+		this.cur++
+	} else {
+		this.stack[this.cur].PushBack(val)
+	}
 }
 
 func (this *StackOfPlates) Pop() int {
-	l := len(this.num)
-	if l == 0 {
+	s := this.stack[this.cur]
+	if s.Len() == 0 || this.cap == 0 {
 		return -1
 	}
-	num := this.num[l-1]
-	this.num = this.num[:l-1]
-	return num
+	val := s.Back().Value.(int)
+	s.Remove(s.Back())
+	if s.Len() == 0 && this.cur > 0 {
+		this.cur--
+		if this.cur > 0 {
+			this.stack = this.stack[:this.cur]
+		}
+	}
+	return val
 }
 
 func (this *StackOfPlates) PopAt(index int) int {
-	l := len(this.num)
-	n := index * this.cap
-	if n > l-1 {
+	if index >= len(this.stack) || this.cap == 0 {
 		return -1
 	}
-	c := (index + 1) * this.cap
-	if c <= l {
-		n := c - 1
-		ans := this.num[n]
-		this.num = append(this.num[:n], this.num[n+1:]...)
-		return ans
+	s := this.stack[index]
+	if s.Len() == 0 {
+		return -1
 	}
-	num := this.num[l-1]
-	this.num = this.num[:l-1]
-	return num
+	val := s.Back().Value.(int)
+	s.Remove(s.Back())
+	if s.Len() == 0 && this.cur > 0 {
+		this.stack = append(this.stack[:index], this.stack[index+1:]...)
+		this.cur--
+	}
+	return val
 }
 func main() {
 	//s := [][]int{{2, 2,3}, {3, 3,3}}
@@ -213,13 +229,12 @@ func main() {
 	//}
 	//a:=[]int{1,2,3,4}
 	//fmt.Println(append(a[:2],a[3:]...))
-	//["StackOfPlates", "push", "push", "push", "popAt", "popAt", "popAt"]
-	//[[2], [1], [2], [3], [0], [0], [0]]
-	c := Constructor(2)
+	//["StackOfPlates", "push", "push", "popAt", "pop", "pop"]
+	//[[1], [1], [2], [1], [], []]
+	c := Constructor(1)
 	c.Push(1)
 	c.Push(2)
-	c.Push(3)
-	fmt.Println(c.PopAt(0))
-	fmt.Println(c.PopAt(0))
-	fmt.Println(c.PopAt(0))
+	fmt.Println(c.PopAt(1))
+	fmt.Println(c.Pop())
+	fmt.Println(c.Pop())
 }
