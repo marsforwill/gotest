@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"sort"
 )
 
@@ -299,11 +298,17 @@ func numSubseq(nums []int, target int) int {
 	if nums[0]*2 > target {
 		return 0
 	}
+	n := len(nums)
+	pow := make([]int, n)
+	for n := 1; n < len(nums); n++ {
+		pow[n] = (pow[n-1] * 2) % (1e9 + 7)
+	}
 	left := 0
 	right := len(nums) - 1
 	for right >= left {
 		if nums[left]+nums[right] <= target {
-			count += int(math.Pow(float64(2), float64(right-left)))
+			count += pow[right-left]
+			count %= 1e9 + 7
 			left++
 		} else {
 			right--

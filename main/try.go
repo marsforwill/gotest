@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 	"strings"
 )
@@ -157,12 +158,83 @@ func rotate(matrix [][]int) {
 	}
 	return
 }
+
+// dont want write!!!!
+type StackOfPlates struct {
+	cap   int
+	cur   int
+	stack []*list.List
+}
+
+func Constructor(cap int) StackOfPlates {
+	var s []*list.List
+	s = append(s, list.New())
+	return StackOfPlates{
+		cap:   cap,
+		stack: s,
+		cur:   0,
+	}
+}
+
+func (this *StackOfPlates) Push(val int) {
+	if this.stack[this.cur].Len() == this.cap {
+		l := list.New()
+		l.PushBack(val)
+		this.stack = append(this.stack, l)
+		this.cur++
+	} else {
+		this.stack[this.cur].PushBack(val)
+	}
+}
+
+func (this *StackOfPlates) Pop() int {
+	s := this.stack[this.cur]
+	if s.Len() == 0 || this.cap == 0 {
+		return -1
+	}
+	val := s.Back().Value.(int)
+	s.Remove(s.Back())
+	if s.Len() == 0 && this.cur > 0 {
+		this.cur--
+		if this.cur > 0 {
+			this.stack = this.stack[:this.cur]
+		}
+	}
+	return val
+}
+
+func (this *StackOfPlates) PopAt(index int) int {
+	if index >= len(this.stack) || this.cap == 0 {
+		return -1
+	}
+	s := this.stack[index]
+	if s.Len() == 0 {
+		return -1
+	}
+	val := s.Back().Value.(int)
+	s.Remove(s.Back())
+	if s.Len() == 0 && this.cur > 0 {
+		this.stack = append(this.stack[:index], this.stack[index+1:]...)
+		this.cur--
+	}
+	return val
+}
 func main() {
-	//s := [][]int{{2, 2}, {3, 3}, {4, 4}, {1, 5}, {1, 5}}
+	//s := [][]int{{2, 2,3}, {3, 3,3}}
 	//fmt.Println(maxEvents3(s))
 	//fmt.Println(oneEditAway("asdf", "asdff"))
 	//rotate([][]int{{1,2,3},{4,5,6},{7,8,9}})
-	for i := 0; i < 20; i++ {
-		fmt.Printf("%v %v\n", i, i*i)
-	}
+	//for i := 0; i < 20; i++ {
+	//	fmt.Printf("%v %v\n", i, i*i)
+	//}
+	//a:=[]int{1,2,3,4}
+	//fmt.Println(append(a[:2],a[3:]...))
+	//["StackOfPlates", "push", "push", "popAt", "pop", "pop"]
+	//[[1], [1], [2], [1], [], []]
+	c := Constructor(1)
+	c.Push(1)
+	c.Push(2)
+	fmt.Println(c.PopAt(1))
+	fmt.Println(c.Pop())
+	fmt.Println(c.Pop())
 }

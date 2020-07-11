@@ -193,6 +193,31 @@ func dfsBST(nodes []*TreeNode, value []int, res *[][]int) {
 	return
 }
 
+//设计一个算法，找出二叉搜索树中指定节点的“下一个”节点（也即中序后继）。
+func inorderSuccessor(root *TreeNode, p *TreeNode) *TreeNode {
+
+	var ans []*TreeNode
+	midfs2(root, &ans)
+	for i := 0; i < len(ans); i++ {
+		if ans[i] == p && i < len(ans)-1 {
+			return ans[i+1]
+		}
+	}
+	return nil
+
+}
+
+func midfs2(root *TreeNode, ans *[]*TreeNode) {
+	if root.Left != nil {
+		midfs2(root.Left, ans)
+	}
+	*ans = append(*ans, root)
+	if root.Right != nil {
+		midfs2(root.Right, ans)
+	}
+	return
+}
+
 func main() {
 	root := &TreeNode{
 		Val:   2,
