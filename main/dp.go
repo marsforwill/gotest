@@ -78,10 +78,38 @@ func longestPalindrome(s string) string {
 	}
 }
 
-func minCost(houses []int, cost [][]int, m int, n int, target int) int {
-	// 一唯 house，二维选择的颜色，value存target
-	//dp := make([][]int,109)
-	return 0
+// 统计全1子矩形 不看题解想不明白系列
+func numSubmat(mat [][]int) int {
+	n := len(mat)
+	m := len(mat[0])
+	left := make([][]int, n)
+	for i := 0; i < n; i++ {
+		left[i] = make([]int, m)
+	}
+	now := 0
+	for i := 0; i < n; i++ {
+		now = 0
+		for j := 0; j < m; j++ {
+			if mat[i][j] == 0 {
+				now = 0
+			} else {
+				now++
+			}
+			left[i][j] = now
+		}
+	}
+	count := 0
+	var minx int
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			minx = 1 << 20
+			for k := i; k >= 0; k-- {
+				minx = min(minx, left[k][j])
+				count += minx
+			}
+		}
+	}
+	return count
 }
 
 func main() {
