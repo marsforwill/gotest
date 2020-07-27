@@ -56,7 +56,68 @@ func genRelation(edges [][]int) [][]int {
 	return relation
 }
 
+//* Definition for a binary tree node.
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+//好叶子节点对 输入：root = [1,2,3,null,4], distance = 3
+//输出：1
+func countPairs(root *TreeNode, distance int) int {
+	ans := 0
+	dfsPair(root, distance, &ans)
+	return ans
+}
+
+func dfsPair(node *TreeNode, distance int, ans *int) []int {
+	if node == nil {
+		return []int{}
+	}
+	if node.Left == nil && node.Right == nil {
+		return []int{0}
+	}
+	//当前node下所有叶子节点的距离
+	var num []int
+	l := dfsPair(node.Left, distance, ans)
+	for i := 0; i < len(l); i++ {
+		if l[i]+1 <= distance {
+			num = append(num, l[i]+1)
+		}
+	}
+	r := dfsPair(node.Right, distance, ans)
+	for i := 0; i < len(r); i++ {
+		if r[i]+1 <= distance {
+			num = append(num, r[i]+1)
+		}
+	}
+	// 计算过当前节点的左右子树符合条件的节点对
+	for i := 0; i < len(l); i++ {
+		for j := 0; j < len(r); j++ {
+			if l[i]+1+r[j]+1 <= distance {
+				*ans++
+			}
+		}
+	}
+	return num
+}
+
 func main() {
-	ans := countSubTrees(7, [][]int{{0, 1}, {0, 2}, {1, 4}, {1, 5}, {2, 3}, {2, 6}}, "abaedcd")
+	//ans := countSubTrees(7, [][]int{{0, 1}, {0, 2}, {1, 4}, {1, 5}, {2, 3}, {2, 6}}, "abaedcd")
+	//fmt.Println(ans)
+	ans := countPairs(&TreeNode{
+		Val: 5,
+		Left: &TreeNode{
+			Val:   3,
+			Left:  nil,
+			Right: nil,
+		},
+		Right: &TreeNode{
+			Val:   4,
+			Left:  nil,
+			Right: nil,
+		},
+	}, 3)
 	fmt.Println(ans)
 }
