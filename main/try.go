@@ -1,7 +1,6 @@
 package main
 
 import (
-	"container/list"
 	"fmt"
 	"strings"
 )
@@ -162,62 +161,64 @@ func rotate(matrix [][]int) {
 // dont want write!!!!
 type StackOfPlates struct {
 	cap   int
-	cur   int
-	stack []*list.List
+	stack [][]int
 }
 
 func Constructor(cap int) StackOfPlates {
-	var s []*list.List
-	s = append(s, list.New())
 	return StackOfPlates{
 		cap:   cap,
-		stack: s,
-		cur:   0,
+		stack: make([][]int, 0),
 	}
 }
 
 func (this *StackOfPlates) Push(val int) {
-	if this.stack[this.cur].Len() == this.cap {
-		l := list.New()
-		l.PushBack(val)
-		this.stack = append(this.stack, l)
-		this.cur++
-	} else {
-		this.stack[this.cur].PushBack(val)
+	if this.cap == 0 {
+		return
 	}
+	if len(this.stack) == 0 {
+		newStack := []int{val}
+		this.stack = append(this.stack, newStack)
+		return
+	}
+	last := this.stack[len(this.stack)-1]
+	if len(last) == this.cap {
+		newStack := []int{val}
+		this.stack = append(this.stack, newStack)
+		return
+	}
+	last = append(last, val)
+	this.stack[len(this.stack)-1] = last
 }
 
 func (this *StackOfPlates) Pop() int {
-	s := this.stack[this.cur]
-	if s.Len() == 0 || this.cap == 0 {
+	if len(this.stack) == 0 {
 		return -1
 	}
-	val := s.Back().Value.(int)
-	s.Remove(s.Back())
-	if s.Len() == 0 && this.cur > 0 {
-		this.cur--
-		if this.cur > 0 {
-			this.stack = this.stack[:this.cur]
-		}
+	plate := this.stack[len(this.stack)-1]
+	v := plate[len(plate)-1]
+	plate = plate[0 : len(plate)-1]
+	this.stack[len(this.stack)-1] = plate
+	if len(plate) == 0 {
+		this.stack = this.stack[0 : len(this.stack)-1]
 	}
-	return val
+	return v
 }
 
 func (this *StackOfPlates) PopAt(index int) int {
-	if index >= len(this.stack) || this.cap == 0 {
+	n := len(this.stack)
+	if index >= n {
 		return -1
 	}
-	s := this.stack[index]
-	if s.Len() == 0 {
-		return -1
+	plate := this.stack[index]
+	v := plate[len(plate)-1]
+	plate = plate[0 : len(plate)-1]
+	this.stack[index] = plate
+	if len(plate) == 0 {
+		tmp := this.stack[index+1:]
+		this.stack = this.stack[:index]
+		this.stack = append(this.stack, tmp...)
 	}
-	val := s.Back().Value.(int)
-	s.Remove(s.Back())
-	if s.Len() == 0 && this.cur > 0 {
-		this.stack = append(this.stack[:index], this.stack[index+1:]...)
-		this.cur--
-	}
-	return val
+	return v
 }
 func main() {
 	//s := [][]int{{2, 2,3}, {3, 3,3}}
