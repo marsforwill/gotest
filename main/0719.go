@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func numWaterBottles(numBottles int, numExchange int) int {
 	numEmpty := 0
@@ -103,21 +105,77 @@ func dfsPair(node *TreeNode, distance int, ans *int) []int {
 	return num
 }
 
+// always three dp
+// 输入：s = "aaabcccd", k = 2
+//输出：4
+//解释：在不删除任何内容的情况下，压缩后的字符串是 "a3bc3d" ，长度为 6 。最优的方案是删除 'b' 和 'd'，这样一来，压缩后的字符串为 "a3
+func getLengthOfOptimalCompression(s string, k int) int {
+	// 选取的字符长度
+	t := len(s) - k
+	dp := make([][]int, len(s)+1)
+	for i := 0; i < len(dp); i++ {
+		for k := 0; k <= len(s); k++ {
+			dp[i] = append(dp[i],10000)
+		}
+	}
+	dp[len(s)][t] = 0
+	// 外层枚举字符串p从后往前
+	for p := len(s)-1; p >= 0; p-- {
+		// cnt 已选取的字符长度
+		for cnt := 0; cnt <= t; cnt++ {
+			same:=0
+			for j:=p; j < len(s); j++ {
+				if s[j]==s[p] {
+					same++
+				}
+				if same + cnt > t {
+					break
+				}
+				// 把【p...j】的字符去掉
+				dp[p][cnt] = min(dp[p][cnt],dp[j+1][cnt+same]+calc(same))
+			}
+			dp[p][cnt] = min(dp[p][cnt],dp[p+1][cnt])
+		}
+	}
+	return dp[0][0]
+}
+
+func calc(x int) int {
+	if x <= 1 {
+		return x
+	}
+	if x <= 9 {
+		return 2
+	}
+	if x <= 99 {
+		return 3
+	}
+	return 4
+}
+func min(i int, i2 int) int {
+	if i < i2 {
+		return i
+	} else {
+		return i2
+	}
+}
+
 func main() {
 	//ans := countSubTrees(7, [][]int{{0, 1}, {0, 2}, {1, 4}, {1, 5}, {2, 3}, {2, 6}}, "abaedcd")
 	//fmt.Println(ans)
-	ans := countPairs(&TreeNode{
-		Val: 5,
-		Left: &TreeNode{
-			Val:   3,
-			Left:  nil,
-			Right: nil,
-		},
-		Right: &TreeNode{
-			Val:   4,
-			Left:  nil,
-			Right: nil,
-		},
-	}, 3)
-	fmt.Println(ans)
+	//ans := countPairs(&TreeNode{
+	//	Val: 5,
+	//	Left: &TreeNode{
+	//		Val:   3,
+	//		Left:  nil,
+	//		Right: nil,
+	//	},
+	//	Right: &TreeNode{
+	//		Val:   4,
+	//		Left:  nil,
+	//		Right: nil,
+	//	},
+	//}, 3)
+	//fmt.Println(ans)
+	fmt.Println(getLengthOfOptimalCompression("aaabcccd",  2))
 }

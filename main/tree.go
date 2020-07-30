@@ -218,6 +218,33 @@ func midfs2(root *TreeNode, ans *[]*TreeNode) {
 	return
 }
 
+func isValidBST(root *TreeNode) bool {
+	if root == nil {
+		return true
+	}
+	var num []int
+	dfsMid(root, &num)
+	for i := 1; i < len(num); i++ {
+		if num[i] <= num[i-1] {
+			return false
+		}
+	}
+	return true
+}
+
+func dfsMid(root *TreeNode, num *[]int) {
+	if root == nil {
+		return
+	}
+	if root.Left != nil {
+		dfsMid(root.Left, num)
+	}
+	*num = append(*num, root.Val)
+	if root.Right != nil {
+		dfsMid(root.Right, num)
+	}
+}
+
 func main() {
 	root := &TreeNode{
 		Val:   2,
