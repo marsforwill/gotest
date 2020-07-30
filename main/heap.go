@@ -8,16 +8,16 @@ import (
 
 type IntHeap [][]int
 
-func (h IntHeap)Len() int {
+func (h IntHeap) Len() int {
 	return len(h)
 }
 func (h IntHeap) Less(i, j int) bool {
-	if h[i][1] == h[j][1]{
+	if h[i][1] == h[j][1] {
 		return h[i][0] < h[j][0]
 	}
 	return h[i][1] < h[j][1]
 }
-func (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h IntHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
 func (h *IntHeap) Push(x interface{}) {
 	// Push and Pop use pointer receivers because they modify the slice's length,
 	// not just its contents.
@@ -44,19 +44,19 @@ func maxEvents(events [][]int) int {
 	count := 0
 	max := 0
 	h := &IntHeap{}
-	in := make([][]int,100009)
-	out := make([][]int,100009)
+	in := make([][]int, 100009)
+	out := make([][]int, 100009)
 	mp := map[int]int{}
 	for i := 0; i < leng; i++ {
 		if events[i][1] > max {
 			max = events[i][1]
 		}
 		in[events[i][0]] = append(in[events[i][0]], i)
-		out[events[i][1]+1] = append(out[events[i][1]+1],i)
+		out[events[i][1]+1] = append(out[events[i][1]+1], i)
 	}
-	for day := 1; day <= max ; day++ {
+	for day := 1; day <= max; day++ {
 		for i := 0; i < len(in[day]); i++ {
-			heap.Push(h,events[in[day][i]])
+			heap.Push(h, events[in[day][i]])
 		}
 		sort.Sort(mp)
 		//for i := 0; i < len(out[day]); i++ {
@@ -98,8 +98,58 @@ func maxEvents2(events [][]int) int {
 
 }
 
+type SortedStack struct {
+	heap []int
+	len  int
+}
+
+func Constructor() SortedStack {
+	return SortedStack{
+		heap: []int{},
+		len:  0,
+	}
+}
+
+func (this *SortedStack) Push(val int) {
+	this.heap = append(this.heap, val)
+	i := len(this.heap) - 1
+	for i != 0 {
+		pi := (i - 1) / 2
+		if this.heap[pi] <= val {
+			break
+		}
+		this.heap[i] = this.heap[pi]
+		i = pi
+	}
+	this.heap[i] = val
+	this.len++
+}
+
+// todo : wait
+func (this *SortedStack) Pop() {
+	if this.IsEmpty() {
+		return
+	}
+	if this.len == 1 {
+		this.heap = []int{}
+	} else {
+
+	}
+}
+
+func (this *SortedStack) Peek() int {
+	if this.IsEmpty() {
+		return -1
+	}
+	return this.heap[0]
+}
+
+func (this *SortedStack) IsEmpty() bool {
+	return len(this.heap) > 0
+}
+
 func main() {
-	s := [][]int{{1,5},{1,5},{1,5},{2,3},{2,5},{1,6},{1,7}}
+	s := [][]int{{1, 5}, {1, 5}, {1, 5}, {2, 3}, {2, 5}, {1, 6}, {1, 7}}
 	fmt.Println(maxEvents(s))
 	//h := &IntHeap{2,5,6,8,3}
 	//heap.Init(h)
