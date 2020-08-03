@@ -1,7 +1,6 @@
 package main
 
 import (
-	"container/heap"
 	"fmt"
 	"sort"
 )
@@ -39,33 +38,33 @@ func (h *IntHeap) Pop() interface{} {
 
 // 在每一个时间点 维护一个这个时间点可以参加的会议集合
 // 每遍历一个时间点 集合入in 出out
-func maxEvents(events [][]int) int {
-	leng := len(events)
-	count := 0
-	max := 0
-	h := &IntHeap{}
-	in := make([][]int, 100009)
-	out := make([][]int, 100009)
-	mp := map[int]int{}
-	for i := 0; i < leng; i++ {
-		if events[i][1] > max {
-			max = events[i][1]
-		}
-		in[events[i][0]] = append(in[events[i][0]], i)
-		out[events[i][1]+1] = append(out[events[i][1]+1], i)
-	}
-	for day := 1; day <= max; day++ {
-		for i := 0; i < len(in[day]); i++ {
-			heap.Push(h, events[in[day][i]])
-		}
-		sort.Sort(mp)
-		//for i := 0; i < len(out[day]); i++ {
-		//	heap.Remove(h,events[out[day][i]])
-		//}
-	}
-
-	return count
-}
+//func maxEvents(events [][]int) int {
+//	leng := len(events)
+//	count := 0
+//	max := 0
+//	h := &IntHeap{}
+//	in := make([][]int, 100009)
+//	out := make([][]int, 100009)
+//	mp := map[int]int{}
+//	for i := 0; i < leng; i++ {
+//		if events[i][1] > max {
+//			max = events[i][1]
+//		}
+//		in[events[i][0]] = append(in[events[i][0]], i)
+//		out[events[i][1]+1] = append(out[events[i][1]+1], i)
+//	}
+//	for day := 1; day <= max; day++ {
+//		for i := 0; i < len(in[day]); i++ {
+//			heap.Push(h, events[in[day][i]])
+//		}
+//		sort.Sort(mp)
+//		//for i := 0; i < len(out[day]); i++ {
+//		//	heap.Remove(h,events[out[day][i]])
+//		//}
+//	}
+//
+//	return count
+//}
 
 func maxEvents2(events [][]int) int {
 
@@ -125,16 +124,36 @@ func (this *SortedStack) Push(val int) {
 	this.len++
 }
 
-// todo : wait
 func (this *SortedStack) Pop() {
 	if this.IsEmpty() {
 		return
 	}
 	if this.len == 1 {
-		this.heap = []int{}
+		this.heap = make([]int, 0)
 	} else {
-
+		// swap
+		this.heap[0], this.heap[this.len-1] = this.heap[this.len-1], this.heap[0]
+		this.heap = this.heap[:this.len-1]
+		// down
+		i := 0
+		for {
+			j := i*2 + 1
+			if j >= len(this.heap) || j < 0 {
+				break
+			}
+			j1 := j      // left child
+			j2 := j1 + 1 // right child
+			if j2 < len(this.heap) && this.heap[j2] < this.heap[j1] {
+				j = j2
+			}
+			if this.heap[i] <= this.heap[j] {
+				break
+			}
+			this.heap[i], this.heap[j] = this.heap[j], this.heap[i]
+			i = j
+		}
 	}
+	this.len--
 }
 
 func (this *SortedStack) Peek() int {
@@ -145,12 +164,16 @@ func (this *SortedStack) Peek() int {
 }
 
 func (this *SortedStack) IsEmpty() bool {
-	return len(this.heap) > 0
+	return len(this.heap) == 0
 }
 
+/**
+测试结果:[null,-1,-1,null,true,-1,null,null,null,19,null,19,null,null,null,false,null,8,false,null,8,8,false,null,false,8,false,null,42,null,null,null,false,null,false,63,null,null,null,null,false,null,null,null,17,false,null,52,null,null,6,false,false,false,false,false,null,null,null,null,null,2,2,false,null]
+期望结果:[null,-1,-1,null,true,-1,null,null,null,19,null,19,null,null,null,false,null,8,false,null,8,8,false,null,false,8,false,null,25,null,null,null,false,null,false,42,null,null,null,null,false,null,null,null,17,false,null,52,null,null,6,false,false,false,false,false,null,null,null,null,null,2,2,false,null
+*/
 func main() {
-	s := [][]int{{1, 5}, {1, 5}, {1, 5}, {2, 3}, {2, 5}, {1, 6}, {1, 7}}
-	fmt.Println(maxEvents(s))
+	//s := [][]int{{1, 5}, {1, 5}, {1, 5}, {2, 3}, {2, 5}, {1, 6}, {1, 7}}
+	//fmt.Println(maxEvents(s))
 	//h := &IntHeap{2,5,6,8,3}
 	//heap.Init(h)
 	//fmt.Printf("%d",heap.Pop(h))
@@ -158,4 +181,15 @@ func main() {
 	//fmt.Print(h.Len())
 	//heap.Push(h,1)
 	//fmt.Printf("%d",heap.Pop(h))
+	obj := Constructor()
+	obj.Push(40)
+	obj.Push(19)
+	obj.Push(44)
+	obj.Push(8)
+	obj.Push(42)
+	obj.Push(29)
+	fmt.Println(obj.Peek())
+	obj.Pop()
+	fmt.Println(obj.Peek())
+
 }

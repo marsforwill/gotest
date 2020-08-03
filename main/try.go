@@ -220,6 +220,44 @@ func (this *StackOfPlates) PopAt(index int) int {
 	}
 	return v
 }
+
+// [1,2,3,4,5,6,7]
+func minSwaps(grid [][]int) int {
+	l := len(grid)
+	num := make([]int, l)
+	for i := 0; i < l; i++ {
+		leng := len(grid[i])
+		countZero := 0
+		for j := leng - 1; j >= 0; j-- {
+			if grid[i][j] == 0 {
+				countZero++
+			} else {
+				break
+			}
+		}
+		num[i] = countZero
+	}
+	ans := 0
+	for i := 0; i < l-1; i++ {
+		needZero := l - i - 1
+		flag := false
+		for j := i; j < l; j++ {
+			if num[j] >= needZero {
+				flag = true
+				// 把j行换到i行
+				ans += j - i
+				for k := j; k > i; k-- {
+					num[k], num[k-1] = num[k-1], num[k]
+				}
+				break
+			}
+		}
+		if flag == false {
+			return -1
+		}
+	}
+	return ans
+}
 func main() {
 	//s := [][]int{{2, 2,3}, {3, 3,3}}
 	//fmt.Println(maxEvents3(s))
@@ -232,10 +270,12 @@ func main() {
 	//fmt.Println(append(a[:2],a[3:]...))
 	//["StackOfPlates", "push", "push", "popAt", "pop", "pop"]
 	//[[1], [1], [2], [1], [], []]
-	c := Constructor(1)
-	c.Push(1)
-	c.Push(2)
-	fmt.Println(c.PopAt(1))
-	fmt.Println(c.Pop())
-	fmt.Println(c.Pop())
+	//c := Constructor(1)
+	//c.Push(1)
+	//c.Push(2)
+	//fmt.Println(c.PopAt(1))
+	//fmt.Println(c.Pop())
+	//fmt.Println(c.Pop())
+	fmt.Println(minSwaps([][]int{{0, 0, 1}, {1, 1, 0}, {1, 0, 0}}))
+
 }
