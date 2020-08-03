@@ -258,6 +258,60 @@ func minSwaps(grid [][]int) int {
 	}
 	return ans
 }
+
+func maxSum(nums1 []int, nums2 []int) int {
+	mod := 1000000007
+	i, j := 0, 0
+	l1 := len(nums1)
+	l2 := len(nums2)
+	var common []int
+	for i < l1 && j < l2 {
+		if nums1[i] == nums2[j] {
+			common = append(common, nums1[i])
+			i++
+			continue
+		}
+		if nums1[i] > nums2[j] {
+			j++
+		} else {
+			i++
+		}
+	}
+	index := 0
+	sum := 0
+	var count []int
+	for i := 0; i < l1; i++ {
+		sum += nums1[i]
+		if index < len(common) && nums1[i] == common[index] {
+			index++
+			count = append(count, sum)
+			sum = 0
+		}
+	}
+	count = append(count, sum)
+	index = 0
+	sum = 0
+	var count2 []int
+	for i := 0; i < l2; i++ {
+		sum += nums2[i]
+		if index < len(common) && nums2[i] == common[index] {
+			index++
+			count2 = append(count2, sum)
+			sum = 0
+		}
+	}
+	count2 = append(count2, sum)
+	ans := 0
+	for i := 0; i < len(count); i++ {
+		if count[i] > count2[i] {
+			ans += count[i]
+		} else {
+			ans += count2[i]
+		}
+		ans %= mod
+	}
+	return ans
+}
 func main() {
 	//s := [][]int{{2, 2,3}, {3, 3,3}}
 	//fmt.Println(maxEvents3(s))
@@ -276,6 +330,7 @@ func main() {
 	//fmt.Println(c.PopAt(1))
 	//fmt.Println(c.Pop())
 	//fmt.Println(c.Pop())
-	fmt.Println(minSwaps([][]int{{0, 0, 1}, {1, 1, 0}, {1, 0, 0}}))
-
+	//fmt.Println(minSwaps([][]int{{0, 0, 1}, {1, 1, 0}, {1, 0, 0}}))
+	//[2,4,5,8,10], nums2 = [4,6,8,9]
+	fmt.Println(maxSum([]int{2, 4, 5, 8, 10}, []int{4, 6, 8, 9}))
 }
