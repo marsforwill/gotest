@@ -112,8 +112,60 @@ func numSubmat(mat [][]int) int {
 	return count
 }
 
+//leetcode submit region begin(Prohibit modification and deletion)
+// 输入：s = "3242415"
+//输出：5
+//解释："24241" 是最长的超赞子字符串，交换其中的字符后，可以得到回文 "24142"
+// 状态压缩dp
+func longestAwesome(s string) int {
+	// 压缩状态 -> index
+	m := make(map[int]int)
+	cur := 0
+	ans := 1
+	m[cur] = -1
+	for i := 0; i < len(s); i++ {
+		ch := s[i] - '0'
+		cur = cur ^ (1 << ch)
+		// 奇数次
+		for j := 0; j < 10; j++ {
+			// 可容忍差一个的回文状态
+			next := cur ^ (1 << j)
+			// 得到index 取相差长度最大
+			index, ok := m[next]
+			if ok {
+				ans = max(ans, i-index)
+			}
+		}
+		// 偶数次
+		index, ok := m[cur]
+		if !ok {
+			m[cur] = i
+		} else {
+			ans = max(ans, i-index)
+		}
+	}
+	return ans
+}
+
+func max(ans int, i int) int {
+	if ans > i {
+		return ans
+	} else {
+		return i
+	}
+}
+
+func min(i, j int) int {
+	if i > j {
+		return j
+	} else {
+		return i
+	}
+}
+
 func main() {
 	//fmt.Println(isMatch("aa", "a*"))
-	fmt.Println(longestPalindrome("babad"))
+	//fmt.Println(longestPalindrome("babad"))
 	//fmt.Println(longestPalindrome("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
+	fmt.Println(longestAwesome("3242415"))
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 // 输入：events = [[1,4],[4,4],[2,2],[3,4],[1,1]]
@@ -325,6 +326,63 @@ func searchMatrix(matrix [][]int, target int) bool {
 	}
 	return false
 }
+
+type req struct {
+	tra trace
+}
+
+type trace struct {
+	timeout int
+}
+
+type con struct {
+	tra trace
+	m   map[string]string
+}
+
+// 输入：s = "aab", t = "bbb", k = 27
+//输出：true
+//解释：第 1 次操作时，我们将第一个 'a' 切换 1 次得到 'b' 。在第 27 次操作时，我们将第二个字母 'a' 切换 27 次得到 'b' 。
+func canConvertString(s string, t string, k int) bool {
+	count := make([]int, 27)
+	if len(s) != len(t) {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		if s[i] != t[i] {
+			u := (int(t[i]) - int(s[i]) + 26) % 26
+			count[u]++
+			if u+(count[u]-1)*26 > k {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func minInsertions(s string) int {
+	ans := 0
+	left := 0
+	n := len(s)
+	for i := 0; i < n; i++ {
+		if s[i] == '(' {
+			left++
+		} else if s[i] == ')' {
+			if i+1 < n && s[i+1] == ')' {
+				i++
+			} else {
+				ans++
+			}
+			if left > 0 {
+				left--
+			} else {
+				ans++
+			}
+		}
+	}
+	ans += left * 2
+	return ans
+}
 func main() {
 	//s := [][]int{{2, 2,3}, {3, 3,3}}
 	//fmt.Println(maxEvents3(s))
@@ -345,5 +403,13 @@ func main() {
 	//fmt.Println(c.Pop())
 	//fmt.Println(minSwaps([][]int{{0, 0, 1}, {1, 1, 0}, {1, 0, 0}}))
 	//[2,4,5,8,10], nums2 = [4,6,8,9]
-	fmt.Println(maxSum([]int{2, 4, 5, 8, 10}, []int{4, 6, 8, 9}))
+	//fmt.Println(maxSum([]int{2, 4, 5, 8, 10}, []int{4, 6, 8, 9}))
+	//c := new(con)
+	//c.m = make(map[string]string)
+	//c.m["timeout"] = "t"
+	//fmt.Println(canConvertString("iqssxdlb","dyuqrwyr",40))
+	//fmt.Println('i'-'d')
+	//fmt.Println('z'-'a')
+	//fmt.Println(minInsertions("))())("))
+	fmt.Println(time.Now().UnixNano() / 1e6)
 }
