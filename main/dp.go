@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 )
 
 //两边dp
@@ -161,6 +162,43 @@ func min(i, j int) int {
 	} else {
 		return i
 	}
+}
+
+
+// 输入：n = 9, cuts = [5,6,1,4,2]
+//输出：22
+//解释：如果按给定的顺序切割，则总成本为 25 。总成本 <= 25 的切割顺序很多，例如，[4，6，5，2，1] 的总成本 = 22，是所有可能方案中成本最
+//小的。
+// 区间dp dp[l][r] 代表切cut[l] cut[r]的最小成本
+func minCost(n int, cuts []int) int {
+	dp := make([][]int,103)
+	for i := 0; i < 103; i++ {
+		for j := 0; j < 103; j++ {
+			dp[i] = append(dp[i],-1)
+		}
+	}
+	cuts = append(cuts, 0)
+	cuts = append(cuts, n)
+	sort.Ints(cuts)
+	return dfsRangeDp(0,len(cuts)-1, cuts, &dp)
+
+}
+
+func dfsRangeDp(l int, r int, cuts []int, dp *[][]int) int {
+	if (*dp)[l][r] != -1 {
+		return (*dp)[l][r]
+	}
+	if l+1 == r {
+		(*dp)[l][r] = 0
+		return 0
+	}
+	for i := l+1; i < r; i++ {
+		cost := dfsRangeDp(l,i,cuts,dp) + dfsRangeDp(i,r,cuts,dp) + cuts[r] - cuts[l]
+		if (*dp)[l][r] == -1 || (*dp)[l][r] > cost {
+			(*dp)[l][r] = cost
+		}
+	}
+	return (*dp)[l][r]
 }
 
 func main() {
