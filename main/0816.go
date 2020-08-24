@@ -72,9 +72,83 @@ func minDays(n int) int {
 	return count
 }
 
+func containsCycle(grid [][]byte) bool {
+	n := len(grid)
+	if n == 0 {
+		return false
+	}
+	m := len(grid[0])
+	vis := make([][]bool, n)
+	for i := 0; i < n; i++ {
+		vis[i] = make([]bool, m)
+	}
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			if vis[i][j] == false && dfsGrid(grid, i, j, &vis) == true {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func dfsGrid(grid [][]byte, i int, j int, vis *[][]bool) bool {
+	if (*vis)[i][j] == true {
+		return false
+	}
+	(*vis)[i][j] = true
+	count := 0
+	if i+1 < len(grid) && grid[i+1][j] == grid[i][j] {
+		if (*vis)[i+1][j] {
+			count++
+		} else {
+			if dfsGrid(grid, i+1, j, vis) {
+				return true
+			}
+		}
+	}
+	if j+1 < len(grid[0]) && grid[i][j+1] == grid[i][j] {
+		if (*vis)[i][j+1] {
+			count++
+		} else {
+			if dfsGrid(grid, i, j+1, vis) {
+				return true
+			}
+		}
+	}
+	if i-1 >= 0 && grid[i-1][j] == grid[i][j] {
+		if (*vis)[i-1][j] {
+			count++
+		} else {
+			if dfsGrid(grid, i-1, j, vis) {
+				return true
+			}
+		}
+	}
+	if j-1 >= 0 && grid[i][j-1] == grid[i][j] {
+		if (*vis)[i][j-1] {
+			count++
+		} else {
+			if dfsGrid(grid, i, j-1, vis) {
+				return true
+			}
+		}
+	}
+
+	if count >= 2 {
+		return true
+	}
+	return false
+}
+
 func main() {
 	//for i := 1; i < 500; i++ {
 	//	fmt.Printf("%v %v\n",i,minDays(i))
 	//}
-	fmt.Println(minDays(9209408))
+	//fmt.Println(minDays(9209408))
+	//{'b','a','c'},
+	//{'c','a','c'},
+	//{'d','d','c'},
+	//{'b','c','c'}
+	fmt.Println(containsCycle([][]byte{{'a', 'g', 'b', 'e', 'c', 'b', 'd', 'd', 'c', 'c', 'e', 'd', 'b', 'd', 'a', 'a', 'h', 'c', 'g', 'f'}, {'b', 'h', 'e', 'e', 'c', 'a', 'f', 'e', 'h', 'c', 'h', 'c', 'a', 'g', 'a', 'd', 'b', 'f', 'g', 'g'}, {'b', 'b', 'c', 'b', 'a', 'a', 'b', 'a', 'a', 'f', 'e', 'f', 'f', 'g', 'e', 'g', 'e', 'h', 'b', 'e'}, {'a', 'c', 'a', 'd', 'f', 'c', 'g', 'b', 'h', 'b', 'e', 'd', 'c', 'h', 'a', 'b', 'd', 'e', 'h', 'b'}, {'a', 'a', 'd', 'a', 'c', 'b', 'b', 'h', 'g', 'f', 'a', 'a', 'g', 'a', 'd', 'd', 'd', 'd', 'd', 'g'}, {'f', 'f', 'h', 'b', 'c', 'a', 'e', 'e', 'c', 'c', 'g', 'f', 'g', 'c', 'c', 'g', 'h', 'b', 'd', 'g'}, {'d', 'a', 'a', 'a', 'e', 'b', 'g', 'h', 'a', 'b', 'g', 'h', 'c', 'd', 'h', 'g', 'c', 'h', 'f', 'a'}, {'h', 'h', 'a', 'h', 'f', 'h', 'c', 'f', 'g', 'b', 'c', 'a', 'a', 'g', 'f', 'h', 'c', 'h', 'f', 'a'}, {'d', 'f', 'c', 'f', 'e', 'c', 'c', 'd', 'd', 'e', 'b', 'g', 'd', 'g', 'f', 'f', 'f', 'h', 'f', 'b'}, {'d', 'g', 'h', 'e', 'e', 'h', 'g', 'e', 'f', 'h', 'g', 'g', 'h', 'f', 'c', 'b', 'f', 'b', 'b', 'f'}, {'g', 'f', 'h', 'g', 'a', 'e', 'c', 'b', 'f', 'd', 'g', 'a', 'g', 'h', 'a', 'h', 'd', 'g', 'h', 'c'}}))
 }

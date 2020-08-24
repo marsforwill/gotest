@@ -245,6 +245,22 @@ func dfsMid(root *TreeNode, num *[]int) {
 	}
 }
 
+//输入某二叉树的前序遍历和中序遍历的结果，请重建该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+// 前序遍历 preorder = [3 | 9 | 20,15,7]
+//中序遍历 inorder = [9 | 3 | 15,20,7]
+func buildTree(preorder []int, inorder []int) *TreeNode {
+	for i := 0; i < len(inorder); i++ {
+		if inorder[i] == preorder[0] {
+			return &TreeNode{
+				Val:   preorder[0],
+				Left:  buildTree(preorder[1:i+1], inorder[0:i]),
+				Right: buildTree(preorder[i+1:], inorder[i+1:]),
+			}
+		}
+	}
+	return nil
+}
+
 func main() {
 	root := &TreeNode{
 		Val:   2,
