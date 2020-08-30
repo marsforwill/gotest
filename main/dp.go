@@ -148,14 +148,6 @@ func longestAwesome(s string) int {
 	return ans
 }
 
-func max(ans int, i int) int {
-	if ans > i {
-		return ans
-	} else {
-		return i
-	}
-}
-
 func min(i, j int) int {
 	if i > j {
 		return j
@@ -164,23 +156,22 @@ func min(i, j int) int {
 	}
 }
 
-
 // 输入：n = 9, cuts = [5,6,1,4,2]
 //输出：22
 //解释：如果按给定的顺序切割，则总成本为 25 。总成本 <= 25 的切割顺序很多，例如，[4，6，5，2，1] 的总成本 = 22，是所有可能方案中成本最
 //小的。
 // 区间dp dp[l][r] 代表切cut[l] cut[r]的最小成本
 func minCost(n int, cuts []int) int {
-	dp := make([][]int,103)
+	dp := make([][]int, 103)
 	for i := 0; i < 103; i++ {
 		for j := 0; j < 103; j++ {
-			dp[i] = append(dp[i],-1)
+			dp[i] = append(dp[i], -1)
 		}
 	}
 	cuts = append(cuts, 0)
 	cuts = append(cuts, n)
 	sort.Ints(cuts)
-	return dfsRangeDp(0,len(cuts)-1, cuts, &dp)
+	return dfsRangeDp(0, len(cuts)-1, cuts, &dp)
 
 }
 
@@ -192,8 +183,8 @@ func dfsRangeDp(l int, r int, cuts []int, dp *[][]int) int {
 		(*dp)[l][r] = 0
 		return 0
 	}
-	for i := l+1; i < r; i++ {
-		cost := dfsRangeDp(l,i,cuts,dp) + dfsRangeDp(i,r,cuts,dp) + cuts[r] - cuts[l]
+	for i := l + 1; i < r; i++ {
+		cost := dfsRangeDp(l, i, cuts, dp) + dfsRangeDp(i, r, cuts, dp) + cuts[r] - cuts[l]
 		if (*dp)[l][r] == -1 || (*dp)[l][r] > cost {
 			(*dp)[l][r] = cost
 		}
@@ -201,9 +192,58 @@ func dfsRangeDp(l int, r int, cuts []int, dp *[][]int) int {
 	return (*dp)[l][r]
 }
 
+//区间dp 贪心算不可取
+func stoneGameV(stoneValue []int) int {
+	dp := make([][]int, 501)
+	for i := 0; i < 501; i++ {
+		for j := 0; j < 501; j++ {
+			dp[i] = append(dp[i], -1)
+		}
+	}
+	sum := make([]int, 501)
+	sum[0] = 0
+	for i := 0; i < len(stoneValue); i++ {
+		sum[i+1] = sum[i] + stoneValue[i]
+	}
+	return storeDfs(1, len(stoneValue), &dp, &sum)
+}
+
+func storeDfs(l int, r int, dp *[][]int, sum *[]int) int {
+	if (*dp)[l][r] != -1 {
+		return (*dp)[l][r]
+	}
+	if l == r {
+		(*dp)[l][r] = 0
+	} else {
+		val := 0
+		for i := l; i < r; i++ {
+			s1 := (*sum)[i] - (*sum)[l-1]
+			s2 := (*sum)[r] - (*sum)[i]
+			if s1 < s2 {
+				val = max(val, s1+storeDfs(l, i, dp, sum))
+			} else if s1 > s2 {
+				val = max(val, s2+storeDfs(i+1, r, dp, sum))
+			} else {
+				val = max(val, max(storeDfs(l, i, dp, sum), storeDfs(i+1, r, dp, sum))+s1)
+			}
+		}
+		(*dp)[l][r] = val
+	}
+	return (*dp)[l][r]
+}
+
+func max(ans int, i int) int {
+	if ans > i {
+		return ans
+	} else {
+		return i
+	}
+}
+
 func main() {
 	//fmt.Println(isMatch("aa", "a*"))
 	//fmt.Println(longestPalindrome("babad"))
 	//fmt.Println(longestPalindrome("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
-	fmt.Println(longestAwesome("3242415"))
+	//fmt.Println(longestAwesome("3242415"))
+	fmt.Println(stoneGameV([]int{6, 2, 3, 4, 5, 5}))
 }
