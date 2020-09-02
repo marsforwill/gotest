@@ -11,20 +11,6 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
-func isValidBST(root *TreeNode) bool {
-	if root == nil || (root.Right == nil && root.Left == nil) {
-		return true
-	}
-	var ans []int
-	midfs(root, &ans)
-	for i := 0; i < len(ans)-1; i++ {
-		if ans[i] >= ans[i+1] {
-			return false
-		}
-	}
-	return true
-}
-
 func midfs(root *TreeNode, ans *[]int) {
 	if root.Left != nil {
 		midfs(root.Left, ans)
@@ -261,13 +247,39 @@ func buildTree(preorder []int, inorder []int) *TreeNode {
 	return nil
 }
 
+//输入两棵二叉树A和B，判断B是不是A的子结构。(约定空树不是任意一个树的子结构)
+func isSubStructure(A *TreeNode, B *TreeNode) bool {
+	if A != nil && B != nil {
+		return dfsIsSub(A, B) || isSubStructure(A.Left, B) || isSubStructure(A.Right, B)
+	}
+	return false
+}
+
+func dfsIsSub(A *TreeNode, B *TreeNode) bool {
+	if B == nil {
+		return true
+	}
+	if A == nil || A.Val != B.Val {
+		return false
+	}
+	return dfsIsSub(A.Left, B.Left) && dfsIsSub(A.Right, B.Right)
+}
+
 func main() {
 	root := &TreeNode{
-		Val:   2,
-		Left:  &TreeNode{Val: 1},
-		Right: &TreeNode{Val: 3},
+		Val:  1,
+		Left: &TreeNode{Val: 0},
+		Right: &TreeNode{
+			Val:   1,
+			Left:  &TreeNode{Val: -4},
+			Right: &TreeNode{Val: 3},
+		},
 	}
-	fmt.Println(BSTSequences(root))
+	fmt.Println(isSubStructure(root, &TreeNode{
+		Val:   1,
+		Left:  &TreeNode{Val: -4},
+		Right: nil,
+	}))
 
 	//rt := &TreeNode{
 	//	Val: 3,

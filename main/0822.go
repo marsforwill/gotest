@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 )
@@ -165,6 +166,33 @@ func maxCoins(piles []int) int {
 	return 0
 }
 
+//给定一个以字符串表示的非负整数 num，移除这个数中的 k 位数字，使得剩下的数字最小。
+// 流程想清楚再 code 写得难受
+func removeKdigits(num string, k int) string {
+	var stack []uint8
+	var result string
+	for i := 0; i < len(num); i++ {
+		number := num[i] - '0'
+		for len(stack) != 0 && stack[len(stack)-1] > number && k > 0 {
+			stack = stack[:len(stack)-1]
+			k--
+		}
+		if number != 0 || len(stack) != 0 {
+			stack = append(stack, number)
+		}
+	}
+	for len(stack) != 0 && k > 0 {
+		stack = stack[:len(stack)-1]
+		k--
+	}
+	for _, v := range stack {
+		result += string('0' + v)
+	}
+	if result == "" {
+		return "0"
+	}
+	return result
+}
 func main() {
 	//fmt.Println(thousandSeparator(123456789))
 	//fmt.Println(countNumsOfOne(7))
@@ -172,4 +200,7 @@ func main() {
 	//fmt.Println(containsCycle([][]byte{{'b','a','c'},{'c','a','c'},{'d','d','c'},{'b','c','c'}}))
 	//fmt.Println(mostVisited(4,[]int{1,3,1,2}))
 	//fmt.Println(stoneGameV([]int{68,75,25,50,34,29,77,1,2,69}))
+	//str := "1432219"
+	//fmt.Println(str[:len(str)-1])
+	fmt.Println(removeKdigits("5337", 2))
 }
