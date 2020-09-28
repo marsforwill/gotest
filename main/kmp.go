@@ -2,7 +2,7 @@ package main
 
 //https://blog.csdn.net/helloworldchina/article/details/104465772
 
-// 计算pattern串的next数组
+// 计算pattern串的next数组 最大公共前后缀的长度值
 func kmpNext(str string) []int {
 	next := make([]int, len(str))
 	next[0] = 0

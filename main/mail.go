@@ -97,22 +97,9 @@ func SendMail(addr string, a smtp.Auth, from string, to []string, msg []byte) er
 }
 
 func main() {
-	// Set up authentication information.
-	//auth := smtp.PlainAuth("", "liushimin@sensetime.com", "Mars940118", "smtp.partner.outlook.cn")
-	//// Connect to the server, authenticate, set the sender and recipient,
-	////and send the email all in one step.
-	//to := []string{"liushimin@sensetime.com"}
-	//msg := []byte("To: liushimin@sensetime.com\r\n" +     "Subject: discount Gophers!\r\n" +     "\r\n" +     "This is the email body.\r\n")
-	//err := smtp.SendMail("smtp.partner.outlook.cn:587", auth, "liushimin@sensetime.com", to, msg)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 
-	auth := NewLoginAuth("liushimin@sensetime.com", "Mars940118")
-
-	to := []string{"zhangmingyang@sensetime.com"}
 	msg := []byte("这是一封来自go的测试邮件")
-	err := SendMail("smtp.partner.outlook.cn:587", auth, "liushimin@sensetime.com", to, msg)
+	err := SendMail("", auth, "liushimin", to, msg)
 	if err != nil {
 		fmt.Println("with err:", err)
 	}
