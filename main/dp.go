@@ -240,10 +240,40 @@ func max(ans int, i int) int {
 	}
 }
 
+//给你两个单词 word1 和 word2，请你计算出将 word1 转换成 word2 所使用的最少操作数【插入/删除/替换】 。
+// 最短编辑距离 dp[i][j] 表示 word1到i位置转换成word2到j位置的编辑次数
+func minDistance(word1 string, word2 string) int {
+	len1 := len(word1)
+	len2 := len(word2)
+	dp := make([][]int, len1+1)
+	for i := 0; i <= len1; i++ {
+		dp[i] = make([]int, len2+1)
+	}
+	// init
+	for i := 1; i <= len1; i++ {
+		dp[i][0] = dp[i-1][0] + 1
+	}
+	for j := 1; j <= len2; j++ {
+		dp[0][j] = dp[0][j-1] + 1
+	}
+	// dp
+	for i := 1; i <= len1; i++ {
+		for j := 1; j <= len2; j++ {
+			if word1[i-1] == word2[j-1] {
+				dp[i][j] = dp[i-1][j-1]
+			} else {
+				dp[i][j] = min(dp[i-1][j-1], min(dp[i-1][j], dp[i][j-1])) + 1
+			}
+		}
+	}
+	return dp[len1][len2]
+}
+
 func main() {
 	//fmt.Println(isMatch("aa", "a*"))
 	//fmt.Println(longestPalindrome("babad"))
 	//fmt.Println(longestPalindrome("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
 	//fmt.Println(longestAwesome("3242415"))
-	fmt.Println(stoneGameV([]int{6, 2, 3, 4, 5, 5}))
+	//fmt.Println(stoneGameV([]int{6, 2, 3, 4, 5, 5}))
+	fmt.Println(minDistance("intention", "execution"))
 }

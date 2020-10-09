@@ -41,5 +41,7 @@ func main() {
 	fmt.Println(GetFirstDateOfLastMonth(time.Now()))
 	fmt.Println(GetLastDateOfLastMonth(time.Now()))
 	fmt.Println(GetFirstDateOfMonth(time.Now()))
+	//fmt.Println(time.Unix(1606752000,0).AddDate(0, -1, 0))
+	fmt.Println(GetFirstDateOfMonth(time.Now()))
 	fmt.Println(GetHalfDateOfMonth(time.Now()))
 }

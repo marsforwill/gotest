@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"time"
 )
@@ -382,6 +383,12 @@ func minInsertions(s string) int {
 	}
 	ans += left * 2
 	return ans
+}
+
+// 灯泡开关
+func bulbSwitch(n int) int {
+	ans := math.Sqrt(float64(n))
+	return int(ans)
 }
 func main() {
 	//s := [][]int{{2, 2,3}, {3, 3,3}}
