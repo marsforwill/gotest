@@ -1,6 +1,7 @@
 package main
 
 import (
+	"container/list"
 	"fmt"
 )
 
@@ -265,6 +266,63 @@ func dfsIsSub(A *TreeNode, B *TreeNode) bool {
 	return dfsIsSub(A.Left, B.Left) && dfsIsSub(A.Right, B.Right)
 }
 
+// 二叉树非递归后序遍历 (可以通过前序遍历逻辑逆转)
+func postorderTraversal(root *TreeNode) []int {
+	stack := list.New()
+	var ans []int
+	tmp := root
+	for tmp != nil || stack.Len() > 0 {
+		if tmp != nil {
+			stack.PushBack(tmp)
+			ans = append([]int{tmp.Val}, ans...)
+			tmp = tmp.Right
+		} else {
+			f := stack.Back()
+			stack.Remove(f)
+			tmp = f.Value.(*TreeNode).Left
+		}
+	}
+	return ans
+}
+
+// 二叉树非递归前序遍历
+func preorderTraversal(root *TreeNode) []int {
+	stack := list.New() //用list模拟栈 push pop
+	var ans []int
+	tmp := root
+	for stack.Len() > 0 || tmp != nil {
+		if tmp != nil {
+			stack.PushBack(tmp)
+			ans = append(ans, tmp.Val)
+			tmp = tmp.Left
+		} else {
+			f := stack.Back()
+			stack.Remove(f)
+			tmp = f.Value.(*TreeNode).Right
+		}
+	}
+	return ans
+}
+
+// 二叉树非递归中序遍历
+func inorderTraversal(root *TreeNode) []int {
+	stack := list.New()
+	tmp := root
+	var ans []int
+	for tmp != nil || stack.Len() > 0 {
+		if tmp != nil {
+			stack.PushBack(tmp)
+			tmp = tmp.Left
+		} else {
+			b := stack.Back()
+			ans = append(ans, b.Value.(*TreeNode).Val)
+			stack.Remove(b)
+			tmp = b.Value.(*TreeNode).Right
+		}
+	}
+	return ans
+}
+
 func main() {
 	root := &TreeNode{
 		Val:  1,
@@ -275,11 +333,12 @@ func main() {
 			Right: &TreeNode{Val: 3},
 		},
 	}
-	fmt.Println(isSubStructure(root, &TreeNode{
-		Val:   1,
-		Left:  &TreeNode{Val: -4},
-		Right: nil,
-	}))
+	fmt.Println(inorderTraversal(root))
+	//fmt.Println(isSubStructure(root, &TreeNode{
+	//	Val:   1,
+	//	Left:  &TreeNode{Val: -4},
+	//	Right: nil,
+	//}))
 
 	//rt := &TreeNode{
 	//	Val: 3,

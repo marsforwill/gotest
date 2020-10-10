@@ -120,4 +120,5 @@ func main() {
 	fmt.Println(query(1, 10, 1, 1, 4, &num))
 
 	// 区间修改
+
 }
