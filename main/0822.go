@@ -193,6 +193,39 @@ func removeKdigits(num string, k int) string {
 	}
 	return result
 }
+
+
+func maximalNetworkRank(n int, roads [][]int) int {
+	city := make([][]int, n)
+	for i := 0; i < len(roads); i++ {
+		city[roads[i][0]] = append(city[roads[i][0]], roads[i][1])
+		city[roads[i][1]] = append(city[roads[i][1]], roads[i][0])
+	}
+	ans := -1
+	for i := 0; i < n; i++ {
+		flag := make([]bool, n)
+		for index,j := range city[i]{
+			ans = max(ans, len(city[i]) + len(city[j]) - 1)
+			flag[city[i][index]] = true
+		}
+		for j := i+1; j < n; j++ {
+			if !flag[j] {
+				ans = max(ans, len(city[i]) + len(city[j]))
+			}
+		}
+	}
+	return ans
+}
+
+func max(ans int, i int) int {
+	if ans > i {
+		return ans
+	} else {
+		return i
+	}
+}
+
+
 func main() {
 	//fmt.Println(thousandSeparator(123456789))
 	//fmt.Println(countNumsOfOne(7))

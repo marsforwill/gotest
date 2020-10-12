@@ -323,6 +323,41 @@ func inorderTraversal(root *TreeNode) []int {
 	return ans
 }
 
+//将BST转化为双向循环链表，不允许新建节点
+//为防止歧义，左指针表示双链表向前指，右指针表示双链表向后指
+var pre *TreeNode //必须在全局变量上才可以实现
+func treeToDoublyList(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+	dfsTransfer(root)
+	head, tail := root, root
+	for head.Left != nil {
+		head = head.Left
+	}
+	for tail.Right != nil {
+		tail = tail.Right
+	}
+	head.Left = tail
+	tail.Right = head
+	return head
+}
+
+func dfsTransfer(cur *TreeNode) {
+	if cur == nil {
+		return
+	}
+	dfsTransfer(cur.Left)
+	if pre != nil {
+		cur.Left = pre
+		pre.Right = cur
+	}
+	pre = cur
+	dfsTransfer(cur.Right)
+}
+
+
+
 func main() {
 	root := &TreeNode{
 		Val:  1,
@@ -333,7 +368,7 @@ func main() {
 			Right: &TreeNode{Val: 3},
 		},
 	}
-	fmt.Println(inorderTraversal(root))
+	fmt.Println(treeToDoublyList(root))
 	//fmt.Println(isSubStructure(root, &TreeNode{
 	//	Val:   1,
 	//	Left:  &TreeNode{Val: -4},
