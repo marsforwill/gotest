@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -269,11 +270,46 @@ func minDistance(word1 string, word2 string) int {
 	return dp[len1][len2]
 }
 
+// 2出现的次数 数位dp
+//以dp[i]表示n的1~i位组成的数字所包含2的个数，关键点在于推导出dp[i]与dp[i-1]的关系
+/**
+0：numberOf2sInRange(02) = numberOf2sInRange(2)
+1：numberOf2sInRange(178) = numberOf2sInRange(99) + numberOf2sInRange(78)
+2：numberOf2sInRange(233) = 2 * numberOf2sInRange(99) + numberOf2sInRange(33) + 33 + 1
+>2:numberOf2sInRange(478) = 4 * numberOf2sInRange(99) + numberOf2sInRange(78) + 100
+*/
+func numberOf2sInRange(n int) int {
+	if n == 0 {
+		return 0
+	}
+	digit := int(math.Log10(float64(n)) + 1)
+	dp := make([]int, digit+1)  //numberOf2sInRange(n % pow(10, i)) 保存0~n的1-i位组成的数包含2的个数
+	dp9 := make([]int, digit+1) //numberOf2sInRange(99..9) 保存i位均为9包含2的个数
+	if n%10 >= 2 {
+		dp[1] = 1
+	} else {
+		dp[1] = 0
+	}
+	dp9[1] = 1
+	for i := 2; i <= digit; i++ {
+		k := n / int(math.Pow(10, float64(i-1))) % 10
+		dp[i] = k*dp9[i-1] + dp[i-1]
+		if k == 2 {
+			dp[i] += n%int(math.Pow(10, float64(i-1))) + 1
+		} else if k > 2 {
+			dp[i] += int(math.Pow(10, float64(i-1)))
+		}
+		dp9[i] = 10*dp9[i-1] + int(math.Pow(10, float64(i-1)))
+	}
+	return dp[digit]
+}
+
 func main() {
 	//fmt.Println(isMatch("aa", "a*"))
 	//fmt.Println(longestPalindrome("babad"))
 	//fmt.Println(longestPalindrome("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
 	//fmt.Println(longestAwesome("3242415"))
 	//fmt.Println(stoneGameV([]int{6, 2, 3, 4, 5, 5}))
-	fmt.Println(minDistance("intention", "execution"))
+	//fmt.Println(minDistance("intention", "execution"))
+	fmt.Println(numberOf2sInRange(25))
 }
