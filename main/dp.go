@@ -299,6 +299,7 @@ func numberOf2sInRange(n int) int {
 		} else if k > 2 {
 			dp[i] += int(math.Pow(10, float64(i-1)))
 		}
+		// dp9999 = 9*dp999 + 999 + 1000
 		dp9[i] = 10*dp9[i-1] + int(math.Pow(10, float64(i-1)))
 	}
 	return dp[digit]
