@@ -276,7 +276,7 @@ func minDistance(word1 string, word2 string) int {
 0：numberOf2sInRange(02) = numberOf2sInRange(2)
 1：numberOf2sInRange(178) = numberOf2sInRange(99) + numberOf2sInRange(78)
 2：numberOf2sInRange(233) = 2 * numberOf2sInRange(99) + numberOf2sInRange(33) + 33 + 1
->2:numberOf2sInRange(478) = 4 * numberOf2sInRange(99) + numberOf2sInRange(78) + 100
+>2:numberOf2sInRange(478) = 4 * numberOf2sInRange(99) + numberOf2sInRange(78) + 100 【200～299 百为】
 */
 func numberOf2sInRange(n int) int {
 	if n == 0 {
@@ -303,6 +303,41 @@ func numberOf2sInRange(n int) int {
 		dp9[i] = 10*dp9[i-1] + int(math.Pow(10, float64(i-1)))
 	}
 	return dp[digit]
+}
+
+// 元素和最大子矩阵 二维最大子段和 枚举首行和末行 枚举后二维缩成一维求
+func getMaxMatrix(matrix [][]int) []int {
+	n := len(matrix)
+	m := len(matrix[0])
+	b := make([]int, m)
+	anssumm := math.MinInt16
+	var x1, y1 int
+	ans := make([]int, 4)
+	for i := 0; i < n; i++ { // first row
+		for t := 0; t < m; t++ { //  //每次更换子矩形上边，就要清空b，重新计算每列的和
+			b[t] = 0
+		}
+		for j := i; j < n; j++ { // last row
+			// 确定枚举出i，j为首行，末行后，按列加和转化为一维b[]最大子段和
+			sum := 0
+			for k := 0; k < m; k++ {
+				b[k] += matrix[j][k]
+				if sum > 0 {
+					sum += b[k]
+				} else {
+					sum = b[k]
+					x1 = i
+					y1 = k
+				}
+				if sum > anssumm {
+					anssumm = sum
+					ans = []int{x1, y1, j, k}
+				}
+			}
+		}
+
+	}
+	return ans
 }
 
 func main() {
