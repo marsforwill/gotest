@@ -193,6 +193,74 @@ func removeKdigits(num string, k int) string {
 	}
 	return result
 }
+
+//长度为 m 且在数组中至少重复 k 次
+func containsPattern(arr []int, m int, k int) bool {
+	l := len(arr)
+	for i := 0; i <= l-m*k; i++ {
+		flag := true
+		for j := 1; j < k; j++ {
+			for p := 0; p < m; p++ {
+				if arr[i+p] != arr[i+j*m+p] {
+					flag = false
+					break
+				}
+			}
+			if flag == false {
+				break
+			}
+		}
+		if flag == true {
+			return true
+		}
+	}
+	return false
+}
+
+func diagonalSum(mat [][]int) int {
+	l := len(mat)
+	ans := 0
+	for i := 0; i < l; i++ {
+		ans += mat[i][i]
+		ans += mat[i][l-i-1]
+	}
+	if l%2 == 1 {
+		ans -= mat[l/2][l/2]
+	}
+	return ans
+}
+
+func numWays(s string) int {
+	cone := 0
+	czero := 0
+	temp := 0
+	tempans := 0
+	mod := 1000000007
+	for i := 0; i < len(s); i++ {
+		if s[i] == '1' {
+			cone++
+		}
+		if s[i] == '0' {
+			czero++
+		}
+	}
+	for i := 0; i < len(s); i++ {
+		if s[i] == '1' {
+			temp++
+		}
+		if temp > cone/3 && temp < cone-cone/3 && s[i] == '0' {
+			tempans++
+		}
+	}
+	if cone%3 != 0 {
+		return 0
+	}
+	if cone == 0 {
+		return (czero - 3) * 3 % mod
+	} else {
+		return tempans * 2 % mod
+	}
+}
 func main() {
 	//fmt.Println(thousandSeparator(123456789))
 	//fmt.Println(countNumsOfOne(7))
@@ -202,5 +270,7 @@ func main() {
 	//fmt.Println(stoneGameV([]int{68,75,25,50,34,29,77,1,2,69}))
 	//str := "1432219"
 	//fmt.Println(str[:len(str)-1])
-	fmt.Println(removeKdigits("5337", 2))
+	//fmt.Println(removeKdigits("5337", 2))
+	//fmt.Println(containsPattern([]int{2,2},1,2))
+	fmt.Println(numWays("10101"))
 }
