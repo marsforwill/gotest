@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -269,11 +270,82 @@ func minDistance(word1 string, word2 string) int {
 	return dp[len1][len2]
 }
 
+// 2出现的次数 数位dp
+//以dp[i]表示n的1~i位组成的数字所包含2的个数，关键点在于推导出dp[i]与dp[i-1]的关系
+/**
+0：numberOf2sInRange(02) = numberOf2sInRange(2)
+1：numberOf2sInRange(178) = numberOf2sInRange(99) + numberOf2sInRange(78)
+2：numberOf2sInRange(233) = 2 * numberOf2sInRange(99) + numberOf2sInRange(33) + 33 + 1
+>2:numberOf2sInRange(478) = 4 * numberOf2sInRange(99) + numberOf2sInRange(78) + 100 【200～299 百为】
+*/
+func numberOf2sInRange(n int) int {
+	if n == 0 {
+		return 0
+	}
+	digit := int(math.Log10(float64(n)) + 1)
+	dp := make([]int, digit+1)  //numberOf2sInRange(n % pow(10, i)) 保存0~n的1-i位组成的数包含2的个数
+	dp9 := make([]int, digit+1) //numberOf2sInRange(99..9) 保存i位均为9包含2的个数
+	if n%10 >= 2 {
+		dp[1] = 1
+	} else {
+		dp[1] = 0
+	}
+	dp9[1] = 1
+	for i := 2; i <= digit; i++ {
+		k := n / int(math.Pow(10, float64(i-1))) % 10
+		dp[i] = k*dp9[i-1] + dp[i-1]
+		if k == 2 {
+			dp[i] += n%int(math.Pow(10, float64(i-1))) + 1
+		} else if k > 2 {
+			dp[i] += int(math.Pow(10, float64(i-1)))
+		}
+		// dp9999 = 9*dp999 + 999 + 1000
+		dp9[i] = 10*dp9[i-1] + int(math.Pow(10, float64(i-1)))
+	}
+	return dp[digit]
+}
+
+// 元素和最大子矩阵 二维最大子段和 枚举首行和末行 枚举后二维缩成一维求
+func getMaxMatrix(matrix [][]int) []int {
+	n := len(matrix)
+	m := len(matrix[0])
+	b := make([]int, m)
+	anssumm := math.MinInt16
+	var x1, y1 int
+	ans := make([]int, 4)
+	for i := 0; i < n; i++ { // first row
+		for t := 0; t < m; t++ { //  //每次更换子矩形上边，就要清空b，重新计算每列的和
+			b[t] = 0
+		}
+		for j := i; j < n; j++ { // last row
+			// 确定枚举出i，j为首行，末行后，按列加和转化为一维b[]最大子段和
+			sum := 0
+			for k := 0; k < m; k++ {
+				b[k] += matrix[j][k]
+				if sum > 0 {
+					sum += b[k]
+				} else {
+					sum = b[k]
+					x1 = i
+					y1 = k
+				}
+				if sum > anssumm {
+					anssumm = sum
+					ans = []int{x1, y1, j, k}
+				}
+			}
+		}
+
+	}
+	return ans
+}
+
 func main() {
 	//fmt.Println(isMatch("aa", "a*"))
 	//fmt.Println(longestPalindrome("babad"))
 	//fmt.Println(longestPalindrome("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
 	//fmt.Println(longestAwesome("3242415"))
 	//fmt.Println(stoneGameV([]int{6, 2, 3, 4, 5, 5}))
-	fmt.Println(minDistance("intention", "execution"))
+	//fmt.Println(minDistance("intention", "execution"))
+	fmt.Println(numberOf2sInRange(25))
 }

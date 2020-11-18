@@ -3,6 +3,8 @@ package main
 import (
 	"container/list"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 //* Definition for a binary tree node.
@@ -323,6 +325,69 @@ func inorderTraversal(root *TreeNode) []int {
 	return ans
 }
 
+//将BST转化为双向循环链表，不允许新建节点
+//为防止歧义，左指针表示双链表向前指，右指针表示双链表向后指
+var pre *TreeNode //必须在全局变量上才可以实现
+func treeToDoublyList(root *TreeNode) *TreeNode {
+	if root == nil {
+		return root
+	}
+	dfsTransfer(root)
+	head, tail := root, root
+	for head.Left != nil {
+		head = head.Left
+	}
+	for tail.Right != nil {
+		tail = tail.Right
+	}
+	head.Left = tail
+	tail.Right = head
+	return head
+}
+
+func dfsTransfer(cur *TreeNode) {
+	if cur == nil {
+		return
+	}
+	dfsTransfer(cur.Left)
+	if pre != nil {
+		cur.Left = pre
+		pre.Right = cur
+	}
+	pre = cur
+	dfsTransfer(cur.Right)
+}
+
+// 二叉树前序遍历 序列化与反序列化
+// Serializes a tree to a single string.
+func serialize(root *TreeNode) string {
+	if root == nil {
+		return "X"
+	}
+	return strconv.Itoa(root.Val) + "." + serialize(root.Left) + "." + serialize(root.Right)
+}
+
+// Deserializes your encoded data to tree.
+func deserialize(data string) *TreeNode {
+	list := strings.Split(data, ".")
+	return buildT(&list)
+}
+
+// 这个有点精髓
+func buildT(list *[]string) *TreeNode {
+	rootVal := (*list)[0]
+	*list = (*list)[1:]
+	if rootVal == "X" {
+		return nil
+	}
+	val, _ := strconv.Atoi(rootVal)
+	return &TreeNode{
+		Val:   val,
+		Left:  buildT(list),
+		Right: buildT(list),
+	}
+}
+
 func main() {
 	root := &TreeNode{
 		Val:  1,
@@ -333,7 +398,10 @@ func main() {
 			Right: &TreeNode{Val: 3},
 		},
 	}
-	fmt.Println(inorderTraversal(root))
+	fmt.Println(serialize(root))
+	a := deserialize("1.0.X.X.1.-4.X.X.3.X.X")
+	fmt.Println(a)
+	//fmt.Println(treeToDoublyList(root))
 	//fmt.Println(isSubStructure(root, &TreeNode{
 	//	Val:   1,
 	//	Left:  &TreeNode{Val: -4},
