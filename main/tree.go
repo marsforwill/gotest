@@ -3,6 +3,8 @@ package main
 import (
 	"container/list"
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 //* Definition for a binary tree node.
@@ -356,7 +358,35 @@ func dfsTransfer(cur *TreeNode) {
 	dfsTransfer(cur.Right)
 }
 
+// 二叉树前序遍历 序列化与反序列化
+// Serializes a tree to a single string.
+func serialize(root *TreeNode) string {
+	if root == nil {
+		return "X"
+	}
+	return strconv.Itoa(root.Val) + "." + serialize(root.Left) + "." + serialize(root.Right)
+}
 
+// Deserializes your encoded data to tree.
+func deserialize(data string) *TreeNode {
+	list := strings.Split(data, ".")
+	return buildT(&list)
+}
+
+// 这个有点精髓
+func buildT(list *[]string) *TreeNode {
+	rootVal := (*list)[0]
+	*list = (*list)[1:]
+	if rootVal == "X" {
+		return nil
+	}
+	val, _ := strconv.Atoi(rootVal)
+	return &TreeNode{
+		Val:   val,
+		Left:  buildT(list),
+		Right: buildT(list),
+	}
+}
 
 func main() {
 	root := &TreeNode{
@@ -368,7 +398,10 @@ func main() {
 			Right: &TreeNode{Val: 3},
 		},
 	}
-	fmt.Println(treeToDoublyList(root))
+	fmt.Println(serialize(root))
+	a := deserialize("1.0.X.X.1.-4.X.X.3.X.X")
+	fmt.Println(a)
+	//fmt.Println(treeToDoublyList(root))
 	//fmt.Println(isSubStructure(root, &TreeNode{
 	//	Val:   1,
 	//	Left:  &TreeNode{Val: -4},
