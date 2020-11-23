@@ -43,9 +43,9 @@ func closeStrings(word1 string, word2 string) bool {
 	m := make(map[uint8]int)
 	for i := 0; i < l1; i++ {
 		a := word1[i]
-		v,ok := m[a]
+		v, ok := m[a]
 		if ok {
-			m[a] = v+1
+			m[a] = v + 1
 		} else {
 			m[a] = 1
 		}
@@ -53,22 +53,22 @@ func closeStrings(word1 string, word2 string) bool {
 	m2 := make(map[uint8]int)
 	for i := 0; i < l1; i++ {
 		a := word2[i]
-		_,o := m[a]
+		_, o := m[a]
 		if o == false {
 			return false
 		}
-		v,ok := m2[a]
+		v, ok := m2[a]
 		if ok {
-			m2[a] = v+1
+			m2[a] = v + 1
 		} else {
 			m2[a] = 1
 		}
 	}
-	var list1,list2 []int
+	var list1, list2 []int
 	for k := range m {
 		list1 = append(list1, m[k])
 	}
-	for k:= range m2 {
+	for k := range m2 {
 		list2 = append(list2, m2[k])
 	}
 	sort.Ints(list1)
@@ -91,38 +91,59 @@ func minOperations(nums []int, x int) int {
 		sum += nums[i]
 	}
 	ans := -1
-	target := sum-x
+	target := sum - x
 	if target == 0 {
 		return len(nums)
 	}
-	left, right, s := 0,0,nums[0]
-	for left < len(nums)  && right < len(nums) {
+	left, right, s := 0, 0, nums[0]
+	for left < len(nums) && right < len(nums) {
 		if s < target {
 			right++
 			if right == len(nums) {
 				continue
 			}
-			s+=nums[right]
+			s += nums[right]
 		} else if s > target {
-			s-=nums[left]
+			s -= nums[left]
 			left++
 		} else if s == target {
-			if  right-left > ans {
-				ans = right-left
+			if right-left > ans {
+				ans = right - left
 			}
 			right++
 			if right == len(nums) {
 				continue
 			}
-			s+=nums[right]
+			s += nums[right]
 		}
 	}
 	if ans == -1 {
 		return -1
 	}
-	return len(nums) - ans -1
+	return len(nums) - ans - 1
+}
+
+// byte 操作比string快
+func getSmallestString(n int, k int) string {
+	ans := make([]byte, n, n)
+	var t int
+	cur := k
+
+	for i := 1; i <= n; i++ {
+		if (n-i)*26 >= cur-1 {
+			ans[i-1] = 'a'
+			cur--
+		} else {
+			temp := cur - (n-i)*26
+			t = 'a' + temp - 1
+			ans[i-1] = byte(t)
+			cur -= temp
+		}
+	}
+	return string(ans)
 }
 
 func main() {
-	fmt.Println(minOperations([]int{500,1,4,2,3},500))
+	//fmt.Println(minOperations([]int{500,1,4,2,3},500))
+	fmt.Println(getSmallestString(5, 73))
 }
