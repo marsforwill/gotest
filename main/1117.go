@@ -143,7 +143,75 @@ func getSmallestString(n int, k int) string {
 	return string(ans)
 }
 
+// 统计每个数前面/后面  奇数/偶数 下标和
+func waysToMakeFair(nums []int) int {
+	ans := 0
+	n := len(nums)
+	leftodd := make([]int, n)
+	lefteven := make([]int, n)
+	rightodd := make([]int, n)
+	righteven := make([]int, n)
+	for i := 0; i < n; i++ {
+		if i%2 == 0 {
+			lefteven[i] = nums[i]
+			if i >= 2 {
+				lefteven[i] += lefteven[i-2]
+			}
+			if i >= 1 {
+				leftodd[i] = leftodd[i-1]
+			}
+		} else {
+			leftodd[i] = nums[i]
+			if i >= 2 {
+				leftodd[i] += leftodd[i-2]
+			}
+			if i >= 1 {
+				lefteven[i] = lefteven[i-1]
+			}
+		}
+	}
+	for i := n - 1; i >= 0; i-- {
+		if i%2 == 0 {
+			righteven[i] = nums[i]
+			if i < n-2 {
+				righteven[i] += righteven[i+2]
+			}
+			if i < n-1 {
+				rightodd[i] = rightodd[i+1]
+			}
+		} else {
+			rightodd[i] = nums[i]
+			if i < n-2 {
+				rightodd[i] += rightodd[i+2]
+			}
+			if i < n-1 {
+				righteven[i] = righteven[i+1]
+			}
+		}
+	}
+	//fmt.Println(leftodd)
+	//fmt.Println(lefteven)
+	//fmt.Println(rightodd)
+	//fmt.Println(righteven)
+	for i := 0; i < n; i++ {
+		o, e := 0, 0
+		if i > 0 {
+			o += leftodd[i-1]
+			e += lefteven[i-1]
+		}
+		if i < n-1 {
+			o += righteven[i+1]
+			e += rightodd[i+1]
+		}
+		if o == e {
+			ans++
+		}
+	}
+	return ans
+}
+
 func main() {
 	//fmt.Println(minOperations([]int{500,1,4,2,3},500))
-	fmt.Println(getSmallestString(5, 73))
+	//fmt.Println(getSmallestString(5, 73))
+	fmt.Println(waysToMakeFair([]int{1, 1, 1}))
 }
