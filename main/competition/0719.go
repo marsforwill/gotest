@@ -115,26 +115,26 @@ func getLengthOfOptimalCompression(s string, k int) int {
 	dp := make([][]int, len(s)+1)
 	for i := 0; i < len(dp); i++ {
 		for k := 0; k <= len(s); k++ {
-			dp[i] = append(dp[i],10000)
+			dp[i] = append(dp[i], 10000)
 		}
 	}
 	dp[len(s)][t] = 0
 	// 外层枚举字符串p从后往前
-	for p := len(s)-1; p >= 0; p-- {
+	for p := len(s) - 1; p >= 0; p-- {
 		// cnt 已选取的字符长度
 		for cnt := 0; cnt <= t; cnt++ {
-			same:=0
-			for j:=p; j < len(s); j++ {
-				if s[j]==s[p] {
+			same := 0
+			for j := p; j < len(s); j++ {
+				if s[j] == s[p] {
 					same++
 				}
-				if same + cnt > t {
+				if same+cnt > t {
 					break
 				}
 				// 把【p...j】的字符去掉
-				dp[p][cnt] = min(dp[p][cnt],dp[j+1][cnt+same]+calc(same))
+				dp[p][cnt] = min(dp[p][cnt], dp[j+1][cnt+same]+calc(same))
 			}
-			dp[p][cnt] = min(dp[p][cnt],dp[p+1][cnt])
+			dp[p][cnt] = min(dp[p][cnt], dp[p+1][cnt])
 		}
 	}
 	return dp[0][0]
@@ -177,5 +177,5 @@ func main() {
 	//	},
 	//}, 3)
 	//fmt.Println(ans)
-	fmt.Println(getLengthOfOptimalCompression("aaabcccd",  2))
+	fmt.Println(getLengthOfOptimalCompression("aaabcccd", 2))
 }

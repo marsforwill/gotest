@@ -11,9 +11,9 @@ func canMakeArithmeticProgression(arr []int) bool {
 	if len(arr) <= 2 {
 		return true
 	}
-	delta := arr[0]-arr[1]
+	delta := arr[0] - arr[1]
 	for i := 0; i < len(arr)-1; i++ {
-		if arr[i] - arr[i+1] != delta {
+		if arr[i]-arr[i+1] != delta {
 			return false
 		}
 	}
@@ -36,7 +36,7 @@ func getLastMoment(n int, left []int, right []int) int {
 	if l > n-r {
 		return l
 	} else {
-		return n-r
+		return n - r
 	}
 }
 
@@ -57,18 +57,18 @@ func numSubmat(mat [][]int) int {
 		for j := 0; j < n; j++ {
 			if mat[i][j] == 0 {
 				f[i][j] = 0
-			} else if i==0 {
-				if j==0 {
+			} else if i == 0 {
+				if j == 0 {
 					f[i][j] = mat[i][j]
 				} else {
-					f[i][j] = f[i][j-1] +1
+					f[i][j] = f[i][j-1] + 1
 				}
-			} else if j==0 {
-				f[i][j] = f[i-1][j]+1
+			} else if j == 0 {
+				f[i][j] = f[i-1][j] + 1
 			} else {
-				last := f[i][j - 1]+f[i - 1][j] - f[i-1][j-1]
+				last := f[i][j-1] + f[i-1][j] - f[i-1][j-1]
 				if last > 0 {
-					f[i][j] = last +1
+					f[i][j] = last + 1
 				} else {
 					f[i][j] = 1
 				}
@@ -86,5 +86,5 @@ func main() {
 	//u,err := url.Parse("internal-proxy.proxy:10002")
 	//fmt.Println(u)
 	//fmt.Println(err)
-	fmt.Println(strings.ReplaceAll("/argus/operation/v1/db/static_group","/operation",""))
+	fmt.Println(strings.ReplaceAll("/argus/operation/v1/db/static_group", "/operation", ""))
 }

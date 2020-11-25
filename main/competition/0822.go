@@ -262,7 +262,6 @@ func numWays(s string) int {
 	}
 }
 
-
 func maximalNetworkRank(n int, roads [][]int) int {
 	city := make([][]int, n)
 	for i := 0; i < len(roads); i++ {
@@ -272,13 +271,13 @@ func maximalNetworkRank(n int, roads [][]int) int {
 	ans := -1
 	for i := 0; i < n; i++ {
 		flag := make([]bool, n)
-		for index,j := range city[i]{
-			ans = max(ans, len(city[i]) + len(city[j]) - 1)
+		for index, j := range city[i] {
+			ans = max(ans, len(city[i])+len(city[j])-1)
 			flag[city[i][index]] = true
 		}
-		for j := i+1; j < n; j++ {
+		for j := i + 1; j < n; j++ {
 			if !flag[j] {
-				ans = max(ans, len(city[i]) + len(city[j]))
+				ans = max(ans, len(city[i])+len(city[j]))
 			}
 		}
 	}
@@ -292,7 +291,6 @@ func max(ans int, i int) int {
 		return i
 	}
 }
-
 
 func main() {
 	//fmt.Println(thousandSeparator(123456789))
