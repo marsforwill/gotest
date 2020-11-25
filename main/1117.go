@@ -210,8 +210,29 @@ func waysToMakeFair(nums []int) int {
 	return ans
 }
 
+// 有一说一 这种数学感觉自己并不能够推导出来
+func minimumEffort(tasks [][]int) int {
+	ans := 0
+	sort.Slice(tasks, func(i int, j int) bool {
+		return (tasks[i][1] - tasks[i][0]) < (tasks[j][1] - tasks[j][0])
+	})
+	for i := 0; i < len(tasks); i++ {
+		ans += tasks[i][0]
+	}
+	count := ans
+	for i := len(tasks) - 1; i >= 0; i-- {
+		if count < tasks[i][1] {
+			ans += tasks[i][1] - count
+			count += tasks[i][1] - count
+		}
+		count -= tasks[i][0]
+	}
+	return ans
+}
+
 func main() {
 	//fmt.Println(minOperations([]int{500,1,4,2,3},500))
 	//fmt.Println(getSmallestString(5, 73))
-	fmt.Println(waysToMakeFair([]int{1, 1, 1}))
+	//fmt.Println(waysToMakeFair([]int{1, 1, 1}))
+	fmt.Println(minimumEffort([][]int{{1, 3}, {2, 4}, {10, 11}, {10, 12}, {8, 9}}))
 }
