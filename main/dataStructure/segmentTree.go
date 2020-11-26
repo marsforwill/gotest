@@ -12,6 +12,14 @@ func min(i, j int) int {
 	}
 }
 
+func max(i, j int) int {
+	if i > j {
+		return i
+	} else {
+		return j
+	}
+}
+
 var INF = 100000
 
 // 点修改 求区间最小值

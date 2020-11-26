@@ -4,24 +4,25 @@ import "fmt"
 
 //https://blog.csdn.net/helloworldchina/article/details/104465772
 
-// 计算pattern串的next数组 最大公共前后缀的长度值
+// 计算pattern串的next数组 最大公共前后缀的长度值 前者是在 pat 中匹配 pat[1..end]
 func kmpNext(str string) []int {
 	next := make([]int, len(str))
 	next[0] = 0
-	k := 0
-	for j := 1; j < len(str); j++ {
-		for k > 0 && str[k] != str[j] {
-			k = next[k-1]
+	j := 0
+	for i := 1; i < len(str); i++ {
+		for j > 0 && str[j] != str[i] {
+			j = next[j-1]
 		}
-		if str[j] == str[k] {
-			k++
+		if str[i] == str[j] {
+			j++
 		}
-		next[j] = k
+		next[i] = j
 	}
 
 	return next
 }
 
+// 在s中匹配模式串pattern t
 func kmp(s, t string, next []int) int {
 	j := 0
 	for i := 0; i < len(s); i++ {
