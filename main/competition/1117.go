@@ -230,9 +230,29 @@ func minimumEffort(tasks [][]int) int {
 	return ans
 }
 
+func mostCompetitive(nums []int, k int) []int {
+	n := len(nums)
+	del := n - k
+	for i := 0; del > 0 && i < len(nums)-1; i++ {
+		if nums[i] <= nums[i+1] {
+			continue
+		} else {
+			for del > 0 && i < len(nums)-1 && nums[i] > nums[i+1] {
+				del--
+				nums = append(nums[0:i], nums[i+1:]...)
+				if i > 0 {
+					i--
+				}
+			}
+		}
+	}
+	return nums[0:k]
+}
+
 func main() {
 	//fmt.Println(minOperations([]int{500,1,4,2,3},500))
 	//fmt.Println(getSmallestString(5, 73))
 	//fmt.Println(waysToMakeFair([]int{1, 1, 1}))
-	fmt.Println(minimumEffort([][]int{{1, 3}, {2, 4}, {10, 11}, {10, 12}, {8, 9}}))
+	//fmt.Println(minimumEffort([][]int{{1, 3}, {2, 4}, {10, 11}, {10, 12}, {8, 9}}))
+	fmt.Println(mostCompetitive([]int{2, 4, 3, 3, 5, 4, 9, 6}, 4))
 }
