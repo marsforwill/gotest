@@ -42,7 +42,9 @@ type LRUCache struct {
 }
 
 func Constructor(capacity int) LRUCache {
+	// 链表维护在缓存中的最近节点访问顺序
 	l := list.New()
+	// map维护在缓存中的key -> list node
 	m := make(map[int]*list.Element, capacity)
 	return LRUCache{
 		list: l,
