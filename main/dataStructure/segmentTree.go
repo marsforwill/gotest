@@ -200,6 +200,9 @@ func (st *SegmentCountTree) Init(nums []int, oper func(i, j int) int) {
 		data[i] = nums[i]
 	}
 	st.data, st.tree = data, tree
+	if len(nums) > 0 {
+		st.buildSegmentTree(0, 0, len(nums)-1)
+	}
 }
 
 // 在 treeIndex 的位置创建 [left....right] 区间的线段树
@@ -268,16 +271,23 @@ func (st *SegmentCountTree) updateCountInTree(treeIndex, left, right, val int) {
 }
 
 func main() {
-	segmentTree := new(SegmentTree)
-	segmentTree.Init([]int{1, 2, 3, 4, 5}, func(i, j int) int {
-		if i > j {
-			return i
-		} else {
-			return j
-		}
+	//segmentTree := new(SegmentTree)
+	//segmentTree.Init([]int{1, 2, 3, 4, 5}, func(i, j int) int {
+	//	if i > j {
+	//		return i
+	//	} else {
+	//		return j
+	//	}
+	//})
+	//segmentTree.UpdateLazy(0, 3, 2)
+	//fmt.Println(segmentTree.data)
+	//fmt.Println(segmentTree.tree)
+	//fmt.Println(segmentTree.QueryLazy(0, 3))
+
+	segmentCountTree := new(SegmentCountTree)
+	segmentCountTree.Init([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, func(i, j int) int {
+		return i + j
 	})
-	segmentTree.UpdateLazy(0, 3, 2)
-	fmt.Println(segmentTree.data)
-	fmt.Println(segmentTree.tree)
-	fmt.Println(segmentTree.QueryLazy(0, 3))
+	fmt.Println(segmentCountTree.Query(3, 6))
+
 }
