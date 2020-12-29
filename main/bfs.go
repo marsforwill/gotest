@@ -64,6 +64,11 @@ func slidingPuzzle(board [][]int) int {
 	return -1
 }
 
+// 获取所有钥匙的最短路径 todo 感觉实在不怎么想写
+func shortestPathAllKeys(grid []string) int {
+	return 0
+}
+
 func main() {
 	fmt.Println(slidingPuzzle([][]int{{3, 2, 4}, {1, 5, 0}}))
 }
