@@ -38,7 +38,7 @@ func reverseList(head *ListNode) *ListNode {
 }
 
 // 输入: 1->2->3->4->5->NULL, m = 2, n = 4
-//输出: 1->4->3->2->5->NULL
+//输出: 1->4->3->2->5->NULL 反转链表中间一部分
 func reverseBetween(head *ListNode, m int, n int) *ListNode {
 	if head == nil || m == n {
 		return head
@@ -79,6 +79,32 @@ func reverseBetween(head *ListNode, m int, n int) *ListNode {
 	return head
 }
 
+// k个一组反转链表
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	node := head
+	for i := 0; i < k; i++ {
+		if node == nil {
+			return head
+		}
+		node = node.Next
+	}
+	newHead := reverse(head, node)
+	head.Next = reverseKGroup(node, k)
+	return newHead
+}
+
+// reverse and return new head
+func reverse(first *ListNode, last *ListNode) *ListNode {
+	var pre *ListNode
+	for first != last {
+		tmp := first.Next
+		first.Next = pre
+		pre = first
+		first = tmp
+	}
+	return pre
+}
+
 //编写程序以 x 为基准分割链表，使得所有小于 x 的节点排在大于或等于 x 的节点之前。如果链表中包含 x，x 只需出现在小于 x 的元素之后(如下所示)。
 //分割元素 x 只需处于“右半部分”即可，其不需要被置于左右两部分之间。
 // 输入: head = 3->5->8->5->10->2->1, x = 5
@@ -105,14 +131,14 @@ func partition(head *ListNode, x int) *ListNode {
 	return head
 }
 func main() {
-	fmt.Println(partition(&ListNode{
+	fmt.Println(reverseKGroup(&ListNode{
 		Val: 1,
 		Next: &ListNode{
-			Val: 4,
+			Val: 2,
 			Next: &ListNode{
 				Val: 3,
 				Next: &ListNode{
-					Val:  2,
+					Val:  4,
 					Next: &ListNode{Val: 5},
 				},
 			},
