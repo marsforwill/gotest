@@ -38,10 +38,14 @@ func GetEndTime(d time.Time) time.Time {
 }
 
 func main() {
-	fmt.Println(GetFirstDateOfLastMonth(time.Now()))
-	fmt.Println(GetLastDateOfLastMonth(time.Now()))
-	fmt.Println(GetFirstDateOfMonth(time.Now()))
-	//fmt.Println(time.Unix(1606752000,0).AddDate(0, -1, 0))
-	fmt.Println(GetFirstDateOfMonth(time.Now()))
-	fmt.Println(GetHalfDateOfMonth(time.Now()))
+	//fmt.Println(GetFirstDateOfLastMonth(time.Now()))
+	//fmt.Println(GetLastDateOfLastMonth(time.Now()))
+	//fmt.Println(GetFirstDateOfMonth(time.Now()))
+	////fmt.Println(time.Unix(1606752000,0).AddDate(0, -1, 0))
+	//fmt.Println(GetFirstDateOfMonth(time.Now()))
+	//fmt.Println(GetHalfDateOfMonth(time.Now()))
+
+	var cstSh, _ = time.LoadLocation("utc")
+	fmt.Println(time.Unix(1609354860, 0))
+	fmt.Println(time.Unix(1609354860, 0).In(cstSh))
 }
