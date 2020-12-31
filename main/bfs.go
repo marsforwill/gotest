@@ -95,7 +95,7 @@ func shortestPathAllKeys(grid []string) int {
 	}
 	q := list.New()
 	// input first head
-	q.PushBack((sy << 16) | (sy << 8))
+	q.PushBack((sy << 16) | (sx << 8))
 	vis[sx][sy][0] = true
 
 	// bfs
@@ -114,8 +114,23 @@ func shortestPathAllKeys(grid []string) int {
 			for idx := 0; idx < 4; idx++ {
 				nx := x + dx[i]
 				ny := y + dy[i]
+				newSta := sta
 				if nx >= 0 && nx < lx && ny >= 0 && ny < ly && grid[nx][ny] != '#' {
-
+					flag, canThroughLock := keys&(1<<(grid[nx][ny]-'A')), false
+					if flag != 0 {
+						canThroughLock = true
+					}
+					if grid[nx][ny] >= 'A' && grid[nx][ny] <= 'F' && !canThroughLock {
+						continue
+					}
+					if grid[nx][ny] >= 'a' && grid[nx][ny] <= 'f' {
+						newSta = newSta | (1 << (grid[nx][ny] - 'a'))
+					}
+					if vis[nx][ny][newSta] {
+						continue
+					}
+					q.PushBack((ny << 16) | (nx << 8) | newSta)
+					vis[nx][ny][newSta] = true
 				}
 			}
 		}
