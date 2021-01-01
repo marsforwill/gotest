@@ -107,16 +107,16 @@ func shortestPathAllKeys(grid []string) int {
 		for i := 0; i < qLen; i++ {
 			cur := q.Front().Value.(int)
 			q.Remove(q.Front())
-			x, y, sta := cur>>16, (cur>>8)&0xFF, cur&0xFF
+			y, x, sta := cur>>16, (cur>>8)&0xFF, cur&0xFF
 			if sta == keys {
 				return res
 			}
 			for idx := 0; idx < 4; idx++ {
-				nx := x + dx[i]
-				ny := y + dy[i]
+				nx := x + dx[idx]
+				ny := y + dy[idx]
 				newSta := sta
 				if nx >= 0 && nx < lx && ny >= 0 && ny < ly && grid[nx][ny] != '#' {
-					flag, canThroughLock := keys&(1<<(grid[nx][ny]-'A')), false
+					flag, canThroughLock := newSta&(1<<(grid[nx][ny]-'A')), false
 					if flag != 0 {
 						canThroughLock = true
 					}
@@ -134,6 +134,7 @@ func shortestPathAllKeys(grid []string) int {
 				}
 			}
 		}
+		res++
 	}
 
 	return -1
@@ -141,5 +142,8 @@ func shortestPathAllKeys(grid []string) int {
 
 func main() {
 	//fmt.Println(slidingPuzzle([][]int{{3, 2, 4}, {1, 5, 0}}))
+	//@.a.#
+	//###.#
+	//b.A.B
 	fmt.Println(shortestPathAllKeys([]string{"@.a.#", "###.#", "b.A.B"}))
 }
