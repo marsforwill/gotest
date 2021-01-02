@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type A struct {
 	a int
 }
@@ -120,29 +122,66 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 
 // EncodeToString returns the base64 encoding of src.
 
-func main() {
+//以从上往下、从左到右进行 Z 字形排列
+func convert(s string, numRows int) string {
+	if numRows <= 1 {
+		return s
+	}
+	dict := make([][]byte, numRows)
+	for i := 0; i < numRows; i++ {
+		dict[i] = make([]byte, len(s))
+	}
+	i, j := 0, 0
+	flag := true
+	for index := 0; index < len(s); index++ {
+		dict[i][j] = s[index]
+		if i+1 == numRows {
+			flag = false
+		}
+		if i == 0 {
+			flag = true
+		}
+		if flag {
+			i++
+		} else {
+			i--
+			j++
+		}
+	}
+	var ans string
+	for i := 0; i < len(dict); i++ {
+		for j := 0; j < len(dict[i]); j++ {
+			if dict[i][j] != ' ' && dict[i][j] != '\u0000' {
+				ans += string(dict[i][j])
+			}
+		}
+	}
+	return ans
+}
 
-	a := ListNode{
-		Val: 2,
-		Next: &ListNode{
-			Val: 4,
-			Next: &ListNode{
-				Val:  3,
-				Next: nil,
-			},
-		},
-	}
-	b := ListNode{
-		Val: 5,
-		Next: &ListNode{
-			Val: 6,
-			Next: &ListNode{
-				Val:  4,
-				Next: nil,
-			},
-		},
-	}
-	addTwoNumbers(&a, &b)
+func main() {
+	fmt.Println(convert("AB", 1))
+	//a := ListNode{
+	//	Val: 2,
+	//	Next: &ListNode{
+	//		Val: 4,
+	//		Next: &ListNode{
+	//			Val:  3,
+	//			Next: nil,
+	//		},
+	//	},
+	//}
+	//b := ListNode{
+	//	Val: 5,
+	//	Next: &ListNode{
+	//		Val: 6,
+	//		Next: &ListNode{
+	//			Val:  4,
+	//			Next: nil,
+	//		},
+	//	},
+	//}
+	//addTwoNumbers(&a, &b)
 
 	//str := "U09GMbdfAAAQBAAAAAEAAAAAAAAEAAAAAAAAAAAAAABbCr0Jkud1uW3Bk1P6E6BKrdXgXL3lqFk42fhK/6uDjyPSHGNdfI0iEfdC4qgev0hEKkknGO4X4f1DEOjfSYe51sAIh8OUTi9Z4+xQrwspYxhCOEhGaqetrkrrfHqtlXGpm0UkWbhnhSpf1T0QwXJRxP68xqGS1gjdCC17mL0C5be2VaPBAWQ2fJVQVaEYpmiC2mua4MiFdgna3O26SyngcAlKiIe/xDtVNDxNDSnZvGiAyeL77S3iEy5J/WQeoS61z8LEOUwSeHHJovrkRkeiUugAUF4Vp2iAPYwkWr52srC46l0b2XynhZ2aUCog+IBlWWGHeVMpmI2VLm1R3KZj7d8jY93I9U5K0LkOtaqGrI4w2NDjGcIMpigxTs5lbVwnitIuJflhVPFzjsmoHYRK9tEKpMvNt5Dcl4ItyPQQyV0K5y8AkLVO7uECMcZ13BC6oK4eaNAleHKaB/+ZPu1XcgFe4VWc2AFnqJBiZrS9HlF9RPp1PgtwLn8EwqYaKTn0gk9Jhp/313Qv6oanSuJPB0LEzC8Kn1OPy5BvV5aWp0iIxj9ilgAd+7dK/lEwEhVVPGVVW1GIhcHp61xqS7xWSkxymdWi+lW+0q98Loj9QUcjLC/MjY4/HlBcU8M9JG/zVeKBQUGO2It5uxOwuHwGJMHWmfgYGpXs4vZtKgNXU4Wz2FG0yVCNpuTcv61o+9b2dWwV7ZxxgGgsHhXslcTKLTs6irDL3slngCRi2jCGgMWL/jfueafiwXHLvQnvZWCMZUK3gUm0TIoAFxgtmHMvw5rULE83KVBGW3IQcCVNz9RE+Jy972dTOnIYbDWE3g7IfWnl2hmh+q4SWJupZ/qT3FV/VGLJP7lhFQIEzUeLq1RKiyLsYHFOlgZFXjypxptDk8damvAVaCqVx58WEVdgeqAWXPfN2e7yN40eOZhpnLwEgu/JNeaKpo0OPCeGfR/Dh48rizbYAIRGeg3t5yPMX+x0xSh+YK6e5gy04t+wfJOJUx6JPaLbOTZ3+sYAS7xSoq3CNPsqpIUYZQLSOErkzfGpDudz4iGjifXJsec6pRq5mRHtKsE2h4TVIyppttKn7gtcIz12ZoG+TRiXh+j+eX1k8pqaFNppy2qCewzNPMuVVnLOlr/Nc7UlmmFe+w4j2xr21FZsXC7Hkl7DfiIEU8YWULxMe2lHzs7um/foL1as/PXd/5ZFQh/4PehKnLpVZ6h6gLg/hmEDclCljudPoVKeJzblDMTUKCtzEfDf/v2BHl7Xcqq5tH+TQ78GuGCyu+PziCNdhSGfnd70E4sDBJMlg6QeA/iEX7wF/BzRJ5GlIruddx8q8iMJ/fTBssysWGEBIABziJQ9mslaEKuWQ0q4fXUIpPrOwhJDKxmwmA=="
 	//bytes :=[]byte(str)
