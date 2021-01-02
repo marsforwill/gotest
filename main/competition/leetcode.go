@@ -168,8 +168,13 @@ func myAtoi(s string) int {
 	str := strings.TrimSpace(s)
 	ans := ""
 	i := 0
+	flag := false
 	for i = 0; i < len(str); i++ {
-		if (str[i] != '-' && str[i] != '+') && (str[i] < '0' || str[i] > '9') {
+		if (str[i] == '-' || str[i] == '+') && flag == false {
+			flag = true
+			continue
+		}
+		if str[i] < '0' || str[i] > '9' {
 			ans = str[:i]
 			break
 		}
@@ -177,13 +182,13 @@ func myAtoi(s string) int {
 	if i == len(str) {
 		ans = str
 	}
+	if ans[len(ans)-1] == '-' || ans[len(ans)-1] == '+' {
+		ans = ans[:len(ans)-1]
+	}
 	if len(ans) == 0 {
 		return 0
 	}
-	num, err := strconv.Atoi(ans)
-	if err != nil {
-		return 0
-	}
+	num, _ := strconv.Atoi(ans)
 	if num > math.MaxInt32 {
 		return math.MaxInt32
 	}
@@ -193,7 +198,7 @@ func myAtoi(s string) int {
 	return num
 }
 func main() {
-	fmt.Println(myAtoi("20000000000000000000"))
+	fmt.Println(myAtoi("123-"))
 	//a := ListNode{
 	//	Val: 2,
 	//	Next: &ListNode{
