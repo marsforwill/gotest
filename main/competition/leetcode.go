@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+	"strconv"
+	"strings"
+)
 
 type A struct {
 	a int
@@ -159,8 +164,36 @@ func convert(s string, numRows int) string {
 	return ans
 }
 
+func myAtoi(s string) int {
+	str := strings.TrimSpace(s)
+	ans := ""
+	i := 0
+	for i = 0; i < len(str); i++ {
+		if (str[i] != '-' && str[i] != '+') && (str[i] < '0' || str[i] > '9') {
+			ans = str[:i]
+			break
+		}
+	}
+	if i == len(str) {
+		ans = str
+	}
+	if len(ans) == 0 {
+		return 0
+	}
+	num, err := strconv.Atoi(ans)
+	if err != nil {
+		return 0
+	}
+	if num > math.MaxInt32 {
+		return math.MaxInt32
+	}
+	if num < math.MinInt32 {
+		return math.MinInt32
+	}
+	return num
+}
 func main() {
-	fmt.Println(convert("AB", 1))
+	fmt.Println(myAtoi("20000000000000000000"))
 	//a := ListNode{
 	//	Val: 2,
 	//	Next: &ListNode{
