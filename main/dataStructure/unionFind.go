@@ -4,6 +4,7 @@ package main
 
 // UnionFind defind
 // 路径压缩 + 秩优化
+// rank[i] 表示以 i 为根的集合所表示的树的层数。
 type UnionFind struct {
 	parent, rank []int
 	count        int
@@ -45,6 +46,7 @@ func (uf *UnionFind) Union(p, q int) {
 		uf.parent[proot] = qroot
 	} else {
 		uf.parent[qroot] = proot
+		// rank[i] 表示以 i 为根的集合所表示的树的层数 这里相同层数的两颗树合并 root层数需要加1
 		if uf.rank[proot] == uf.rank[qroot] {
 			uf.rank[proot]++
 		}
