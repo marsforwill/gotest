@@ -201,6 +201,53 @@ func reverse(x int) int {
 	return a
 }
 
+// 双指针扫描 维护一个 含有尽可能多元素且长度最小的集合
+func minWindow(s string, t string) string {
+	// t串中各个字符出现的次数
+	tmap := make(map[uint8]int)
+	// 当前扫描中各个字符出现的次数
+	vis := make(map[uint8]int)
+	for i := 0; i < len(t); i++ {
+		tmap[t[i]]++
+	}
+	if len(tmap) == 0 || len(s) == 0 {
+		return ""
+	}
+	check := func() bool {
+		for k, v := range tmap {
+			if vis[k] < v {
+				return false
+			}
+		}
+		return true
+	}
+
+	left, right := -1, -1
+	slen := len(s)
+	ansl := math.MaxUint32
+	//在 s 上滑动窗口，通过移动 r 指针不断扩张窗口。当窗口包含 t 全部所需的字符后，如果能收缩，我们就移动l收缩窗口直到得到最小窗口
+	for l, r := 0, 0; r < slen; r++ {
+		if r < slen && tmap[s[r]] > 0 {
+			vis[s[r]]++
+		}
+		for check() && l <= r {
+			if r-l+1 < ansl {
+				ansl = r - l + 1
+				left, right = l, r+1
+			}
+			if _, ok := tmap[s[l]]; ok {
+				vis[s[l]] -= 1
+			}
+			l++
+		}
+	}
+	if left == -1 {
+		return ""
+	}
+
+	return s[left:right]
+}
+
 //[1,4],[4,4],[2,2],[3,4],[1,1]
 func main() {
 	//ans := waysToChange(5)
