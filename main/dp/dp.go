@@ -347,5 +347,5 @@ func main() {
 	//fmt.Println(longestAwesome("3242415"))
 	//fmt.Println(stoneGameV([]int{6, 2, 3, 4, 5, 5}))
 	//fmt.Println(minDistance("intention", "execution"))
-	fmt.Println(numberOf2sInRange(25))
+	//fmt.Println(numberOf2sInRange(25))
 }

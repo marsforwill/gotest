@@ -68,6 +68,25 @@ func setZeroes(matrix [][]int) {
 	}
 	return
 }
+
+// 11.盛最多水的容器 虽然暴力也能过 但是最优应该是首尾双指针向中间移动
+func maxArea(height []int) int {
+	l := len(height)
+	if l < 2 {
+		return 0
+	}
+	ans := 0
+	for i := 0; i < l; i++ {
+		for j := i + 1; j < l; j++ {
+			if height[i] > height[j] {
+				ans = max(ans, (j-i)*height[j])
+			} else {
+				ans = max(ans, (j-i)*height[i])
+			}
+		}
+	}
+	return ans
+}
 func main() {
 	a := []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
 
