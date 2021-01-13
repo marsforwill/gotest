@@ -165,6 +165,21 @@ func merge(a *ListNode, b *ListNode) *ListNode {
 	}
 	return temp.Next
 }
+
+func swapPairs(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	ans := head.Next
+	cur := head
+	for cur != nil && cur.Next != nil {
+		tmp := cur.Next
+		cur.Next = tmp.Next
+		tmp.Next = cur
+		cur = cur.Next
+	}
+	return ans
+}
 func main() {
 	fmt.Println(merge(&ListNode{
 		Val: 1,
