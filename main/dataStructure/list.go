@@ -130,8 +130,49 @@ func partition(head *ListNode, x int) *ListNode {
 	}
 	return head
 }
+
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 1 {
+		return lists[0]
+	}
+	if len(lists) == 0 {
+		return nil
+	}
+	ans := lists[0]
+	for i := 1; i < len(lists); i++ {
+		ans = merge(ans, lists[i])
+	}
+	return ans
+}
+
+func merge(a *ListNode, b *ListNode) *ListNode {
+	ans := &ListNode{}
+	temp := ans
+	for a != nil && b != nil {
+		if a.Val < b.Val {
+			ans.Next = a
+			a = a.Next
+		} else {
+			ans.Next = b
+			b = b.Next
+		}
+		ans = ans.Next
+	}
+	if a != nil {
+		ans.Next = a
+	} else {
+		ans.Next = b
+	}
+	return temp.Next
+}
 func main() {
-	fmt.Println(reverseKGroup(&ListNode{
+	fmt.Println(merge(&ListNode{
+		Val: 1,
+		Next: &ListNode{
+			Val:  2,
+			Next: nil,
+		},
+	}, &ListNode{
 		Val: 1,
 		Next: &ListNode{
 			Val: 2,
@@ -143,6 +184,6 @@ func main() {
 				},
 			},
 		},
-	}, 3))
+	}))
 
 }
