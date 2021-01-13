@@ -226,8 +226,63 @@ func fullJustify(words []string, maxWidth int) []string {
 		}
 	}
 }
+
+func intToRoman(num int) string {
+	ans := ""
+	if num/1000 > 0 {
+		n := num / 1000
+		ans = ans + strings.Repeat("M", n)
+	}
+	if (num/100)%10 > 0 {
+		n := (num / 100) % 10
+		if n == 4 {
+			ans = ans + "CD"
+		} else if n == 9 {
+			ans = ans + "CM"
+		} else {
+			a := n % 5
+			b := 0
+			if n >= 5 {
+				b = 1
+			}
+			ans = ans + strings.Repeat("D", b) + strings.Repeat("C", a)
+		}
+	}
+	if (num/10)%10 > 0 {
+		n := (num / 10) % 10
+		if n == 4 {
+			ans = ans + "XL"
+		} else if n == 9 {
+			ans = ans + "XC"
+		} else {
+			a := n % 5
+			b := 0
+			if n >= 5 {
+				b = 1
+			}
+			ans = ans + strings.Repeat("L", b) + strings.Repeat("X", a)
+		}
+	}
+	if num%10 > 0 {
+		n := num % 10
+		if n == 4 {
+			ans = ans + "IV"
+		} else if n == 9 {
+			ans = ans + "IX"
+		} else {
+			a := n % 5
+			b := 0
+			if n >= 5 {
+				b = 1
+			}
+			ans = ans + strings.Repeat("V", b) + strings.Repeat("I", a)
+		}
+	}
+	return ans
+}
 func main() {
-	fmt.Println(myAtoi("123-"))
+	fmt.Println(intToRoman(1994))
+	//fmt.Println(myAtoi("123-"))
 	//a := ListNode{
 	//	Val: 2,
 	//	Next: &ListNode{
