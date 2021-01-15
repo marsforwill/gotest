@@ -172,12 +172,13 @@ func swapPairs(head *ListNode) *ListNode {
 	}
 	ans := head.Next
 	cur := head
-	for cur != nil && cur.Next != nil {
+	if cur.Next != nil {
 		tmp := cur.Next
 		cur.Next = tmp.Next
 		tmp.Next = cur
-		cur = cur.Next
+
 	}
+	cur.Next = swapPairs(cur.Next)
 	return ans
 }
 func main() {
