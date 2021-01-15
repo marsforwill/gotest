@@ -280,8 +280,25 @@ func intToRoman(num int) string {
 	}
 	return ans
 }
+
+func firstMissingPositive(nums []int) int {
+	m := make(map[int]bool)
+	for i := 0; i < len(nums); i++ {
+		if nums[i] > 0 {
+			m[nums[i]] = true
+		}
+	}
+	ans := 1
+	for ; ans <= len(nums); ans++ {
+		if _, ok := m[ans]; !ok {
+			break
+		}
+	}
+	return ans
+}
 func main() {
-	fmt.Println(intToRoman(1994))
+	fmt.Println(firstMissingPositive([]int{1, 2, 0}))
+	//fmt.Println(intToRoman(1994))
 	//fmt.Println(myAtoi("123-"))
 	//a := ListNode{
 	//	Val: 2,
