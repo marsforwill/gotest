@@ -317,13 +317,55 @@ func numSubseq(nums []int, target int) int {
 	return count
 }
 
+//15 三数只和 滑动指针
+func threeSum(nums []int) [][]int {
+	if len(nums) < 3 {
+		return [][]int{}
+	}
+	var ans [][]int
+	sort.Ints(nums)
+
+	for i := 0; i+2 < len(nums); i++ {
+		sum := 0 - nums[i]
+		left, right := i+1, len(nums)-1
+		for left < right {
+			if nums[left]+nums[right] == sum {
+				ans = append(ans, []int{nums[i], nums[left], nums[right]})
+				left++
+			} else if nums[left]+nums[right] < sum {
+				left++
+			} else {
+				right--
+			}
+		}
+	}
+	sort.Slice(ans, func(i int, j int) bool {
+		if ans[i][0] == ans[j][0] {
+			if ans[i][1] == ans[i][1] {
+				return ans[i][2] > ans[j][2]
+			}
+			return ans[i][1] > ans[j][1]
+		}
+		return ans[i][0] > ans[j][0]
+	})
+	for i := 1; i < len(ans); {
+		if ans[i][0] == ans[i-1][0] && ans[i][1] == ans[i-1][1] && ans[i][2] == ans[i-1][2] {
+			ans = append(ans[0:i-1], ans[i:]...)
+		} else {
+			i++
+		}
+	}
+	return ans
+}
+
 func main() {
+	fmt.Println(threeSum([]int{-4, -2, -2, -2, 0, 1, 2, 2, 2, 3, 3, 4, 4, 6, 6}))
 	//fmt.Print(canArrange([]int{-4,-7,5,2,9,1,10,4,-8,-3},3))
 	//fmt.Print(isPathCrossing("NESWW"))
 	//fmt.Println(longestSubarray([]int{1,1,0,1}))
 	//fmt.Printf("%b",7-(1<<0))
 	//n = 4, dependencies = [[2,1],[3,1],[1,4]], k = 2
 	//fmt.Println(minNumberOfSemesters2(8, [][]int{{1, 6}, {2, 7}, {8, 7}, {2, 5}, {3, 4}}, 3))
-	fmt.Println(numSubseq([]int{3, 5, 6, 7}, 9))
+	//fmt.Println(numSubseq([]int{3, 5, 6, 7}, 9))
 
 }
