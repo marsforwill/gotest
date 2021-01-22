@@ -233,6 +233,45 @@ func storeDfs(l int, r int, dp *[][]int, sum *[]int) int {
 	return (*dp)[l][r]
 }
 
+//1690. 石子游戏 VII 又是一道区间dp
+func stoneGameVII(stones []int) int {
+	n := len(stones)
+	if n <= 1 {
+		return 0
+	}
+	sum := make([][]int, n)
+	for i := 0; i < n; i++ {
+		sum[i] = make([]int, n)
+	}
+	for i := 0; i < n; i++ {
+		temp := stones[i]
+		sum[i][i] = temp
+		for j := i + 1; j < n; j++ {
+			temp += stones[j]
+			sum[i][j] = temp
+			sum[j][i] = temp
+		}
+	}
+	//dp[i][j] 表示轮到这一个人（无论是 A 或者 B）选时，他能得到与另一个人最大的得分差；
+	dp := make([][]int, n)
+	for i := 0; i < n; i++ {
+		dp[i] = make([]int, n)
+	}
+	// 区间dp 所以循环要按照从已知区间往未知区间推的方向
+	for i := n - 1; i >= 0; i-- {
+		for j := i + 1; j < n; j++ {
+			if j-i == 1 {
+				dp[i][j] = max(stones[i], stones[j])
+			} else {
+				// point!!!
+				dp[i][j] = max(sum[i+1][j]-dp[i+1][j], sum[i][j-1]-dp[i][j-1])
+			}
+			dp[j][i] = dp[i][j]
+		}
+	}
+	return dp[0][n-1]
+}
+
 func max(ans int, i int) int {
 	if ans > i {
 		return ans
@@ -343,7 +382,7 @@ func getMaxMatrix(matrix [][]int) []int {
 // leetcode 44 通配符匹配
 //s = "adceb"
 //p = "*a*b"
-func isMatch(s string, p string) bool {
+func isMatch2(s string, p string) bool {
 	m, n := len(s), len(p)
 	dp := make([][]bool, m+1)
 	for i := 0; i < m+1; i++ {
@@ -370,6 +409,7 @@ func isMatch(s string, p string) bool {
 }
 
 func main() {
+	fmt.Println(stoneGameVII([]int{5, 3, 1, 4, 2}))
 	//fmt.Println(isMatch("aa", "a*"))
 	//fmt.Println(longestPalindrome("babad"))
 	//fmt.Println(longestPalindrome("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
