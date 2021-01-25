@@ -317,7 +317,7 @@ func numSubseq(nums []int, target int) int {
 	return count
 }
 
-//15 三数只和 滑动指针
+//15 三数只和 滑动指针 答案去重是比较考虑的点
 func threeSum(nums []int) [][]int {
 	if len(nums) < 3 {
 		return [][]int{}
@@ -325,34 +325,31 @@ func threeSum(nums []int) [][]int {
 	var ans [][]int
 	sort.Ints(nums)
 
-	for i := 0; i+2 < len(nums); i++ {
+	for i := 0; i < len(nums); i++ {
+		if nums[i] > 0 {
+			return ans
+		}
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
 		sum := 0 - nums[i]
 		left, right := i+1, len(nums)-1
 		for left < right {
 			if nums[left]+nums[right] == sum {
 				ans = append(ans, []int{nums[i], nums[left], nums[right]})
+				for left < right && nums[left] == nums[left+1] {
+					left++
+				}
+				for left < right && nums[right] == nums[right-1] {
+					right--
+				}
 				left++
+				right--
 			} else if nums[left]+nums[right] < sum {
 				left++
 			} else {
 				right--
 			}
-		}
-	}
-	sort.Slice(ans, func(i int, j int) bool {
-		if ans[i][0] == ans[j][0] {
-			if ans[i][1] == ans[i][1] {
-				return ans[i][2] > ans[j][2]
-			}
-			return ans[i][1] > ans[j][1]
-		}
-		return ans[i][0] > ans[j][0]
-	})
-	for i := 1; i < len(ans); {
-		if ans[i][0] == ans[i-1][0] && ans[i][1] == ans[i-1][1] && ans[i][2] == ans[i-1][2] {
-			ans = append(ans[0:i-1], ans[i:]...)
-		} else {
-			i++
 		}
 	}
 	return ans
