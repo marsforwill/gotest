@@ -198,13 +198,16 @@ func myAtoi(s string) int {
 	return num
 }
 
+// 68. 文本左右对齐
 func fullJustify(words []string, maxWidth int) []string {
 	var ans []string
 	// dont want to write more
 	i, n := 0, len(words)
+	// 每次循环一行
 	for {
 		start := i   // 这一行文本在 words 的起始位置
 		wordLen := 0 // 统计这一行单词字符的个数
+		// 当前行要加的word
 		for ; i < n && wordLen+len(words[i])+i-start <= maxWidth; i++ {
 			wordLen += len(words[i])
 		}
@@ -296,6 +299,47 @@ func firstMissingPositive(nums []int) int {
 	}
 	return ans
 }
+
+// 166. 分数到小数 模拟长除法 todo 细节
+func fractionToDecimal(numerator int, denominator int) string {
+	if numerator == 0 {
+		return "0"
+	}
+	var fraction string
+	if (numerator < 0 && denominator > 0) || (numerator > 0 && denominator < 0) {
+		fraction = fraction + "-"
+	}
+	dividend := abs(int32(numerator))
+	divisor := abs(int32(denominator))
+	fraction = fraction + strconv.Itoa(int(dividend/divisor))
+	remainder := dividend % divisor
+	if remainder == 0 {
+		return fraction
+	}
+	fraction = fraction + "."
+	// 记录余数 无限循环状态
+	m := make(map[int32]int)
+	for remainder != 0 {
+		if _, ok := m[remainder]; ok {
+
+			fraction = fraction + ")"
+			break
+		}
+		m[remainder] = len(fraction)
+		remainder *= 10
+		fraction = fraction + strconv.Itoa(int(remainder/divisor))
+		remainder %= divisor
+	}
+	return fraction
+}
+func abs(num int32) int32 {
+	if num > 0 {
+		return num
+	} else {
+		return -num
+	}
+}
+
 func main() {
 	fmt.Println(firstMissingPositive([]int{1, 2, 0}))
 	//fmt.Println(intToRoman(1994))
