@@ -300,7 +300,7 @@ func firstMissingPositive(nums []int) int {
 	return ans
 }
 
-// 166. 分数到小数 模拟长除法 todo 细节
+// 166. 分数到小数 模拟长除法  细节
 func fractionToDecimal(numerator int, denominator int) string {
 	if numerator == 0 {
 		return "0"
@@ -309,8 +309,8 @@ func fractionToDecimal(numerator int, denominator int) string {
 	if (numerator < 0 && denominator > 0) || (numerator > 0 && denominator < 0) {
 		fraction = fraction + "-"
 	}
-	dividend := abs(int32(numerator))
-	divisor := abs(int32(denominator))
+	dividend := abs(int64(numerator))
+	divisor := abs(int64(denominator))
 	fraction = fraction + strconv.Itoa(int(dividend/divisor))
 	remainder := dividend % divisor
 	if remainder == 0 {
@@ -318,13 +318,14 @@ func fractionToDecimal(numerator int, denominator int) string {
 	}
 	fraction = fraction + "."
 	// 记录余数 无限循环状态
-	m := make(map[int32]int)
+	m := make(map[int64]int)
 	for remainder != 0 {
-		if _, ok := m[remainder]; ok {
-
+		if pos, ok := m[remainder]; ok {
+			fraction = fraction[0:pos] + "(" + fraction[pos:]
 			fraction = fraction + ")"
 			break
 		}
+		// 记录余数对应的商的循环未知 也就是循环括号的起点位置
 		m[remainder] = len(fraction)
 		remainder *= 10
 		fraction = fraction + strconv.Itoa(int(remainder/divisor))
@@ -332,16 +333,17 @@ func fractionToDecimal(numerator int, denominator int) string {
 	}
 	return fraction
 }
-func abs(num int32) int32 {
+func abs(num int64) int64 {
 	if num > 0 {
 		return num
 	} else {
-		return -num
+		return num * (-1)
 	}
 }
 
 func main() {
-	fmt.Println(firstMissingPositive([]int{1, 2, 0}))
+	fmt.Println(fractionToDecimal(-1, -2147483648))
+	//fmt.Println(firstMissingPositive([]int{1, 2, 0}))
 	//fmt.Println(intToRoman(1994))
 	//fmt.Println(myAtoi("123-"))
 	//a := ListNode{
