@@ -109,19 +109,3 @@ func isHuiwen(str string) bool {
 	}
 	return true
 }
-
-// out of time
-func palindromePairs(words []string) [][]int {
-	var ans [][]int
-	for i := 0; i < len(words); i++ {
-		for j := 0; j < len(words); j++ {
-			if i == j {
-				continue
-			}
-			if isHuiwen(words[i] + words[j]) {
-				ans = append(ans, []int{i, j})
-			}
-		}
-	}
-	return ans
-}
