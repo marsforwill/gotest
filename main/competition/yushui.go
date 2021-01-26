@@ -87,6 +87,36 @@ func maxArea(height []int) int {
 	}
 	return ans
 }
+
+//251. 展开二维向量
+// 标准高效的迭代器 应该用双指针记录 不过。。就这样吧
+type Vector2D struct {
+	num   []int
+	index int
+}
+
+func Constructor(v [][]int) Vector2D {
+	var num []int
+	for i := 0; i < len(v); i++ {
+		num = append(num, v[i]...)
+	}
+	return Vector2D{
+		num:   num,
+		index: len(num),
+	}
+}
+
+func (this *Vector2D) Next() int {
+	next := this.num[0]
+	this.index--
+	this.num = this.num[1:]
+	return next
+}
+
+func (this *Vector2D) HasNext() bool {
+	return this.index > 0
+}
+
 func main() {
 	a := []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
 
