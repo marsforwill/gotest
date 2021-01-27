@@ -83,53 +83,6 @@ func findLeastNumOfUniqueInts(arr []int, k int) int {
 	return 0
 }
 
-//二分是我万万没有想到的
-//要制作 m 束花。制作花束时，需要使用花园中 相邻的 k 朵花
-func minDays(bloomDay []int, m int, k int) int {
-	l := len(bloomDay)
-	if m*k > l {
-		return -1
-	}
-	left := 1
-	right := 0
-	for i := 0; i < l; i++ {
-		if bloomDay[i] > right {
-			right = bloomDay[i]
-		}
-	}
-	for left+1 < right {
-		mid := (left + right) / 2
-		if checkMid(mid, bloomDay, m, k) {
-			right = mid - 1
-		} else {
-			left = mid + 1
-		}
-	}
-	if checkMid(left, bloomDay, m, k) {
-		return left
-	}
-	return right
-}
-
-// 校验mid天是不是能满足开花的条件要求
-func checkMid(mid int, day []int, m int, k int) bool {
-	l := len(day)
-	count := 0
-	ans := 0
-	for i := 0; i < l; i++ {
-		if day[i] <= mid {
-			count++
-		} else {
-			count = 0
-		}
-		if count == k {
-			ans++
-			count = 0
-		}
-	}
-	return ans > m
-}
-
 // 1 <= k <= n <= 5*10^4
 // parent[0] == -1 表示编号为 0 的节点是根节点。
 // 对于所有的 0 < i < n ，0 <= parent[i] < n 总成立
@@ -301,5 +254,5 @@ func main() {
 	//var num uint64 = 234234234
 	//fmt.Println(strconv.FormatUint(num, 10))
 	//fmt.Printf("%v", (int64(math.Pow(2, 16))))
-	minDays([]int{1, 10, 3, 10, 2}, 3, 1)
+
 }
