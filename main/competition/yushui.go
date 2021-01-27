@@ -117,6 +117,39 @@ func (this *Vector2D) HasNext() bool {
 	return this.index > 0
 }
 
+//341. 扁平化嵌套列表迭代器
+//type NestedIterator struct {
+//	num []int
+//}
+//
+//func Constructor(nestedList []*NestedInteger) *NestedIterator {
+//	var number []int
+//	dfsIter(nestedList, &number)
+//	return &NestedIterator{
+//		num: number,
+//	}
+//}
+//
+//func dfsIter(list []*NestedInteger, number *[]int) {
+//	for i := 0; i < len(list); i++ {
+//		if list[i].IsInteger() {
+//			*number = append((*number), list[i].GetInteger())
+//		} else {
+//			dfsIter(list[i].GetList(),number)
+//		}
+//	}
+//}
+//
+//func (this *NestedIterator) Next() int {
+//	n := this.num[0]
+//	this.num = this.num[1:]
+//	return n
+//}
+//
+//func (this *NestedIterator) HasNext() bool {
+//	return len(this.num) > 0
+//}
+
 func main() {
 	a := []int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}
 
