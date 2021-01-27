@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 func validate_xml(xml string) string {
@@ -86,6 +88,7 @@ func combinationSum(candidates []int, target int) [][]int {
 }
 
 //322. 零钱兑换 可以贪心dfs 或者动态规划
+//给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数
 func coinChange(coins []int, amount int) int {
 
 	sort.Ints(coins)
@@ -116,6 +119,35 @@ func coinChange(coins []int, amount int) int {
 	return min
 }
 
+// 为什么会有这么奇怪的ip细节题
+// 751. IP 到 CIDR 给定一个起始 IP 地址 ip 和一个我们需要包含的 IP 的数量 n，返回用列表（最小可能的长度）表示的 CIDR块的范围。
+func ipToCIDR(ip string, n int) []string {
+	start := ipToInt(ip)
+	var ans []string
+	for n > 0 {
+		mask := max(33 - (start & -start).bit_length(),
+			33 - n.bit_length())
+		ans = append(ans, intToIp(start) + "/" + strconv.Itoa(mask))
+		start += 1 << (32 - mask)
+		n -= 1 << (32 - mask)
+
+	}
+	return ans
+}
+
+func ipToInt(ip string) int {
+	ans := 0
+	strs := strings.Split(ip,".")
+	for _,x := range strs {
+		v,_ := strconv.Atoi(x)
+		ans = 256 * ans + v
+	}
+	return ans
+}
+func intToIp(n int) string {
+	return ".".join(str((x >> i) % 256)
+	for i in (24, 16, 8, 0))
+}
 func main() {
 	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
