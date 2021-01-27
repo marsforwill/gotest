@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+	"sort"
+)
 
 func validate_xml(xml string) string {
 	// Write your code here
@@ -81,7 +85,39 @@ func combinationSum(candidates []int, target int) [][]int {
 	return ans
 }
 
+//322. 零钱兑换 可以贪心dfs 或者动态规划
+func coinChange(coins []int, amount int) int {
+
+	sort.Ints(coins)
+	min := math.MaxInt64
+	var dfsCoin func(coins []int, idx int, amount int, count int)
+	dfsCoin = func(coins []int, idx int, amount int, count int) {
+		if amount == 0 {
+			if min > count {
+				min = count
+			}
+			return
+		}
+		if amount < 0 || idx < 0 {
+			return
+		}
+		for i := amount / coins[idx]; i >= 0; i-- {
+			if i+count > min {
+				break
+			}
+			dfsCoin(coins, idx-1, amount-i*coins[idx], count+i)
+		}
+		return
+	}
+	dfsCoin(coins, len(coins)-1, amount, 0)
+	if min == math.MaxInt64 {
+		return -1
+	}
+	return min
+}
+
 func main() {
-	fmt.Println(validate_xml("<a></a>"))
+	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
+	fmt.Println(coinChange([]int{1, 2, 5}, 11))
 }
