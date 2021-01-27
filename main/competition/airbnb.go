@@ -125,9 +125,15 @@ func ipToCIDR(ip string, n int) []string {
 	start := ipToInt(ip)
 	var ans []string
 	for n > 0 {
-		mask := max(33 - (start & -start).bit_length(),
-			33 - n.bit_length())
-		ans = append(ans, intToIp(start) + "/" + strconv.Itoa(mask))
+		// start 和 n的最大掩码
+		// 在一般情况下啊，我们使用 n 和 start&-start（start 的最低非零位）的位长度来计算能表示 2^{32 - \text{mask}}2 32−mask
+		//  个 ip 地址的掩码。然后，我们动态调整 start 和 n。
+		mask := max(33-bitLength((start&-start)),
+			33-bitLength(n))
+		if mask > 32 {
+			mask = 32
+		}
+		ans = append(ans, intToIp(start)+"/"+strconv.Itoa(mask))
 		start += 1 << (32 - mask)
 		n -= 1 << (32 - mask)
 
@@ -135,21 +141,44 @@ func ipToCIDR(ip string, n int) []string {
 	return ans
 }
 
-func ipToInt(ip string) int {
+func bitLength(num int) int {
 	ans := 0
-	strs := strings.Split(ip,".")
-	for _,x := range strs {
-		v,_ := strconv.Atoi(x)
-		ans = 256 * ans + v
+	for num > 0 {
+		num = num >> 1
+		ans++
 	}
 	return ans
 }
-func intToIp(n int) string {
-	return ".".join(str((x >> i) % 256)
-	for i in (24, 16, 8, 0))
+
+func ipToInt(ip string) int {
+	ans := 0
+	strs := strings.Split(ip, ".")
+	for _, x := range strs {
+		v, _ := strconv.Atoi(x)
+		ans = 256*ans + v
+	}
+	return ans
+}
+func intToIp(x int) string {
+	var ans string
+	for i := 0; i < 25; i += 8 {
+		ans = strconv.Itoa((x>>i)%256) + ans
+		if i != 24 {
+			ans = "." + ans
+		}
+	}
+	return ans
+}
+func max(ans int, i int) int {
+	if ans > i {
+		return ans
+	} else {
+		return i
+	}
 }
 func main() {
 	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
-	fmt.Println(coinChange([]int{1, 2, 5}, 11))
+	//fmt.Println(coinChange([]int{1, 2, 5}, 11))
+	fmt.Println(ipToCIDR("255.0.0.7", 10))
 }
