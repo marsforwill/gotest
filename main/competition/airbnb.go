@@ -176,9 +176,93 @@ func max(ans int, i int) int {
 		return i
 	}
 }
+
+//324. 摆动排序 II
+func wiggleSort(nums []int) {
+	sort.Ints(nums)
+	var min, max []int
+	for i := 0; i < len(nums); i++ {
+		if i < len(nums)/2 {
+			min = append(min, nums[i])
+		} else {
+			max = append(max, nums[i])
+		}
+	}
+	if len(max) > len(min) {
+		temp := max[0]
+		max = max[1:]
+		min = append(min, temp)
+	}
+	j := len(min) - 1
+	k := len(max) - 1
+	for i := 0; i < len(nums); i++ {
+		if i%2 == 0 {
+			nums[i] = min[j]
+			j--
+		} else {
+			nums[i] = max[k]
+			k--
+		}
+	}
+	return
+}
+
+//1166. 设计文件系统
+type FileSystem struct {
+	value int
+	m     map[string]FileSystem
+}
+
+func Constructor() FileSystem {
+	return FileSystem{
+		value: 0,
+		m:     make(map[string]FileSystem),
+	}
+}
+
+func (this *FileSystem) CreatePath(path string, value int) bool {
+	paths := strings.Split(path, "/")
+	tempMap := this.m
+	i := 0
+	for i = 0; i < len(paths)-1; i++ {
+		v, ok := tempMap[paths[i]]
+		if !ok {
+			return false
+		}
+		tempMap = v.m
+	}
+	_, ok := tempMap[paths[i]]
+	if ok {
+		return false
+	} else {
+		tempMap[paths[i]] = FileSystem{
+			value: value,
+			m:     make(map[string]FileSystem),
+		}
+		return true
+	}
+}
+
+func (this *FileSystem) Get(path string) int {
+	paths := strings.Split(path, "/")
+	tempMap := this.m
+	i := 0
+	for i = 0; i < len(paths); i++ {
+		v, ok := tempMap[paths[i]]
+		if !ok {
+			return -1
+		}
+		tempMap = v.m
+		if i == len(paths)-1 {
+			return v.value
+		}
+	}
+	return -1
+}
 func main() {
 	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
 	//fmt.Println(coinChange([]int{1, 2, 5}, 11))
-	fmt.Println(ipToCIDR("255.0.0.7", 10))
+	//fmt.Println(ipToCIDR("255.0.0.7", 10))
+	wiggleSort([]int{1, 1, 2, 1, 2, 2, 1})
 }
