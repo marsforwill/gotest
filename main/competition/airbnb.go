@@ -269,15 +269,74 @@ func (this *FileSystem) Get(path string) int {
 	}
 	return -1
 }
+
+// 212. 单词搜索 II dfs  // 深度搜索回溯
+func findWords(board [][]byte, words []string) []string {
+	var ans []string
+	vis := make([][]bool, len(board))
+	for i := 0; i < len(board); i++ {
+		vis[i] = make([]bool, len(board[0]))
+	}
+	for i := 0; i < len(words); i++ {
+		str := words[i]
+		for j := 0; j < len(board); j++ {
+			flag := false
+			for k := 0; k < len(board[j]); k++ {
+				if board[j][k] == str[0] {
+					if dfsWord(board, words[i], 0, j, k, &vis) || len(str) == 1 {
+						ans = append(ans, words[i])
+						flag = true
+						break
+					}
+					vis[j][k] = false
+				}
+			}
+			if flag {
+				break
+			}
+		}
+	}
+	return ans
+}
+
+func dfsWord(board [][]byte, s string, index int, x int, y int, vis *[][]bool) bool {
+	if index == len(s) {
+		return true
+	}
+	if x < 0 || y < 0 || x >= len(board) || y >= len(board[0]) {
+		return false
+	}
+	if board[x][y] != s[index] {
+		return false
+	}
+	(*vis)[x][y] = true
+
+	if dfsWord(board, s, index+1, x+1, y, vis) {
+		return true
+	}
+	if dfsWord(board, s, index+1, x-1, y, vis) {
+		return true
+	}
+	if dfsWord(board, s, index+1, x, y+1, vis) {
+		return true
+	}
+	if dfsWord(board, s, index+1, x, y-1, vis) {
+		return true
+	}
+
+	(*vis)[x][y] = false
+	return false
+}
 func main() {
 	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
 	//fmt.Println(coinChange([]int{1, 2, 5}, 11))
 	//fmt.Println(ipToCIDR("255.0.0.7", 10))
 	//wiggleSort([]int{1, 1, 2, 1, 2, 2, 1})
-	obj := Constructor()
-	param_1 := obj.CreatePath("/a", 1)
-	param_2 := obj.Get("/a")
-	fmt.Println(param_1)
-	fmt.Println(param_2)
+	//obj := Constructor()
+	//param_1 := obj.CreatePath("/a", 1)
+	//param_2 := obj.Get("/a")
+	//fmt.Println(param_1)
+	//fmt.Println(param_2)
+	fmt.Println(findWords([][]byte{{'a', 'a'}}, []string{"aaa"}))
 }
