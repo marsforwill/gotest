@@ -273,12 +273,12 @@ func (this *FileSystem) Get(path string) int {
 // 212. 单词搜索 II dfs  // 深度搜索回溯
 func findWords(board [][]byte, words []string) []string {
 	var ans []string
-	vis := make([][]bool, len(board))
-	for i := 0; i < len(board); i++ {
-		vis[i] = make([]bool, len(board[0]))
-	}
 	for i := 0; i < len(words); i++ {
 		str := words[i]
+		vis := make([][]bool, len(board))
+		for i := 0; i < len(board); i++ {
+			vis[i] = make([]bool, len(board[0]))
+		}
 		for j := 0; j < len(board); j++ {
 			flag := false
 			for k := 0; k < len(board[j]); k++ {
@@ -303,7 +303,7 @@ func dfsWord(board [][]byte, s string, index int, x int, y int, vis *[][]bool) b
 	if index == len(s) {
 		return true
 	}
-	if x < 0 || y < 0 || x >= len(board) || y >= len(board[0]) {
+	if x < 0 || y < 0 || x >= len(board) || y >= len(board[0]) || (*vis)[x][y] == true {
 		return false
 	}
 	if board[x][y] != s[index] {
