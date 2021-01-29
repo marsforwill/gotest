@@ -221,6 +221,11 @@ func Constructor() FileSystem {
 }
 
 func (this *FileSystem) CreatePath(path string, value int) bool {
+	if path[0] == '/' {
+		path = path[1:]
+	} else {
+		return false
+	}
 	paths := strings.Split(path, "/")
 	tempMap := this.m
 	i := 0
@@ -244,6 +249,11 @@ func (this *FileSystem) CreatePath(path string, value int) bool {
 }
 
 func (this *FileSystem) Get(path string) int {
+	if path[0] == '/' {
+		path = path[1:]
+	} else {
+		return -1
+	}
 	paths := strings.Split(path, "/")
 	tempMap := this.m
 	i := 0
@@ -264,5 +274,10 @@ func main() {
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
 	//fmt.Println(coinChange([]int{1, 2, 5}, 11))
 	//fmt.Println(ipToCIDR("255.0.0.7", 10))
-	wiggleSort([]int{1, 1, 2, 1, 2, 2, 1})
+	//wiggleSort([]int{1, 1, 2, 1, 2, 2, 1})
+	obj := Constructor()
+	param_1 := obj.CreatePath("/a", 1)
+	param_2 := obj.Get("/a")
+	fmt.Println(param_1)
+	fmt.Println(param_2)
 }
