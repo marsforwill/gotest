@@ -272,14 +272,6 @@ func stoneGameVII(stones []int) int {
 	return dp[0][n-1]
 }
 
-func max(ans int, i int) int {
-	if ans > i {
-		return ans
-	} else {
-		return i
-	}
-}
-
 //给你两个单词 word1 和 word2，请你计算出将 word1 转换成 word2 所使用的最少操作数【插入/删除/替换】 。
 // 最短编辑距离 dp[i][j] 表示 word1到i位置转换成word2到j位置的编辑次数
 func minDistance(word1 string, word2 string) int {
@@ -435,6 +427,36 @@ func waysToChange(n int) int {
 	}
 	return ans[n]
 
+}
+
+//198. 打家劫舍
+func rob(nums []int) int {
+	// ans[i][0]代表不拿i房的最大 ans[i][1]代表拿i房的最大
+	n := len(nums)
+	if n == 0 {
+		return 0
+	}
+	if n == 1 {
+		return nums[0]
+	}
+	ans := make([][]int, n)
+	for i := 0; i < n; i++ {
+		ans[i] = make([]int, 2)
+	}
+	ans[0][0], ans[0][1] = 0, nums[0]
+	ans[1][0], ans[1][1] = nums[0], nums[1]
+	for i := 2; i < n; i++ {
+		ans[i][0] = max(ans[i-1][0], ans[i-1][1])
+		ans[i][1] = max(ans[i-1][0]+nums[i], ans[i-2][1]+nums[i])
+	}
+	return max(ans[n-1][0], ans[n-1][1])
+}
+func max(ans int, i int) int {
+	if ans > i {
+		return ans
+	} else {
+		return i
+	}
 }
 func main() {
 	//fmt.Println(stoneGameVII([]int{5, 3, 1, 4, 2}))
