@@ -327,6 +327,44 @@ func dfsWord(board [][]byte, s string, index int, x int, y int, vis *[][]bool) b
 	(*vis)[x][y] = false
 	return false
 }
+
+func letterCombinations(digits string) []string {
+	var ans []string
+	if len(digits) == 0 {
+		return ans
+	}
+	var phoneMap map[string]string = map[string]string{
+		"2": "abc",
+		"3": "def",
+		"4": "ghi",
+		"5": "jkl",
+		"6": "mno",
+		"7": "pqrs",
+		"8": "tuv",
+		"9": "wxyz",
+	}
+	var dfsDigit func(digits string, index int, temp string)
+	dfsDigit = func(digits string, index int, temp string) {
+		if index == len(digits) {
+			ans = append(ans, temp)
+			return
+		}
+		if digits[index] != '1' {
+			str, ok := phoneMap[string(digits[index])]
+			if ok {
+				for i := 0; i < len(str); i++ {
+					dfsDigit(digits, index+1, temp+string(str[i]))
+				}
+			}
+		} else {
+			dfsDigit(digits, index+1, temp)
+
+		}
+		return
+	}
+	dfsDigit(digits, 0, "")
+	return ans
+}
 func main() {
 	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
