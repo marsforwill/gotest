@@ -391,6 +391,23 @@ func multiply(num1 string, num2 string) string {
 	}
 	return ans
 }
+
+func generate(numRows int) [][]int {
+	ans := make([][]int, numRows)
+	for i := 0; i < numRows; i++ {
+		ans[i] = make([]int, i+1)
+	}
+	for i := 0; i < numRows; i++ {
+		ans[i][0] = 1
+		ans[i][i] = 1
+	}
+	for i := 2; i < numRows; i++ {
+		for j := 1; j < len(ans[i])-1; j++ {
+			ans[i][j] = ans[i-1][j-1] + ans[i-1][j]
+		}
+	}
+	return ans
+}
 func main() {
 	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
