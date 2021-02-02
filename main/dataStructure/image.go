@@ -3,17 +3,17 @@ package main
 import "fmt"
 
 /**
- * Definition for a Node.
+ * Definition for a GNode.
  */
-type Node struct {
+type GNode struct {
 	Val       int
-	Neighbors []*Node
+	Neighbors []*GNode
 }
 
-func cloneGraph(node *Node) *Node {
-	fg := make(map[int]*Node)
-	var dfsImage func(node *Node) *Node
-	dfsImage = func(n *Node) *Node {
+func cloneGraph(node *GNode) *GNode {
+	fg := make(map[int]*GNode)
+	var dfsImage func(node *GNode) *GNode
+	dfsImage = func(n *GNode) *GNode {
 		if n == nil {
 			return nil
 		}
@@ -21,9 +21,9 @@ func cloneGraph(node *Node) *Node {
 		if ok {
 			return nodedeal
 		}
-		ans := Node{
+		ans := GNode{
 			Val:       n.Val,
-			Neighbors: make([]*Node, len(n.Neighbors)),
+			Neighbors: make([]*GNode, len(n.Neighbors)),
 		}
 		fg[n.Val] = &ans
 		for i, temp := range n.Neighbors {
@@ -34,7 +34,7 @@ func cloneGraph(node *Node) *Node {
 	return dfsImage(node)
 }
 
-//func dfsImage(node *Node, fg *map[int]Node) *Node {
+//func dfsImage(node *GNode, fg *map[int]GNode) *GNode {
 //	if node == nil {
 //		return nil
 //	}
@@ -42,9 +42,9 @@ func cloneGraph(node *Node) *Node {
 //	if ok {
 //		return &nodedeal
 //	}
-//	ans := Node{
+//	ans := GNode{
 //		Val:       node.Val,
-//		Neighbors: make([]*Node,len(node.Neighbors)),
+//		Neighbors: make([]*GNode,len(node.Neighbors)),
 //	}
 //	(*fg)[ans.Val] = ans
 //	for i,n := range node.Neighbors{
@@ -53,16 +53,16 @@ func cloneGraph(node *Node) *Node {
 //	return &ans
 //}
 func main() {
-	n1 := &Node{
+	n1 := &GNode{
 		Val: 1,
 	}
-	n2 := &Node{
+	n2 := &GNode{
 		Val: 2,
 	}
-	n3 := &Node{
+	n3 := &GNode{
 		Val: 3,
 	}
-	n4 := &Node{
+	n4 := &GNode{
 		Val: 4,
 	}
 	n1.Neighbors = append(append(n1.Neighbors, n2), n4)

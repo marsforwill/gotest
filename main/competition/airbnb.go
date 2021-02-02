@@ -327,7 +327,51 @@ func dfsWord(board [][]byte, s string, index int, x int, y int, vis *[][]bool) b
 	(*vis)[x][y] = false
 	return false
 }
+
+func isAlienSorted(words []string, order string) bool {
+	ord := make(map[uint8]int)
+	for i := 0; i < len(order); i++ {
+		ord[order[i]] = i
+	}
+	for i := 0; i < len(words)-1; i++ {
+		str := words[i]
+		strnext := words[i+1]
+		if str == strnext {
+			continue
+		}
+		j := 0
+		for j = 0; j < len(str) && j < len(strnext); j++ {
+			if str[j] != strnext[j] {
+				idx, ok := ord[str[j]]
+				if !ok {
+					return false
+				}
+				idxNext, ok := ord[strnext[j]]
+				if !ok {
+					return false
+				}
+				if idx > idxNext {
+					return false
+				}
+				break
+			}
+		}
+		if j == len(strnext) {
+			return false
+		}
+	}
+	return true
+}
+
+func lengthOfLastWord(s string) int {
+	words := strings.Split(s, " ")
+	if len(words) == 0 {
+		return 0
+	}
+	return len(words[len(words)-1])
+}
 func main() {
+	fmt.Println(lengthOfLastWord(" a"))
 	//fmt.Println(validate_xml("<a></a>"))
 	//	fmt.Println(combinationSum([]int{2, 3, 6, 7}, 7))
 	//fmt.Println(coinChange([]int{1, 2, 5}, 11))
@@ -338,5 +382,5 @@ func main() {
 	//param_2 := obj.Get("/a")
 	//fmt.Println(param_1)
 	//fmt.Println(param_2)
-	fmt.Println(findWords([][]byte{{'a', 'a'}}, []string{"aaa"}))
+	//fmt.Println(findWords([][]byte{{'a', 'a'}}, []string{"aaa"}))
 }

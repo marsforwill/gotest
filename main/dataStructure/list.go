@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 //leetcode submit region begin(Prohibit modification and deletion)
 /**
@@ -181,25 +179,74 @@ func swapPairs(head *ListNode) *ListNode {
 	cur.Next = swapPairs(cur.Next)
 	return ans
 }
+
+//138. 复制带随机指针的链表 链表深拷贝 为什么用递归要先赋值再递归呢
+type Node struct {
+	Val    int
+	Next   *Node
+	Random *Node
+}
+
+var m map[*Node]*Node
+
+func copyRandomList(head *Node) *Node {
+	m = make(map[*Node]*Node)
+	ans := deepCopy(head)
+	return ans
+}
+
+func deepCopy(node *Node) *Node {
+	if node == nil {
+		return nil
+	}
+	if nod, ok := m[node]; ok {
+		return nod
+	}
+	copyNode := &Node{
+		Val:    node.Val,
+		Next:   nil,
+		Random: nil,
+	}
+	//要先赋值再递归呢 ？？
+	m[node] = copyNode
+	copyNode.Next = deepCopy(node.Next)
+	copyNode.Random = deepCopy(node.Random)
+	return copyNode
+}
+
 func main() {
-	fmt.Println(merge(&ListNode{
-		Val: 1,
-		Next: &ListNode{
-			Val:  2,
-			Next: nil,
-		},
-	}, &ListNode{
-		Val: 1,
-		Next: &ListNode{
-			Val: 2,
-			Next: &ListNode{
-				Val: 3,
-				Next: &ListNode{
-					Val:  4,
-					Next: &ListNode{Val: 5},
-				},
+	fmt.Println(copyRandomList(&Node{
+		Val: 3,
+		Next: &Node{
+			Val: 5,
+			Next: &Node{
+				Val:    7,
+				Next:   nil,
+				Random: nil,
 			},
+			Random: nil,
 		},
+		Random: nil,
 	}))
+
+	//fmt.Println(merge(&ListNode{
+	//	Val: 1,
+	//	Next: &ListNode{
+	//		Val:  2,
+	//		Next: nil,
+	//	},
+	//}, &ListNode{
+	//	Val: 1,
+	//	Next: &ListNode{
+	//		Val: 2,
+	//		Next: &ListNode{
+	//			Val: 3,
+	//			Next: &ListNode{
+	//				Val:  4,
+	//				Next: &ListNode{Val: 5},
+	//			},
+	//		},
+	//	},
+	//}))
 
 }
