@@ -328,6 +328,87 @@ func dfsWord(board [][]byte, s string, index int, x int, y int, vis *[][]bool) b
 	return false
 }
 
+func letterCombinations(digits string) []string {
+	var ans []string
+	if len(digits) == 0 {
+		return ans
+	}
+	var phoneMap map[string]string = map[string]string{
+		"2": "abc",
+		"3": "def",
+		"4": "ghi",
+		"5": "jkl",
+		"6": "mno",
+		"7": "pqrs",
+		"8": "tuv",
+		"9": "wxyz",
+	}
+	var dfsDigit func(digits string, index int, temp string)
+	dfsDigit = func(digits string, index int, temp string) {
+		if index == len(digits) {
+			ans = append(ans, temp)
+			return
+		}
+		if digits[index] != '1' {
+			str, ok := phoneMap[string(digits[index])]
+			if ok {
+				for i := 0; i < len(str); i++ {
+					dfsDigit(digits, index+1, temp+string(str[i]))
+				}
+			}
+		} else {
+			dfsDigit(digits, index+1, temp)
+
+		}
+		return
+	}
+	dfsDigit(digits, 0, "")
+	return ans
+}
+
+//43. 字符串相乘 大数乘法 竖式优化
+func multiply(num1 string, num2 string) string {
+	if num1 == "0" || num2 == "0" {
+		return "0"
+	}
+	res := make([]int, len(num1)+len(num2))
+	for i := len(num1) - 1; i >= 0; i-- {
+		n1 := num1[i] - '0'
+		for j := len(num2) - 1; j >= 0; j-- {
+			n2 := num2[j] - '0'
+			//num1[i] x num2[j] 的结果为 tmp(位数为两位，"0x","xy"的形式)，其第一位位于 res[i+j]，第二位位于 res[i+j+1]
+			sum := res[i+j+1] + int(n1*n2)
+			res[i+j+1] = sum % 10
+			res[i+j] += sum / 10
+		}
+	}
+	var ans string
+	for i := 0; i < len(res); i++ {
+		if i == 0 && res[i] == 0 {
+			continue
+		}
+		ans = ans + strconv.Itoa(res[i])
+	}
+	return ans
+}
+
+func generate(numRows int) [][]int {
+	ans := make([][]int, numRows)
+	for i := 0; i < numRows; i++ {
+		ans[i] = make([]int, i+1)
+	}
+	for i := 0; i < numRows; i++ {
+		ans[i][0] = 1
+		ans[i][i] = 1
+	}
+	for i := 2; i < numRows; i++ {
+		for j := 1; j < len(ans[i])-1; j++ {
+			ans[i][j] = ans[i-1][j-1] + ans[i-1][j]
+		}
+	}
+	return ans
+}
+
 func isAlienSorted(words []string, order string) bool {
 	ord := make(map[uint8]int)
 	for i := 0; i < len(order); i++ {
@@ -382,5 +463,7 @@ func main() {
 	//param_2 := obj.Get("/a")
 	//fmt.Println(param_1)
 	//fmt.Println(param_2)
+	//fmt.Println(findWords([][]byte{{'a', 'a'}}, []string{"aaa"}))
+	fmt.Println(multiply("123", "45"))
 	//fmt.Println(findWords([][]byte{{'a', 'a'}}, []string{"aaa"}))
 }
