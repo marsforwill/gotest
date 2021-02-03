@@ -409,6 +409,35 @@ func buildT(list *[]string) *TreeNode {
 	}
 }
 
+//109. 有序链表转换二叉搜索树 分治加中序遍历
+var iter *ListNode
+
+func sortedListToBST(head *ListNode) *TreeNode {
+	if head == nil {
+		return nil
+	}
+	tail := head
+	iter = head
+	leng := 0
+	for tail.Next != nil {
+		leng++
+		tail = tail.Next
+	}
+	return buildBT(0, leng)
+}
+
+func buildBT(left int, right int) *TreeNode {
+	if left > right {
+		return nil
+	}
+	mid := (left + right + 1) / 2
+	head := &TreeNode{}
+	head.Left = buildBT(left, mid-1)
+	head.Val = iter.Val
+	iter = iter.Next
+	head.Right = buildBT(mid+1, right)
+	return head
+}
 func main() {
 	root := &TreeNode{
 		Val:  1,
