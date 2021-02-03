@@ -438,6 +438,33 @@ func buildBT(left int, right int) *TreeNode {
 	head.Right = buildBT(mid+1, right)
 	return head
 }
+
+//102. 二叉树的层序遍历 bfs 广搜
+func levelOrder(root *TreeNode) [][]int {
+	var ans [][]int
+	if root == nil {
+		return ans
+	}
+	l := list.New()
+	l.PushBack(root)
+	for l.Len() > 0 {
+		n := l.Len()
+		var level []int
+		for i := 0; i < n; i++ {
+			node := l.Front().Value.(*TreeNode)
+			l.Remove(l.Front())
+			level = append(level, node.Val)
+			if node.Left != nil {
+				l.PushBack(node.Left)
+			}
+			if node.Right != nil {
+				l.PushBack(node.Right)
+			}
+		}
+		ans = append(ans, level)
+	}
+	return ans
+}
 func main() {
 	root := &TreeNode{
 		Val:  1,
