@@ -458,6 +458,20 @@ func max(ans int, i int) int {
 		return i
 	}
 }
+
+//123. 买卖股票的最佳时机 III 不太好想 先定义状态 然后通过状态找到转移方程
+func maxProfit(prices []int) int {
+	buy1, sell1 := -prices[0], 0
+	buy2, sell2 := -prices[0], 0
+	for i := 1; i < len(prices); i++ {
+		//对于buy1而言，在第 ii 天我们可以不进行任何操作，保持不变，也可以在未进行任何操作的前提下以 \textit{prices}[i]prices[i] 的价格买入股票
+		buy1 = max(buy1, -prices[i])
+		sell1 = max(sell1, buy1+prices[i])
+		buy2 = max(buy2, sell1-prices[i])
+		sell2 = max(sell2, buy2+prices[i])
+	}
+	return sell2
+}
 func main() {
 	//fmt.Println(stoneGameVII([]int{5, 3, 1, 4, 2}))
 	//fmt.Println(isMatch("aa", "a*"))
