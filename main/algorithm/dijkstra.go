@@ -14,7 +14,7 @@ func findCheapestPrice(n int, flights [][]int, src int, dst int, K int) int {
 	}
 	var fakepq [][]int
 	vis := make(map[int]int) // node+k*1000, cost
-	// 放入初始源节点
+	// 放入初始源节点 维护可达未访问最小节点集合
 	fakepq = append(fakepq, []int{0, 0, src}) // cost k node
 	// 当前处理节点不为空
 	for len(fakepq) > 0 {
