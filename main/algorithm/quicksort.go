@@ -14,13 +14,16 @@ func quickSort(a *[]int, low int, high int) {
 func partitions(a *[]int, low int, high int) int {
 	key := (*a)[low]
 	for low < high {
+		// 从后往前比key大需交换的数
 		for high > low && (*a)[high] >= key {
 			high--
 		}
+		//换到前面
 		(*a)[low] = (*a)[high]
+		// 从前往后比key小的数
 		for low < high && (*a)[low] <= key {
 			low++
-		}
+		} // 换到后面
 		(*a)[high] = (*a)[low]
 	}
 	(*a)[low] = key
