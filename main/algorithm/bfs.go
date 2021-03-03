@@ -140,6 +140,44 @@ func shortestPathAllKeys(grid []string) int {
 	return -1
 }
 
+func bfs(a int, b int, n int) int {
+	startx, starty := 0, 0
+	delx := []int{a, b, -a, -b, a, b, -a, -b}
+	dely := []int{b, a, b, a, -b, -a, -b, -a}
+	var queue []int
+	m := make(map[int]bool)
+	// count*10000+x*100+y
+	queue = append(queue, startx*100+starty)
+	for len(queue) > 0 {
+		info := queue[0]
+		queue = queue[1:]
+		x := (info / 100) % 100
+		y := info % 100
+		count := info / 10000
+		//fmt.Printf("%v %v %v\n",x,y,count)
+		if x < 0 || y < 0 || x >= n || y >= n {
+			continue
+		}
+		if ok, _ := m[x*100+y]; ok {
+			continue
+		}
+		if x == n-1 && y == n-1 {
+			return count
+		}
+		m[x*100+y] = true
+		for i := 0; i < 8; i++ {
+			newx := x + delx[i]
+			newy := y + dely[i]
+			if newx < 0 || newy < 0 || newx >= n || newy >= n {
+				continue
+			}
+			queue = append(queue, (count+1)*10000+newx*100+newy)
+		}
+
+	}
+	return -1
+}
+
 func main() {
 	//fmt.Println(slidingPuzzle([][]int{{3, 2, 4}, {1, 5, 0}}))
 	//@.a.#

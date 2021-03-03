@@ -466,4 +466,64 @@ func main() {
 	//fmt.Println(findWords([][]byte{{'a', 'a'}}, []string{"aaa"}))
 	fmt.Println(multiply("123", "45"))
 	//fmt.Println(findWords([][]byte{{'a', 'a'}}, []string{"aaa"}))
+
+	//n,m := 10,1
+	//dict := make([][]int, n)
+	//for i := 0;i<n;i++ {
+	//	dict[i] = make([]int, m)
+	//}
+	//num := 1
+	//x,y := 0,0
+	//up := true
+	//for i:=0;i<n*m;i++ {
+	//	dict[x][y] = num
+	//	num++
+	//
+	//	if up {
+	//		// bound
+	//		if x==0 {
+	//			if y+1<m {
+	//				y++
+	//			}else {
+	//				x++
+	//			}
+	//			up = false
+	//		} else if y==m-1 {
+	//			x++
+	//			up = false
+	//		}else {
+	//			x--
+	//			y++
+	//		}
+	//		// down
+	//	}else {
+	//		if y==0 {
+	//			if x+1<n {
+	//				x++
+	//			}else {
+	//				y++
+	//			}
+	//			up = true
+	//		} else if x == n-1 {
+	//			y++
+	//			up = true
+	//		} else {
+	//			x++
+	//			y--
+	//		}
+	//	}
+	//}
+	//fmt.Println()
+	//for i:=0;i<len(dict);i++ {
+	//	for j:=0;j<len(dict[0]);j++ {
+	//		fmt.Printf("%v ", dict[i][j])
+	//	}
+	//	fmt.Println()
+	//}
+	////fmt.Scan(&n)
+	//
+	//// fmt.Print(bfs(1,1,n))
+	////fmt.Printf("%d\n", a)
+	//
+	//fmt.Printf("Hello World!\n")
 }
