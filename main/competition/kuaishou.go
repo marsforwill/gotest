@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -30,6 +31,24 @@ func compareVersion(version1 string, version2 string) int {
 		}
 	}
 	return 0
+}
+
+// 可用map存储换时间优化到O（n）
+func longestConsecutive(nums []int) int {
+	sort.Ints(nums)
+	ans := 0
+	count := 0
+	for i := 1; i < len(nums); i++ {
+		if nums[i] == nums[i-1]+1 {
+			count++
+		} else {
+			count = 0
+		}
+		if count > ans {
+			ans = count
+		}
+	}
+	return ans
 }
 
 func main() {
