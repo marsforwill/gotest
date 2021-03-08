@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 	"strings"
@@ -51,6 +52,31 @@ func longestConsecutive(nums []int) int {
 	return ans
 }
 
-func main() {
+func subsets(nums []int) [][]int {
+	m := make(map[int]bool)
+	for i := 0; i < len(nums); i++ {
+		m[nums[i]] = true
+	}
+	var numq []int
+	for k := range m {
+		numq = append(numq, k)
+	}
+	var ans [][]int
+	dfsset(&ans, numq, []int{}, 0)
+	return ans
+}
 
+func dfsset(ans *[][]int, numq []int, temp []int, index int) {
+	if index == len(numq) {
+		*ans = append(*ans, append([]int(nil), temp...))
+		return
+	}
+	dfsset(ans, numq, temp, index+1)
+	temp = append(temp, numq[index])
+	dfsset(ans, numq, temp, index+1)
+}
+
+func main() {
+	ans := subsets([]int{9, 0, 3, 5, 7})
+	fmt.Println(ans)
 }
