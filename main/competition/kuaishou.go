@@ -99,18 +99,26 @@ func maxProduct(nums []int) int {
 	return ans
 }
 
-func max(x, y int) int {
-	if x > y {
-		return x
+// 300.最长递增子序列
+func lengthOfLIS(nums []int) int {
+	count := make([]int, len(nums))
+	count[0] = 1
+	for i := 1; i < len(nums); i++ {
+		temp := 1
+		for j := 0; j < i; j++ {
+			if nums[j] < nums[i] && temp < count[j]+1 {
+				temp = count[j] + 1
+			}
+		}
+		count[i] = temp
 	}
-	return y
-}
-
-func min(x, y int) int {
-	if x < y {
-		return x
+	ans := 0
+	for i := 0; i < len(count); i++ {
+		if ans < count[i] {
+			ans = count[i]
+		}
 	}
-	return y
+	return ans
 }
 
 func main() {
