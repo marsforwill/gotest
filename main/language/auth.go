@@ -66,5 +66,5 @@ func CreatData(ak, sk string) map[string]string {
 }
 
 func main() {
-	fmt.Println(CreatData("l1-d98a2a81-64558d59c9c1", "cd624e44f04789487fc074f5de460bbd"))
+	//fmt.Println(CreatData("l1-d98a2a81-64558d59c9c1", "cd624e44f04789487fc074f5de460bbd"))
 }
