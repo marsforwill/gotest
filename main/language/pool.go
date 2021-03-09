@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"sync"
 	"time"
 )
@@ -38,5 +39,5 @@ func main() {
 	// 再次获取，会发现，已经是空的了，只能返回默认的值。
 	num := pool.Get()
 	fmt.Println(num)
-
+	io.WriteString()
 }
