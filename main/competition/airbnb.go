@@ -449,7 +449,12 @@ func lengthOfLastWord(s string) int {
 	if len(words) == 0 {
 		return 0
 	}
-	return len(words[len(words)-1])
+	for i := len(words) - 1; i >= 0; i-- {
+		if len(words[i]) > 0 && words[i] != " " {
+			return len(words[i])
+		}
+	}
+	return 0
 }
 func main() {
 	fmt.Println(lengthOfLastWord(" a"))
