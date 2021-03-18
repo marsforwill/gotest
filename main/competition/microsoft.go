@@ -57,8 +57,27 @@ def numberToWords(self, num: int) -> str:
 func numberToWords(num int) string {
 	to19 := strings.Split("One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen", " ")
 	tens := strings.Split("Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety", " ")
-	var helper = func(num int) []string {
-
+	var helper func(num int) []string
+	helper = func(num int) []string {
+		if num < 20 {
+			return to19[num-1:num]
+		}
+		if num < 100 {
+			ans := []string{tens[(num/10)-2]}
+			return append(ans, helper(num%10)...)
+		}
+		if num < 1000 {
+			ans := []string{to19[num/100-1]}
+			ans = append(ans,"Hundred")
+			ans = append(ans, helper(num%100)...)
+			return ans
+		}
+		temp := []string{"Thousand", "Million", "Billion"}
+		for i := 0; i < len(temp); i++ {
+			if num < 1000*(i+1) {
+				return helper()
+			}
+		}
 	}
 	return strings.Join(helper(num), " ")
 }
