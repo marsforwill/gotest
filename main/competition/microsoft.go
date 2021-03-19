@@ -1,6 +1,9 @@
 package main
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 //151. 翻转字符串里的单词
 func reverseWords(s string) string {
@@ -31,36 +34,22 @@ func reverseWords(s string) string {
 	return ans
 }
 
-/**
-def numberToWords(self, num: int) -> str:
-        to19 = 'One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve ' \
-               'Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen'.split()
-        tens = 'Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety'.split()
-
-        def helper(num):
-            if num < 20:
-                return to19[num - 1:num]
-            if num < 100:
-                return [tens[num // 10 - 2]] + helper(num % 10)
-            if num < 1000:
-                return [to19[num // 100 - 1]] + ["Hundred"] + helper(num % 100)
-            for p, w in enumerate(["Thousand", "Million", "Billion"], 1):
-                if num < 1000 ** (p + 1):
-                    return helper(num // 1000 ** p) + [w] + helper(num % 1000 ** p)
-
-        return " ".join(helper(num)) or "Zero"
-
-*/
 //273. 整数转换英文表示 递归 简洁处理细节
 //输入：num = 1234567891
 //输出："One Billion Two Hundred Thirty Four Million Five Hundred Sixty Seven Thousand Eight Hundred Ninety One"
 func numberToWords(num int) string {
+	if num == 0 {
+		return "Zero"
+	}
 	to19 := strings.Split("One Two Three Four Five Six Seven Eight Nine Ten Eleven Twelve Thirteen Fourteen Fifteen Sixteen Seventeen Eighteen Nineteen", " ")
 	tens := strings.Split("Twenty Thirty Forty Fifty Sixty Seventy Eighty Ninety", " ")
 	var helper func(num int) []string
 	helper = func(num int) []string {
+		if num <= 0 {
+			return []string{}
+		}
 		if num < 20 {
-			return to19[num-1:num]
+			return to19[num-1 : num]
 		}
 		if num < 100 {
 			ans := []string{tens[(num/10)-2]}
@@ -68,20 +57,38 @@ func numberToWords(num int) string {
 		}
 		if num < 1000 {
 			ans := []string{to19[num/100-1]}
-			ans = append(ans,"Hundred")
+			ans = append(ans, "Hundred")
 			ans = append(ans, helper(num%100)...)
 			return ans
 		}
 		temp := []string{"Thousand", "Million", "Billion"}
 		for i := 0; i < len(temp); i++ {
-			if num < 1000*(i+1) {
-				return helper()
+			if num < p(1000, i+2) {
+				ansm := helper(num % p(1000, i+1))
+				low := make([]string, 30)
+				copy(low, ansm)
+				ansh := helper(num / p(1000, i+1))
+				ansh = append(ansh, temp[i])
+				ansh = append(ansh, low...)
+				return ansh
 			}
 		}
+		return []string{}
 	}
-	return strings.Join(helper(num), " ")
+	return strings.TrimRight(strings.Join(helper(num), " "), " ")
+}
+func p(num int, pow int) int {
+	if pow == 0 {
+		return 1
+	}
+	ans := 1
+	for i := 0; i < pow; i++ {
+		ans = ans * num
+	}
+	return ans
 }
 
 func main() {
-	println(reverseWords("  hello world  "))
+	//println(reverseWords("  hello world  "))
+	fmt.Println(numberToWords(1234567891))
 }
