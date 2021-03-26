@@ -89,19 +89,63 @@ func p(num int, pow int) int {
 }
 
 //48. 旋转图像
-func rotate(matrix [][]int)  {
+func rotate(matrix [][]int) {
 	n := len(matrix)
 	for i := 0; i < n/2; i++ {
-		for j := 0; j < (n+1)/2 ; j++ {
+		for j := 0; j < (n+1)/2; j++ {
 			temp := matrix[i][j]
-			matrix[i][j] = matrix[n - j - 1][i];
-			matrix[n - j - 1][i] = matrix[n - i - 1][n - j - 1];
-			matrix[n - i - 1][n - j - 1] = matrix[j][n - i - 1];
-			matrix[j][n - i - 1] = temp
+			matrix[i][j] = matrix[n-j-1][i]
+			matrix[n-j-1][i] = matrix[n-i-1][n-j-1]
+			matrix[n-i-1][n-j-1] = matrix[j][n-i-1]
+			matrix[j][n-i-1] = temp
 		}
 	}
 }
 
+//365. 水壶问题 能否从x y升的水壶到处z的水 三水杯简化版本 bfs
+func canMeasureWater(x int, y int, z int) bool {
+	if x+y < z {
+		return false
+	}
+	var queue []int
+	init := 0
+	queue = append(queue, init)
+	visited := make(map[int]bool)
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue = queue[1:]
+		if _, ok := visited[cur]; ok {
+			continue
+		}
+		visited[cur] = true
+		nx := cur / 10000
+		ny := cur % 10000
+		if nx == z || ny == z || nx+ny == z {
+			return true
+		}
+		// 增加下一次可达的状态：倒满X
+		queue = append(queue, x*10000+ny)
+		// 增加下一次可达的状态：倒满Y
+		queue = append(queue, nx*10000+y)
+		// 增加下一次可达的状态：清空X
+		queue = append(queue, 0+ny)
+		// 增加下一次可达的状态：清空Y
+		queue = append(queue, nx*10000+0)
+		// x--> y
+		if nx > y-ny {
+			queue = append(queue, (nx+ny-y)*10000+y)
+		} else {
+			queue = append(queue, 0, nx+ny)
+		}
+		// y--> x
+		if ny > x-nx {
+			queue = append(queue, x*10000+(nx+ny-x))
+		} else {
+			queue = append(queue, (nx+ny)*10000)
+		}
+	}
+	return false
+}
 func main() {
 	//println(reverseWords("  hello world  "))
 	fmt.Println(numberToWords(1234567891))
