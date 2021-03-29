@@ -465,6 +465,44 @@ func levelOrder(root *TreeNode) [][]int {
 	}
 	return ans
 }
+
+// 333. 最大 BST 子树
+var maxn = 0
+func largestBSTSubtree(root *TreeNode) int {
+	dfslargestBSTSubtree(root)
+	return maxn
+}
+func dfslargestBSTSubtree(root *TreeNode) int {
+	if root == nil {
+		return 0
+	}
+	if root.Left == nil && root.Right == nil {
+		return 1
+	}
+	var left int
+	var right int
+	if root.Left != nil {
+		if root.Val <= root.Left.Val {
+			return 0
+		}
+		left = dfslargestBSTSubtree(root.Left)
+	}
+	if root.Right != nil {
+		if root.Val >= root.Right.Val {
+			return 0
+		}
+		right = dfslargestBSTSubtree(root.Right)
+	}
+	ans := 0
+	if left > 0 && right > 0 {
+		ans = left+right+1
+	}
+	if ans > maxn {
+		maxn = ans
+	}
+	return ans
+}
+
 func main() {
 	root := &TreeNode{
 		Val:  1,
