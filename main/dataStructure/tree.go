@@ -410,6 +410,11 @@ func buildT(list *[]string) *TreeNode {
 }
 
 //109. 有序链表转换二叉搜索树 分治加中序遍历
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
 var iter *ListNode
 
 func sortedListToBST(head *ListNode) *TreeNode {
@@ -468,6 +473,7 @@ func levelOrder(root *TreeNode) [][]int {
 
 // 333. 最大 BST 子树
 var maxn = 0
+
 func largestBSTSubtree(root *TreeNode) int {
 	dfslargestBSTSubtree(root)
 	return maxn
@@ -486,16 +492,22 @@ func dfslargestBSTSubtree(root *TreeNode) int {
 			return 0
 		}
 		left = dfslargestBSTSubtree(root.Left)
+		if left == 0 {
+			return 0
+		}
 	}
 	if root.Right != nil {
 		if root.Val >= root.Right.Val {
 			return 0
 		}
 		right = dfslargestBSTSubtree(root.Right)
+		if right == 0 {
+			return 0
+		}
 	}
-	ans := 0
-	if left > 0 && right > 0 {
-		ans = left+right+1
+	ans := left + right + 1
+	if ans == 3 {
+		fmt.Println(root.Val)
 	}
 	if ans > maxn {
 		maxn = ans
@@ -505,17 +517,37 @@ func dfslargestBSTSubtree(root *TreeNode) int {
 
 func main() {
 	root := &TreeNode{
-		Val:  1,
-		Left: &TreeNode{Val: 0},
+		Val: 4,
+		Left: &TreeNode{
+			Val: 2,
+			Left: &TreeNode{
+				Val: 2,
+				Left: &TreeNode{
+					Val: 2,
+					Left: &TreeNode{
+						Val:   1,
+						Left:  nil,
+						Right: nil,
+					},
+					Right: nil,
+				},
+				Right: nil,
+			},
+			Right: &TreeNode{
+				Val:   3,
+				Left:  nil,
+				Right: nil,
+			},
+		},
 		Right: &TreeNode{
-			Val:   1,
-			Left:  &TreeNode{Val: -4},
-			Right: &TreeNode{Val: 3},
+			Val:   7,
+			Left:  &TreeNode{Val: 5},
+			Right: nil,
 		},
 	}
-	fmt.Println(serialize(root))
-	a := deserialize("1.0.X.X.1.-4.X.X.3.X.X")
-	fmt.Println(a)
+	fmt.Println(largestBSTSubtree(root))
+	//a := deserialize("1.0.X.X.1.-4.X.X.3.X.X")
+	//fmt.Println(a)
 	//fmt.Println(treeToDoublyList(root))
 	//fmt.Println(isSubStructure(root, &TreeNode{
 	//	Val:   1,
