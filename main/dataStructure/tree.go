@@ -467,40 +467,37 @@ func levelOrder(root *TreeNode) [][]int {
 }
 
 // 333. 最大 BST 子树
-var maxn = 0
 func largestBSTSubtree(root *TreeNode) int {
-	dfslargestBSTSubtree(root)
-	return maxn
+	ans,_,_,_ := dfslargestBSTSubtree(root)
+	return ans
 }
-func dfslargestBSTSubtree(root *TreeNode) int {
+// return 当前节点统计，当前树 min，max，是否符合bst
+func dfslargestBSTSubtree(root *TreeNode) (int, int, int, bool)  {
 	if root == nil {
-		return 0
+		return 0, -1<<31, 1<<31, true
 	}
 	if root.Left == nil && root.Right == nil {
-		return 1
+		return 1, root.Val, root.Val, true
 	}
-	var left int
-	var right int
-	if root.Left != nil {
-		if root.Val <= root.Left.Val {
-			return 0
-		}
-		left = dfslargestBSTSubtree(root.Left)
+	left,lmin,lmax,ok1 := dfslargestBSTSubtree(root.Left)
+	right,rmin,rmax,ok2 := dfslargestBSTSubtree(root.Right)
+
+	if !ok1 || !ok2 {
+		return max(left, right), 0, 0, false
 	}
-	if root.Right != nil {
-		if root.Val >= root.Right.Val {
-			return 0
-		}
-		right = dfslargestBSTSubtree(root.Right)
+	if root.Left != nil && lmax >= root.Val {
+		return max(left, right), 0, 0, false
 	}
-	ans := 0
-	if left > 0 && right > 0 {
-		ans = left+right+1
+	if root.Right != nil && rmin <= root.Val {
+		return max(left, right), 0, 0, false
 	}
-	if ans > maxn {
-		maxn = ans
+	if root.Left == nil {
+		return 1 + right, root.Val, rmax, true
 	}
-	return ans
+	if root.Right == nil {
+		return 1 + left, lmin, root.Val, true
+	}
+	return 1 + left + right, lmin, rmax, true
 }
 
 func main() {
