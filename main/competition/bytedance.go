@@ -11,10 +11,12 @@ func nextPermutation(nums []int) {
 		if nums[i] < nums[i+1] {
 			for j := len(nums) - 1; j > i && j >= 0; j-- {
 				if nums[i] < nums[j] {
+					// 交换 比index大的最小元素（末尾）
 					nums[i], nums[j] = nums[j], nums[i]
 					break
 				}
 			}
+			// reverse 升序变降序
 			reverse(nums[i+1:])
 			return
 		}

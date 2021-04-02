@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -146,7 +147,64 @@ func canMeasureWater(x int, y int, z int) bool {
 	}
 	return false
 }
+
+//56. 合并重复区间 //其实是可以排序加双指针
+func merge(intervals [][]int) [][]int {
+	startMap := make(map[int]int)
+	endMap := make(map[int]int)
+	minx := math.MaxInt8
+	maxx := -1
+	for i := 0; i < len(intervals); i++ {
+		if cnt, ok := startMap[intervals[i][0]]; ok {
+			startMap[intervals[i][0]] = cnt + 1
+		} else {
+			startMap[intervals[i][0]] = 1
+		}
+		if intervals[i][0] < minx {
+			minx = intervals[i][0]
+		}
+		if cnt, ok := endMap[intervals[i][1]]; ok {
+			endMap[intervals[i][1]] = cnt + 1
+		} else {
+			endMap[intervals[i][1]] = 1
+		}
+		if intervals[i][0] < minx {
+			minx = intervals[i][0]
+		}
+		if maxx < intervals[i][1] {
+			maxx = intervals[i][1]
+		}
+	}
+	cnt := 0
+	st, end := 0, 0
+	in := false
+	var ans [][]int
+	for i := minx; i <= maxx; i++ {
+		count, ok := startMap[i]
+		if ok {
+			cnt += count
+		}
+		count, ok2 := endMap[i]
+		if ok2 {
+			cnt -= count
+		}
+		if in == false && cnt == 0 && ok && ok2 {
+			ans = append(ans, []int{i, i})
+		}
+		if in == false && cnt > 0 {
+			st = i
+			in = true
+		}
+		if in == true && cnt == 0 {
+			end = i
+			in = false
+			ans = append(ans, []int{st, end})
+		}
+	}
+	return ans
+}
 func main() {
 	//println(reverseWords("  hello world  "))
-	fmt.Println(numberToWords(1234567891))
+	//fmt.Println(numberToWords(1234567891))
+	fmt.Println(merge([][]int{{1, 4}, {0, 0}}))
 }
