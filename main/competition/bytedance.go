@@ -1,25 +1,34 @@
 package main
 
-import "sort"
-
 /**
-[1,3,2]
-输出：
-[3,1,2]
-预期结果：
-[2,1,3]
+输入：nums = [1,2,3]
+输出：[1,3,2]
 */
 //31. 下一个排列
 func nextPermutation(nums []int) {
-	for i := len(nums) - 1; i > 0; i-- {
-		if nums[i] > nums[i-1] {
-			nums[i], nums[i-1] = nums[i-1], nums[i]
+	for i := len(nums) - 2; i >= 0; i-- {
+		// 找到第一个逆序升序index
+		if nums[i] < nums[i+1] {
+			for j := len(nums) - 1; j > i && j >= 0; j-- {
+				if nums[i] < nums[j] {
+					nums[i], nums[j] = nums[j], nums[i]
+					break
+				}
+			}
+			reverse(nums[i+1:])
 			return
 		}
 	}
-	sort.Ints(nums)
+	reverse(nums)
 	return
 }
+func reverse(a []int) {
+	for i, n := 0, len(a); i < n/2; i++ {
+		a[i], a[n-1-i] = a[n-1-i], a[i]
+	}
+}
+
 func main() {
+	nextPermutation([]int{1, 5, 1})
 
 }
