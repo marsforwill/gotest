@@ -30,6 +30,32 @@ func reverse(a []int) {
 	}
 }
 
+// 46. 全排列 dfs 搜索树回溯
+func permute(nums []int) [][]int {
+	var res [][]int
+	vis := make(map[int]bool)
+	var dfs func(path []int)
+	dfs = func(path []int) {
+		if len(path) == len(nums) {
+			temp := make([]int, len(nums))
+			copy(path, temp)
+			res = append(res, temp)
+			return
+		}
+		for _, i := range nums {
+			if vis[i] {
+				continue
+			}
+			path = append(path, i)
+			vis[i] = true
+			dfs(path)
+			path = path[:len(path)-1]
+			vis[i] = false
+		}
+	}
+	dfs([]int{})
+	return res
+}
 func main() {
 	nextPermutation([]int{1, 5, 1})
 
