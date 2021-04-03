@@ -468,19 +468,20 @@ func levelOrder(root *TreeNode) [][]int {
 
 // 333. 最大 BST 子树
 func largestBSTSubtree(root *TreeNode) int {
-	ans,_,_,_ := dfslargestBSTSubtree(root)
+	ans, _, _, _ := dfslargestBSTSubtree(root)
 	return ans
 }
+
 // return 当前节点统计，当前树 min，max，是否符合bst
-func dfslargestBSTSubtree(root *TreeNode) (int, int, int, bool)  {
+func dfslargestBSTSubtree(root *TreeNode) (int, int, int, bool) {
 	if root == nil {
-		return 0, -1<<31, 1<<31, true
+		return 0, -1 << 31, 1 << 31, true
 	}
 	if root.Left == nil && root.Right == nil {
 		return 1, root.Val, root.Val, true
 	}
-	left,lmin,lmax,ok1 := dfslargestBSTSubtree(root.Left)
-	right,rmin,rmax,ok2 := dfslargestBSTSubtree(root.Right)
+	left, lmin, lmax, ok1 := dfslargestBSTSubtree(root.Left)
+	right, rmin, rmax, ok2 := dfslargestBSTSubtree(root.Right)
 
 	if !ok1 || !ok2 {
 		return max(left, right), 0, 0, false
@@ -500,6 +501,46 @@ func dfslargestBSTSubtree(root *TreeNode) (int, int, int, bool)  {
 	return 1 + left + right, lmin, rmax, true
 }
 
+//103. 二叉树的锯齿形层序遍历
+func zigzagLevelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+	var ans [][]int
+	order := true
+	queue := []*TreeNode{root}
+	for len(queue) > 0 {
+		iter := []*TreeNode{}
+		number := []int{}
+		for i := 0; i < len(queue); i++ {
+			if queue[i] == nil {
+				continue
+			}
+			if queue[i].Left != nil {
+				iter = append(iter, queue[i].Left)
+			}
+			if queue[i].Right != nil {
+				iter = append(iter, queue[i].Right)
+			}
+			number = append(number, queue[i].Val)
+		}
+		queue = iter
+		if order {
+			ans = append(ans, number)
+			order = false
+		} else {
+			reverse(number)
+			ans = append(ans, number)
+			order = true
+		}
+	}
+	return ans
+}
+func reverse(a []int) {
+	for i, n := 0, len(a); i < n/2; i++ {
+		a[i], a[n-1-i] = a[n-1-i], a[i]
+	}
+}
 func main() {
 	root := &TreeNode{
 		Val:  1,
