@@ -203,6 +203,35 @@ func merge(intervals [][]int) [][]int {
 	}
 	return ans
 }
+
+//54. 螺旋矩阵
+func spiralOrder(matrix [][]int) []int {
+	n := len(matrix)
+	if n == 0 {
+		return []int{}
+	}
+	m := len(matrix[0])
+	var ans []int
+	vis := make([][]bool, n)
+	for i := 0; i < n; i++ {
+		vis[i] = make([]bool, m)
+	}
+
+	directions := [][]int{[]int{0, 1}, []int{1, 0}, []int{0, -1}, []int{-1, 0}}
+	directionIndex := 0
+	x, y := 0, 0
+	for i := 0; i < m*n; i++ {
+		ans = append(ans, matrix[x][y])
+		vis[x][y] = true
+		nx, ny := x+directions[directionIndex][0], y+directions[directionIndex][1]
+		if nx < 0 || nx >= n || ny < 0 || ny >= m || vis[nx][ny] {
+			directionIndex = (directionIndex + 1) % 4
+		}
+		x += directions[directionIndex][0]
+		y += directions[directionIndex][1]
+	}
+	return ans
+}
 func main() {
 	//println(reverseWords("  hello world  "))
 	//fmt.Println(numberToWords(1234567891))
