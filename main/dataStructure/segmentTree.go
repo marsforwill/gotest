@@ -270,6 +270,80 @@ func (st *SegmentCountTree) updateCountInTree(treeIndex, left, right, val int) {
 	}
 }
 
+// ^ todo
+// -------------------------------------------------------------------------------------------------
+// 线段树 标准模版
+//307. 区域和检索 - 数组可修改
+type NumArray struct {
+	tree []int
+	n    int
+}
+
+func Constructor(nums []int) NumArray {
+	if len(nums) > 0 {
+		tree := make([]int, len(nums)*4)
+		n := len(nums)
+		na := NumArray{
+			tree: tree,
+			n:    n,
+		}
+		na.build(0, n-1, 1, nums)
+
+		return na
+	}
+	return NumArray{}
+}
+
+func (this *NumArray) build(l int, r int, rt int, nums []int) {
+	if l == r {
+		this.tree[rt] = nums[l]
+		return
+	}
+	mid := l + ((r - l) >> 1)
+	this.build(l, mid, rt<<1, nums)
+	this.build(mid+1, r, rt<<1|1, nums)
+	this.tree[rt] = this.tree[rt*2] + this.tree[rt*2+1]
+
+}
+
+func (this *NumArray) Update(index int, val int) {
+	this.UpdateTree(index, index, val, 0, this.n-1, 1)
+}
+
+func (this *NumArray) UpdateTree(l int, r int, val int, L int, R int, rt int) {
+	if l <= L && r >= R {
+		this.tree[rt] = val
+		return
+	}
+	mid := L + ((R - L) >> 1)
+	if l <= mid {
+		this.UpdateTree(l, r, val, L, mid, rt*2)
+	}
+	if r > mid {
+		this.UpdateTree(l, r, val, mid+1, R, rt*2+1)
+	}
+	this.tree[rt] = this.tree[rt*2] + this.tree[rt*2+1]
+}
+
+func (this *NumArray) SumRange(left int, right int) int {
+	return this.query(left, right, 0, this.n-1, 1)
+}
+
+func (this *NumArray) query(left int, right int, L int, R int, treeIndex int) int {
+	if left <= L && right >= R {
+		return this.tree[treeIndex]
+	}
+	mid := L + ((R - L) >> 1)
+	ans := 0
+	if left <= mid {
+		ans += this.query(left, right, L, mid, treeIndex*2)
+	}
+	if right > mid {
+		ans += this.query(left, right, mid+1, R, treeIndex*2+1)
+	}
+	return ans
+}
+
 func main() {
 	//segmentTree := new(SegmentTree)
 	//segmentTree.Init([]int{1, 2, 3, 4, 5}, func(i, j int) int {
@@ -284,10 +358,11 @@ func main() {
 	//fmt.Println(segmentTree.tree)
 	//fmt.Println(segmentTree.QueryLazy(0, 3))
 
-	segmentCountTree := new(SegmentCountTree)
-	segmentCountTree.Init([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, func(i, j int) int {
-		return i + j
-	})
-	fmt.Println(segmentCountTree.Query(3, 6))
-
+	//segmentCountTree := new(SegmentCountTree)
+	//segmentCountTree.Init([]int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, func(i, j int) int {
+	//	return i + j
+	//})
+	//fmt.Println(segmentCountTree.Query(3, 6))
+	obj := Constructor([]int{0, 9, 5, 7, 3})
+	fmt.Println(obj.SumRange(4, 4))
 }
