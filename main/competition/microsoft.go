@@ -232,8 +232,53 @@ func spiralOrder(matrix [][]int) []int {
 	}
 	return ans
 }
+
+//253. 会议室 II 扫描线 题解是：按照开始时间排序 遍历处理中用优先队列存最早结束时间来判断是否需要新增房间
+func minMeetingRooms(intervals [][]int) int {
+	startMap := make(map[int]int)
+	endMap := make(map[int]int)
+	minx := math.MaxInt8
+	maxx := -1
+	for i := 0; i < len(intervals); i++ {
+		if cnt, ok := startMap[intervals[i][0]]; ok {
+			startMap[intervals[i][0]] = cnt + 1
+		} else {
+			startMap[intervals[i][0]] = 1
+		}
+		if intervals[i][0] < minx {
+			minx = intervals[i][0]
+		}
+		if cnt, ok := endMap[intervals[i][1]]; ok {
+			endMap[intervals[i][1]] = cnt + 1
+		} else {
+			endMap[intervals[i][1]] = 1
+		}
+		if intervals[i][0] < minx {
+			minx = intervals[i][0]
+		}
+		if maxx < intervals[i][1] {
+			maxx = intervals[i][1]
+		}
+	}
+	cnt := 0
+	ans := 0
+	for i := minx; i <= maxx; i++ {
+		count, ok := startMap[i]
+		if ok {
+			cnt += count
+		}
+		count, ok2 := endMap[i]
+		if ok2 {
+			cnt -= count
+		}
+		if cnt > ans {
+			ans = cnt
+		}
+	}
+	return ans
+}
 func main() {
 	//println(reverseWords("  hello world  "))
 	//fmt.Println(numberToWords(1234567891))
-	fmt.Println(merge([][]int{{1, 4}, {0, 0}}))
+	fmt.Println(minMeetingRooms([][]int{{0, 30}, {5, 10}, {15, 20}}))
 }
