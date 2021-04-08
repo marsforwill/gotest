@@ -277,6 +277,29 @@ func minMeetingRooms(intervals [][]int) int {
 	}
 	return ans
 }
+
+//22. 括号生成 dfs好写
+func generateParenthesis(n int) []string {
+	var ans []string
+	var dfsStr func(string, int, int, *[]string)
+	dfsStr = func(str string, left int, right int, ans *[]string) {
+		if left == n && right == n {
+			*ans = append(*ans, str)
+			return
+		}
+		if right > left {
+			return
+		}
+		if left < n {
+			dfsStr(str+"(", left+1, right, ans)
+		}
+		if right < n {
+			dfsStr(str+")", left, right+1, ans)
+		}
+	}
+	dfsStr("", 0, 0, &ans)
+	return ans
+}
 func main() {
 	//println(reverseWords("  hello world  "))
 	//fmt.Println(numberToWords(1234567891))
