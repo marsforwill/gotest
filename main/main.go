@@ -5,9 +5,9 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"os"
 )
 
@@ -81,13 +81,168 @@ func Rimage(filename string) (string, error) {
 	return "", err
 }
 
-func main() {
-	bytes, err := hex.DecodeString("534f463146610000100200000001000000000000050000000000000000000000ee65e4cbd849fd3e0df97bc0fef45b5773e572d4a6e0dc5fd1fa288902275dcc63aad6337da93a69af467a2ac43759a50c7ffef3f325e5438eda4bc56e4a62bb77d9ab96300ab3304aaa26f5b9391103d096fe6bdac8d8fd332180343469a969f7c2e646191ba2fd248137deec0d98e05268af08f7155fe6fbeb32b70022a64cb879c5c628eb7bad6b6e197a76c042387c21b5cd523b445b30f38ede217696880f19183f6f03a3ff2e062934c1d20a42e60d45e284c8f4d58145e2dbb6242fd131b27c4b3194d0ebb081723c8a5e6642ea29a5aca1d4de865ca64c8fecdd94ebca914d58333ebcf0f7c09cb6c7b50c9bc8233c14acda8440381c79235d174589903118bd0c136d0cf2d0fcf6f9e74c7087af9bd16c3805b70b12f0431c29c0fd9ff69700de1b87d9e5c0fe5111106e3d1b0a9862bebca3c2e549bd96b60f64f0c32fa9105a4ce15f3a2f9d64a5bf5295beed8ed1588146a834bc2340d3e17e57eb7de544da5735d48df4661463c7eca82c8bf5b6c77d7af4610ca343bc423f4684ef7e42084013a0694ed6f67e684dcd305c5d404492dcc3d1fda4627642c21a77bc10a4cdd19e1b60c68894be73f40302c577b2d9d1631861505bd667974d620b5a94e9136bcbb6a3f18d9163ead6c0684dcdd6eb60f030692d16d0cb8df6212bf6ae05c4c4dc3b4d81e9ff58a87b547c525453581699658bf90dc3f60d644c99d5ae4f5cd8c65606136f439b9e7005")
-	if err != nil {
-		fmt.Println(err)
+func cal(price []int) (int, int, int) {
+	min := math.MaxInt32
+	minIndex := 1
+	ans := 0
+	var begin, end int
+	for i := 0; i < len(price); i++ {
+		if price[i] < min {
+			min = price[i]
+			minIndex = i
+		} else {
+			if ans < price[i]-min {
+				ans = price[i] - min
+				begin = minIndex
+				end = i
+			}
+		}
 	}
-	str := base64.StdEncoding.EncodeToString(bytes)
-	fmt.Println(str)
+	return ans, begin, end
+}
+
+func getNumber(n int) int {
+	ans := []int{1}
+
+	index2, index3, index5, index7 := 0, 0, 0, 0
+	for len(ans) <= n {
+		n2, n3, n5, n7 := ans[index2]*2, ans[index3]*3, ans[index5]*5, ans[index7]*7
+		minNumber := min(min(n2, n3), min(n5, n7))
+		ans = append(ans, minNumber)
+		if minNumber == n2 {
+			index2++
+		}
+		if minNumber == n3 {
+			index3++
+		}
+		if minNumber == n5 {
+			index5++
+		}
+		if minNumber == n7 {
+			index7++
+		}
+	}
+	return ans[n]
+}
+
+func min(a int, b int) int {
+	if a <= b {
+		return a
+	}
+	return b
+}
+
+//
+//"abcde"
+//"acbde"
+//dp[3][3] = 2
+//dp[4][4] = max()
+
+func getCommonSub(a string, b string) int {
+	dp := make([][]int, len(a)+1)
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]int, len(b)+1)
+	}
+	if len(a) == 0 || len(b) == 0 {
+		return 0
+	}
+
+	if a[0] == b[0] {
+		dp[0][0] = 1
+	}
+	for i := 1; i < len(a); i++ {
+		if a[i] == b[0] || dp[i-1][0] > 0 {
+			dp[i][0] = 1
+		}
+	}
+	for j := 1; j < len(b); j++ {
+		if b[j] == a[0] || dp[0][j-1] > 0 {
+			dp[0][j] = 1
+		}
+	}
+
+	for i := 1; i < len(a); i++ {
+		for j := 1; j < len(b); j++ {
+			if a[i] == b[j] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	//
+	//for i := 0; i < len(a); i++ {
+	//	for j := 0; j < len(b); j++ {
+	//		fmt.Printf("%v ",dp[i][j])
+	//	}
+	//	fmt.Println()
+	//}
+	return dp[len(a)-1][len(b)-1]
+
+}
+
+func getCommonSub2(a string, b string) int {
+	dp := make([][]int, len(a)+1)
+	for i := 0; i < len(dp); i++ {
+		dp[i] = make([]int, len(b)+1)
+	}
+	if len(a) == 0 || len(b) == 0 {
+		return 0
+	}
+	for i := 1; i <= len(a); i++ {
+		for j := 1; j <= len(b); j++ {
+			if a[i-1] == b[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	//
+	//for i := 0; i < len(a); i++ {
+	//	for j := 0; j < len(b); j++ {
+	//		fmt.Printf("%v ",dp[i][j])
+	//	}
+	//	fmt.Println()
+	//}
+
+	return dp[len(a)][len(b)]
+
+}
+
+func max(a int, b int) int {
+	if a >= b {
+		return a
+	}
+	return b
+}
+
+//
+//// 2,3,5,7
+//3 --> 4
+////2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 24, 25, 27
+//{1,2,3,4}
+//*2 2 4 6
+//*3 3 6
+//*5 5
+//*7 7
+
+//[1,2,3,4,1,3,4]
+//[3,1,2,6]
+func main() {
+	fmt.Println(getCommonSub2("abcde", "acbde"))             // 4
+	fmt.Println(getCommonSub2("aaaaa", "aaa"))               // 3
+	fmt.Println(getCommonSub2("aaaaa", "bbb"))               // 0
+	fmt.Println(getCommonSub2("", ""))                       // 0
+	fmt.Println(getCommonSub2("aybycydyeyf", "aubucudueuf")) //6
+	fmt.Println(getCommonSub2("cccc", "cccc"))               //4
+
+	//bytes, err := hex.DecodeString("534f463146610000100200000001000000000000050000000000000000000000ee65e4cbd849fd3e0df97bc0fef45b5773e572d4a6e0dc5fd1fa288902275dcc63aad6337da93a69af467a2ac43759a50c7ffef3f325e5438eda4bc56e4a62bb77d9ab96300ab3304aaa26f5b9391103d096fe6bdac8d8fd332180343469a969f7c2e646191ba2fd248137deec0d98e05268af08f7155fe6fbeb32b70022a64cb879c5c628eb7bad6b6e197a76c042387c21b5cd523b445b30f38ede217696880f19183f6f03a3ff2e062934c1d20a42e60d45e284c8f4d58145e2dbb6242fd131b27c4b3194d0ebb081723c8a5e6642ea29a5aca1d4de865ca64c8fecdd94ebca914d58333ebcf0f7c09cb6c7b50c9bc8233c14acda8440381c79235d174589903118bd0c136d0cf2d0fcf6f9e74c7087af9bd16c3805b70b12f0431c29c0fd9ff69700de1b87d9e5c0fe5111106e3d1b0a9862bebca3c2e549bd96b60f64f0c32fa9105a4ce15f3a2f9d64a5bf5295beed8ed1588146a834bc2340d3e17e57eb7de544da5735d48df4661463c7eca82c8bf5b6c77d7af4610ca343bc423f4684ef7e42084013a0694ed6f67e684dcd305c5d404492dcc3d1fda4627642c21a77bc10a4cdd19e1b60c68894be73f40302c577b2d9d1631861505bd667974d620b5a94e9136bcbb6a3f18d9163ead6c0684dcdd6eb60f030692d16d0cb8df6212bf6ae05c4c4dc3b4d81e9ff58a87b547c525453581699658bf90dc3f60d644c99d5ae4f5cd8c65606136f439b9e7005")
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//str := base64.StdEncoding.EncodeToString(bytes)
+	//fmt.Println(str)
 
 	//fmt.Println(url.PathUnescape("\u0026%$#@!~:\u003c\u003e?:\""))
 
