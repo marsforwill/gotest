@@ -3,6 +3,7 @@ package main
 import (
 	"container/list"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -540,6 +541,26 @@ func reverse(a []int) {
 	for i, n := 0, len(a); i < n/2; i++ {
 		a[i], a[n-1-i] = a[n-1-i], a[i]
 	}
+}
+
+//124. 二叉树中的最大路径和
+func maxPathSum(root *TreeNode) int {
+	ans := math.MinInt32
+	var maxGain func(node *TreeNode) int
+	maxGain = func(node *TreeNode) int {
+		if node == nil {
+			return 0
+		}
+		leftGain := max(maxGain(node.Left), 0)
+		rightGain := max(maxGain(node.Right), 0)
+		cur := node.Val + leftGain + rightGain
+		if cur > ans {
+			ans = cur
+		}
+		return node.Val + max(leftGain, rightGain)
+	}
+	maxGain(root)
+	return ans
 }
 func main() {
 	root := &TreeNode{
