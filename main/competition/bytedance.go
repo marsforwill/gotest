@@ -56,6 +56,42 @@ func permute(nums []int) [][]int {
 	dfs([]int{})
 	return res
 }
+
+//79. 单词搜索 dfs搜索回溯
+func exist(board [][]byte, word string) bool {
+	vis := make([][]bool, len(board))
+	for i := 0; i < len(vis); i++ {
+		vis[i] = make([]bool, len(board[0]))
+	}
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[i]); j++ {
+			if dfsBoard(i, j, board, word, vis, 0) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+var dx = []int{0, 0, -1, 1}
+var dy = []int{-1, 1, 0, 0}
+
+func dfsBoard(x int, y int, board [][]byte, word string, vis [][]bool, idx int) bool {
+	if idx == len(word) {
+		return true
+	}
+	if x >= 0 && x < len(board) && y >= 0 && y < len(board[0]) && board[x][y] == word[idx] && vis[x][y] == false {
+		for i := 0; i < 4; i++ {
+			vis[x][y] = true
+			if dfsBoard(x+dx[i], y+dy[i], board, word, vis, idx+1) {
+				return true
+			}
+			vis[x][y] = false
+		}
+	}
+	return false
+}
+
 func main() {
 	nextPermutation([]int{1, 5, 1})
 
