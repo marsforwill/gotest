@@ -1,5 +1,10 @@
 package main
 
+import (
+	"strconv"
+	"strings"
+)
+
 /**
 输入：nums = [1,2,3]
 输出：[1,3,2]
@@ -92,6 +97,42 @@ func dfsBoard(x int, y int, board [][]byte, word string, vis [][]bool, idx int) 
 	return false
 }
 
+//93. 复原 IP 地址
+func restoreIpAddresses(s string) []string {
+	var ans []string
+	for i := 1; i < len(s) && i <= 3; i++ {
+		for j := i + 1; j < len(s) && j < i+4; j++ {
+			for k := j + 1; k < j+4 && k < len(s); k++ {
+				str1 := s[0:i]
+				str2 := s[i:j]
+				str3 := s[j:k]
+				str4 := s[k:]
+				if len(str1)+len(str2)+len(str3)+len(str4) == len(s) {
+					num1, er1 := strconv.Atoi(str1)
+					num2, er2 := strconv.Atoi(str2)
+					num3, er3 := strconv.Atoi(str3)
+					num4, er4 := strconv.Atoi(str4)
+					if (str1[0] == '0' && num1 > 0) || (num1 == 0 && len(str1) > 1) {
+						continue
+					}
+					if (str2[0] == '0' && num2 > 0) || (num2 == 0 && len(str2) > 1) {
+						continue
+					}
+					if (str3[0] == '0' && num3 > 0) || (num3 == 0 && len(str3) > 1) {
+						continue
+					}
+					if (str4[0] == '0' && num4 > 0) || (num4 == 0 && len(str4) > 1) {
+						continue
+					}
+					if er1 == nil && er2 == nil && er3 == nil && er4 == nil && num1 <= 255 && num2 <= 255 && num3 <= 255 && num4 <= 255 {
+						ans = append(ans, strings.Join([]string{str1, str2, str3, str4}, "."))
+					}
+				}
+			}
+		}
+	}
+	return ans
+}
 func main() {
 	nextPermutation([]int{1, 5, 1})
 
