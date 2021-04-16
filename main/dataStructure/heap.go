@@ -117,6 +117,7 @@ func (this *SortedStack) Push(val int) {
 		if this.heap[pi] <= val {
 			break
 		}
+		//把父亲节点的值下放并继续往上层迭代
 		this.heap[i] = this.heap[pi]
 		i = pi
 	}
@@ -131,7 +132,7 @@ func (this *SortedStack) Pop() {
 	if this.len == 1 {
 		this.heap = make([]int, 0)
 	} else {
-		// swap
+		// swap 把最底层元素放到堆顶并逐渐往下调整
 		this.heap[0], this.heap[this.len-1] = this.heap[this.len-1], this.heap[0]
 		this.heap = this.heap[:this.len-1]
 		// down
@@ -146,6 +147,7 @@ func (this *SortedStack) Pop() {
 			if j2 < len(this.heap) && this.heap[j2] < this.heap[j1] {
 				j = j2
 			}
+			// 找到j定义为左右儿子的min值并 与头节点i交换
 			if this.heap[i] <= this.heap[j] {
 				break
 			}
