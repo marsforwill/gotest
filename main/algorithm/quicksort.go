@@ -30,8 +30,27 @@ func partitions(a *[]int, low int, high int) int {
 	return low
 }
 
+//215. 数组中的第K个最大元素
+func findKthLargest(nums []int, k int) int {
+	if len(nums) == 1 {
+		return nums[0]
+	}
+	targetIndex := len(nums) - k
+	keyPos := partitions(&nums, 0, len(nums)-1)
+	if keyPos == targetIndex {
+		return nums[keyPos]
+	}
+	if targetIndex > keyPos {
+		return findKthLargest(nums[keyPos+1:], k)
+	} else {
+		return findKthLargest(nums[0:keyPos], k-(len(nums)-keyPos))
+	}
+}
+
+// 1,2
 func main() {
-	a := []int{3, 5, 8, 6, 2}
-	quickSort(&a, 0, 4)
-	fmt.Println(a)
+	//a := []int{3, 5, 8, 6, 2}
+	//quickSort(&a, 0, 4)
+	//fmt.Println(a)
+	fmt.Println(findKthLargest([]int{7, 6, 5, 4, 3, 2, 1}, 2))
 }
