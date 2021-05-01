@@ -214,6 +214,25 @@ func deepCopy(node *Node) *Node {
 	return copyNode
 }
 
+//19. 删除链表的倒数第 N 个结点  双指针的精妙优化解法 todo
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	dummyHead := &ListNode{
+		Val:  0,
+		Next: head,
+	}
+	fast, slow := head, dummyHead
+	//双指针让fast领先slow n个节点
+	for i := 0; i < n; i++ {
+		fast = fast.Next
+	}
+	for fast != nil && fast.Next != nil {
+		fast = fast.Next
+		slow = slow.Next
+	}
+	slow.Next = slow.Next.Next
+	return dummyHead.Next
+}
+
 func main() {
 	fmt.Println(copyRandomList(&Node{
 		Val: 3,
