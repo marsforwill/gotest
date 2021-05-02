@@ -133,6 +133,25 @@ func restoreIpAddresses(s string) []string {
 	}
 	return ans
 }
+
+//32. 最长有效括号 匹配括号 dp/栈/
+func longestValidParentheses(s string) int {
+	stack := []int{-1}
+	ans := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == '(' {
+			stack = append(stack, i)
+		} else {
+			stack = stack[:len(stack)-1]
+			if len(stack) == 0 {
+				stack = append(stack, i)
+			} else {
+				ans = max(ans, i-stack[len(stack)-1])
+			}
+		}
+	}
+	return ans
+}
 func main() {
 	nextPermutation([]int{1, 5, 1})
 
