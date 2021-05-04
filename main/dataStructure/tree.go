@@ -562,6 +562,30 @@ func maxPathSum(root *TreeNode) int {
 	maxGain(root)
 	return ans
 }
+
+//199. 二叉树的右视图 bfs层次遍历再每次取答案
+func rightSideView(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
+	var ans []int
+	queue := []*TreeNode{root}
+	for len(queue) > 0 {
+		l := len(queue)
+		ans = append(ans, queue[0].Val)
+		for i := 0; i < l; i++ {
+			cur := queue[0]
+			queue = queue[1:]
+			if cur != nil && cur.Right != nil {
+				queue = append(queue, cur.Right)
+			}
+			if cur != nil && cur.Left != nil {
+				queue = append(queue, cur.Left)
+			}
+		}
+	}
+	return ans
+}
 func main() {
 	root := &TreeNode{
 		Val:  1,
