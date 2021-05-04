@@ -586,6 +586,30 @@ func rightSideView(root *TreeNode) []int {
 	}
 	return ans
 }
+
+//135. 分发糖果 两遍不同方向的遍历 取符合条件max
+func candy(ratings []int) int {
+	n := len(ratings)
+	left := make([]int, n)
+	for i := 0; i < n; i++ {
+		if i > 0 && ratings[i] > ratings[i-1] {
+			left[i] = left[i-1] + 1
+		} else {
+			left[i] = 1
+		}
+	}
+	ans := 0
+	right := 0
+	for i := n - 1; i >= 0; i-- {
+		if i < n-1 && ratings[i] > ratings[i+1] {
+			right++
+		} else {
+			right = 1
+		}
+		ans += max(right, left[i])
+	}
+	return ans
+}
 func main() {
 	root := &TreeNode{
 		Val:  1,
