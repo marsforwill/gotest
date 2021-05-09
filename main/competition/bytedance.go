@@ -152,6 +152,20 @@ func longestValidParentheses(s string) int {
 	}
 	return ans
 }
+
+//89. 格雷编码
+func grayCode(n int) []int {
+	ans := []int{0}
+	head := 1
+	for i := 0; i < n; i++ {
+		for j := len(ans) - 1; j >= 0; j-- {
+			num := ans[j] + head
+			ans = append(ans, num)
+		}
+		head = head << 1
+	}
+	return ans
+}
 func main() {
 	nextPermutation([]int{1, 5, 1})
 
