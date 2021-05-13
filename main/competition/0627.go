@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
@@ -354,7 +355,48 @@ func threeSum(nums []int) [][]int {
 	}
 	return ans
 }
+//16. 最接近的三数之和 枚举一个 双指针滑动两个
+func threeSumClosest(nums []int, target int) int {
+	sort.Ints(nums)
+	n := len(nums)
+	ans := math.MaxInt64
+	anst := 0
+	for i := 0; i < n-2; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		j,k := i+1,n-1
+		for j < k {
+			sum := nums[i] + nums[j] + nums[k]
+			if sum == target {
+				return target
+			}
+			if abs(sum-target) < ans {
+				ans = abs(sum-target)
+				anst = sum
+			}
+			if sum > target {
+				// 如果和大于 target，移动 c 对应的指针
+				k0 := k - 1
+				// 移动到下一个不相等的元素
+				for j < k0 && nums[k0] == nums[k] {
+					k0--
+				}
+				k = k0
+			} else {
+				// 如果和小于 target，移动 b 对应的指针
+				j0 := j + 1
+				// 移动到下一个不相等的元素
+				for j0 < k && nums[j0] == nums[j] {
+					j0++
+				}
+				j = j0
+			}
+		}
 
+	}
+	return anst
+}
 func main() {
 	fmt.Println(threeSum([]int{-4, -2, -2, -2, 0, 1, 2, 2, 2, 3, 3, 4, 4, 6, 6}))
 	//fmt.Print(canArrange([]int{-4,-7,5,2,9,1,10,4,-8,-3},3))
