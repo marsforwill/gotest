@@ -9,7 +9,8 @@ import (
 	"io/ioutil"
 	"math"
 	"os"
-	"sync"
+	"regexp"
+	"strings"
 )
 
 type MallcooTraceBody struct {
@@ -230,18 +231,39 @@ func max(a int, b int) int {
 
 //[1,2,3,4,1,3,4]
 //[3,1,2,6]
+
+type Info struct {
+	Type            string   `json:"type"`
+	Token           string   `json:"token"`
+}
 func main() {
-	customerIDs := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-	var wg sync.WaitGroup
-	for i := 0; i < len(customerIDs); i++ {
-		customerID := customerIDs[i]
-		wg.Add(1)
-		go func() {
-			fmt.Println(customerID)
-			wg.Done()
-		}()
-	}
-	wg.Wait()
+		//str := "foo(bar)foo(baz)golang"
+		str := "客户决策人【高频】【跨案场】，此组客户第 56 次到访本店，请进行接待。滑动进入应用查看此客户详情"
+		str = strings.Replace(str,"【","(",-1)
+		str = strings.Replace(str,"】",")",-1)
+		rex := regexp.MustCompile(`\(([^)]+)\)`)
+		out := rex.FindAllStringSubmatch(str, -1)
+
+		for _, i := range out {
+			fmt.Println(i[1])
+		}
+	//info := Info{Type: "sdf"}
+	//str, err := json.Marshal(info)
+	//if err == nil {
+	//	println(string(str))
+	//}
+
+	//customerIDs := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	//var wg sync.WaitGroup
+	//for i := 0; i < len(customerIDs); i++ {
+	//	customerID := customerIDs[i]
+	//	wg.Add(1)
+	//	go func() {
+	//		fmt.Println(customerID)
+	//		wg.Done()
+	//	}()
+	//}
+	//wg.Wait()
 
 	//fmt.Println(getCommonSub2("abcde", "acbde"))             // 4
 	//fmt.Println(getCommonSub2("aaaaa", "aaa"))               // 3

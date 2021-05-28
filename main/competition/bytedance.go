@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -153,6 +154,14 @@ func longestValidParentheses(s string) int {
 	return ans
 }
 
+func max(ans int, i int) int {
+	if ans > i {
+		return ans
+	} else {
+		return i
+	}
+}
+
 //89. 格雷编码
 func grayCode(n int) []int {
 	ans := []int{0}
@@ -166,7 +175,54 @@ func grayCode(n int) []int {
 	}
 	return ans
 }
-func main() {
-	nextPermutation([]int{1, 5, 1})
 
+//30. 串联所有单词的子串  双指针加滑动窗口
+func findSubstring(s string, words []string) []int {
+	wl := len(words)
+	onewordLen := len(words[0])
+	hm := make(map[string]int)
+	allCount := 0
+	for i := 0; i < wl; i++ {
+		if _, ok := hm[words[i]]; !ok {
+			allCount++
+		}
+		hm[words[i]]++
+	}
+	var ans []int
+	for i := 0; i < onewordLen; i++ {
+		count := 0
+		tmphm := make(map[string]int)
+		left, right := i, i+onewordLen
+		for ; right <= len(s); right += onewordLen {
+			// 移动右指针并维护状态
+			str := s[right-onewordLen : right]
+			if _, ok := hm[str]; ok {
+				tmphm[str]++
+				if tmphm[str] == hm[str] {
+					count++
+				}
+			}
+			// 移动左指针并维护状态
+			for right-left > wl*onewordLen {
+				str := s[left : left+onewordLen]
+				if _, ok := tmphm[str]; ok {
+					tmphm[str]--
+				}
+				if tmphm[str]+1 == hm[str] {
+					count--
+				}
+				left += onewordLen
+			}
+			// 状态判断：字符计数以及长度
+			if count == allCount && right-left == wl*onewordLen {
+				ans = append(ans, left)
+			}
+		}
+	}
+
+	return ans
+}
+func main() {
+	//nextPermutation([]int{1, 5, 1})
+	fmt.Println(findSubstring("barfoothefoobarman", []string{"foo", "bar"}))
 }
