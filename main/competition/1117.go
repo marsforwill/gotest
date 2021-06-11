@@ -249,6 +249,27 @@ func mostCompetitive(nums []int, k int) []int {
 	return nums[0:k]
 }
 
+// 37 解数独 递归回溯位运算
+func solveSudoku(board [][]byte) {
+
+	var line, column [9]int
+	var block [3][3]int
+	flip := func(i, j int, digit byte) {
+		line[i] = line[i] ^ (1 << digit)
+		column[j] = column[j] ^ (1 << digit)
+		block[i/3][j/3] = block[i/3][j/3] ^ (1 << digit)
+	}
+	// 标记已有占位数
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			if board[i][j] != '.' {
+				digit := board[i][j] - '1'
+				flip(i, j, digit)
+			}
+		}
+	}
+}
+
 func main() {
 	//fmt.Println(minOperations([]int{500,1,4,2,3},500))
 	//fmt.Println(getSmallestString(5, 73))
